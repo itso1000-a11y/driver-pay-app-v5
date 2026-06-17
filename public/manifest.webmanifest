@@ -2,7 +2,7 @@
   "name": "Driver Pay App v5.0.0",
   "short_name": "Driver Pay v5",
   "description": "Driver Pay App v5.0.0 clean base",
-  "start_url": "/?app=driver-pay-v5",
+  "start_url": "/?app=driver-pay-v5-clean",
   "scope": "/",
   "display": "standalone",
   "background_color": "#f8fafc",
@@ -10,17 +10,17 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/icons/icon-192.png",
+      "src": "/icons/icon-v5-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "/icons/icon-v5-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
   ],
-  "id": "/?app=driver-pay-v5"
+  "id": "/?app=driver-pay-v5-clean"
 }
