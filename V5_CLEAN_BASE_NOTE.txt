@@ -1,0 +1,5 @@
+Driver Pay App v5.0.0 clean install identity base
+- Based on stable v4.37.38 logic
+- No Pay Setup v2 integration yet
+- PWA manifest id/start_url separated for v5 install
+- package-lock.json omitted to avoid Vercel npm install issue seen on first v5 import
