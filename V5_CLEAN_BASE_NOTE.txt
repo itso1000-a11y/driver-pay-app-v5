@@ -1,6 +1,8 @@
-Driver Pay App v5.0.0 clean final with versioned v5 icon paths
+Driver Pay App v5.0.0 clean zoom + empty display cleanup
 - Based on stable v4.37.38 logic
 - No Pay Setup v2 integration
-- Manifest uses /icons/icon-v5-192.png and /icons/icon-v5-512.png
-- favicon.ico and apple-touch-icon.png are v5
+- No layout/button/spacing redesign
+- Mobile viewport locked to prevent pinch zoom while keeping vertical scroll
+- Removed visual dash noise only from Day screen OT, KM run, and Day summary empty states
+- Completed work day shows No where useful for OT/Bonuses; KM remains computed value when available
 - package-lock.json omitted for Vercel
