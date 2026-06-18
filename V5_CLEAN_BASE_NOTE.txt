@@ -1,8 +1,9 @@
-Driver Pay App v5.0.0 clean zoom + empty display cleanup
-- Based on stable v4.37.38 logic
+Driver Pay App v5.0.0 clean update + zoom fix
+- Visible version remains v5.0.0
+- Based on v5.0.0 clean zoom/empty-display base
+- Adds stronger mobile pinch-zoom blocking without layout/spacing changes
+- Restores/strengthens PWA update prompt for same-version v5-to-v5 clean rebuilds
+- Service worker cache marker changed so this same-version build is still detected as new
 - No Pay Setup v2 integration
-- No layout/button/spacing redesign
-- Mobile viewport locked to prevent pinch zoom while keeping vertical scroll
-- Removed visual dash noise only from Day screen OT, KM run, and Day summary empty states
-- Completed work day shows No where useful for OT/Bonuses; KM remains computed value when available
+- No button text/layout/day-type logic changes
 - package-lock.json omitted for Vercel

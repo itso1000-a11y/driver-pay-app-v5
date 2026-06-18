@@ -1,4 +1,4 @@
-const CACHE_NAME = "driver-pay-v5-clean-zoom-empty-display-cache-v5-0-0";
+const CACHE_NAME = "driver-pay-v5-clean-update-zoom-cache-v5-0-0-build-02";
 const APP_SHELL = ["/", "/index.html", "/manifest.webmanifest", "/icons/icon-v5-192.png", "/icons/icon-v5-512.png", "/favicon.ico", "/apple-touch-icon.png"];
 
 self.addEventListener("install", (event) => {
@@ -72,4 +72,11 @@ self.addEventListener("fetch", (event) => {
   }
 
   event.respondWith(staleWhileRevalidate(event.request, "/index.html"));
+});
+
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });
