@@ -1,0 +1,7 @@
+Driver Pay App v5.1.1 profile apply safety
+- Separates Company/Agency from Profile name in Pay Setup v2
+- Adds Load profile selector
+- Update profile now saves profile data only and does NOT silently apply global settings
+- Apply profile is explicit and labelled as applying from next empty day
+- Keeps Day screen, Archive, KM carry, Rest logic unchanged
+- Keeps zoom lock and empty display cleanup

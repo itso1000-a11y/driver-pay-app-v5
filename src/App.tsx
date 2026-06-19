@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 
 
 type Lang = "en" | "bg";
-const APP_VERSION = "v5.1.0";
+const APP_VERSION = "v5.1.1";
 const LANGUAGE_STORAGE_KEY = "driverPayV4_language";
 const ACTIVE_WEEK_STORAGE_KEY = "driverPayV4_activeSaturday";
 const CLOSED_WEEKS_STORAGE_KEY = "driverPayV4_closedWeeks";
@@ -17,7 +17,7 @@ const UI_TEXT: Record<Lang, Record<string, string>> = {
     kilometres: "Kilometres", suggested: "suggested", startKm: "Start km", finishKm: "Finish km", kmRun: "KM run", startKmManual: "Start km can be corrected manually.", startKmSuggested: "Grey start km is suggested from {source}. Type over it if it is wrong.", fromFinishKm: "from {source} finish km", lastSavedDay: "last saved day", lastWeek: "last week",
     restFromPreviousDay: "Rest from previous shift", noPreviousDay: "No previous shift found.", currentRest: "Current rest", holidayPay: "Holiday pay", taxed: "taxed", splitBreak: "Split break", weekActive: "Week active", nightOut: "Night out", bonuses: "Bonuses", addBonus: "Add bonus", add: "Add", noBonusesAdded: "No bonuses added.", saveNext: "Save & Next", weekView: "Week View",
     daySummary: "Day summary", hours: "Hours", overtime: "Overtime", km: "KM", yes: "Yes", no: "No", delete: "Delete",
-    settingsTitle: "Settings", backupRestore: "Backup / Restore", recommended: "recommended", backupInfo: "Save a copy of all weeks, current entries, settings, archive, and payslip comparison. Restore it if Edge data is cleared or you move to another computer.", backup: "Backup", restore: "Restore", payRates: "Pay rates", companyName: "Company name (optional)", weekdayPayRate: "Weekday pay rate", saturdayPayRate: "Saturday pay rate", sundayPayRate: "Sunday pay rate", pensionMode: "Pension mode", noPension: "No pension", manualPension: "Manual pension", pensionDeduction: "Pension deduction", overtimeThreshold: "Overtime threshold (hours)", overtimePayRate: "Overtime pay rate", foodAllowance: "Food allowance per worked day", nightOutPay: "Night out pay", bonusPayRates: "Bonus pay rates", customBonuses: "Custom bonuses", customBonusName: "Bonus name", customBonusRate: "Rate", done: "Done", paySetupV2: "Pay Setup v2", openPaySetup: "Open Pay Setup", currentProfile: "Current profile", profileName: "Profile name", profileSaved: "Profile saved", createProfile: "Create profile", updateProfile: "Update profile", saveAsNewProfile: "Save as new profile", newFromThis: "New from this", profilePreview: "Profile preview",
+    settingsTitle: "Settings", backupRestore: "Backup / Restore", recommended: "recommended", backupInfo: "Save a copy of all weeks, current entries, settings, archive, and payslip comparison. Restore it if Edge data is cleared or you move to another computer.", backup: "Backup", restore: "Restore", payRates: "Pay rates", companyName: "Company name (optional)", weekdayPayRate: "Weekday pay rate", saturdayPayRate: "Saturday pay rate", sundayPayRate: "Sunday pay rate", pensionMode: "Pension mode", noPension: "No pension", manualPension: "Manual pension", pensionDeduction: "Pension deduction", overtimeThreshold: "Overtime threshold (hours)", overtimePayRate: "Overtime pay rate", foodAllowance: "Food allowance per worked day", nightOutPay: "Night out pay", bonusPayRates: "Bonus pay rates", customBonuses: "Custom bonuses", customBonusName: "Bonus name", customBonusRate: "Rate", done: "Done", paySetupV2: "Pay Setup v2", openPaySetup: "Open Pay Setup", currentProfile: "Current profile", profileName: "Profile name", profileSaved: "Profile saved", createProfile: "Create profile", updateProfile: "Update profile", saveAsNewProfile: "Save as new profile", newFromThis: "New from this", profilePreview: "Profile preview", organisationName: "Company / Agency", loadProfile: "Load profile", applyProfile: "Apply profile", applyFromNextEmptyDay: "Apply from next empty day", profileOnlySaved: "Profile saved. Apply it when ready.", currentDraft: "Current draft",
     weekPreview: "Week Preview", close: "Close", estimatedNet: "Estimated Net", payslipNet: "Payslip Net", difference: "Difference", days: "Days", noPoundsHere: "no £ here", holiday: "Holiday", off: "Off", showBreakdown: "Show breakdown", hideBreakdown: "Hide breakdown", basePay: "Base pay", food: "Food", tax: "Tax", ni: "NI", net: "Net", splitRests: "Split rests", back: "Back", endWeek: "End Week",
     endWeekPreview: "End Week Preview", totalHours: "Total hours", reducedRests: "Reduced rests", confirmInfo: "Confirming will close this week, save an automatic backup, and open the next week. Choose how to mark the remaining days.", confirmCloseWeek: "Confirm & Close Week", remainingOff: "Remaining Off", remainingHoliday: "Remaining Holiday",
     from11hRest: "from 11h rest", nineHourOption: "9h option", reducedLimitReached: "No reduced rests left", reducedLeft: "Left", noReducedLeft: "No reduced rests left", splitRestNotCounted: "", incompleteShift: "Incomplete shift.", finishBeforeStart: "Finish time is before start.", longShift: "Long shift", shiftLimitExceeded: "15h limit exceeded", rest11: "Daily rest", rest9: "Reduced rest", previousShiftTooLongFor11h: "11h rest unavailable", weeklyRest45Option: "Weekly rest", weeklyRest24Option: "Reduced", owedLater: "later", toFullWeeklyRest: "left", weeklyRestComplete: "Weekly rest", reducedWeeklyRest: "Reduced weekly rest", compensationMissing: "Hours missing", weeklyRestRequired: "Weekly rest needed", dailyRestCompleted: "", violation: "Rest violation", pending: "No start yet", backupRestored: "Backup restored successfully.", backupFailed: "This backup file could not be restored.", installHelp: "Use your browser menu and choose Install app / Add to Home screen.", futureWeekClose: "Close empty week", fastCloseHint: "This week has no work data. Mark the days and close it without filling day by day.", allOff: "All Off", allHoliday: "All Holiday", chooseDays: "Choose days", closeFutureWeek: "Close this week", goToCurrentWeek: "Go to current week", savedWeeks: "Saved weeks", noSavedWeeks: "No saved weeks yet", fullWeek: "full", partialWeek: "partial", selectSaturday: "Select Saturday", savedFull: "Saved full", savedPartial: "Saved partial", emptyWeek: "Empty", restSnapshot: "Rest snapshot", usedExtras: "Used extras / markers", detailedView: "Detailed view", hideDailyDetails: "Hide daily details", archiveWatermark: "ARCHIVE", editingArchive: "Archive edit mode"
@@ -30,7 +30,7 @@ const UI_TEXT: Record<Lang, Record<string, string>> = {
     kilometres: "Километри", suggested: "подсказано", startKm: "Старт км", finishKm: "Край км", kmRun: "Км", startKmManual: "Старт км може да се коригира ръчно.", startKmSuggested: "Сивият старт км е подсказан от {source}. Напиши отгоре, ако е грешен.", fromFinishKm: "от {source} краен км", lastSavedDay: "последен ден", lastWeek: "предишна седмица",
     restFromPreviousDay: "Почивка от предишната смяна", noPreviousDay: "Няма предишна смяна.", holidayPay: "Отпуск £", taxed: "облагаемо", splitBreak: "Сплит почивка", weekActive: "Маркирано тази седмица", nightOut: "Нощувка", bonuses: "Бонуси", addBonus: "Добави бонус", add: "Добави", noBonusesAdded: "Няма добавени бонуси.", saveNext: "Запази и следващ", weekView: "Седмица",
     daySummary: "Дневно превю", hours: "Часове", overtime: "Овъртайм", km: "Км", yes: "Да", no: "Не", delete: "Изтрий",
-    settingsTitle: "Настройки", backupRestore: "Архив / Възстановяване", recommended: "препоръчително", backupInfo: "Запазва копие на всички седмици, текущите данни, настройките, архива и сравнението с фиша. Възстановява при изчистване на данните или смяна на компютър.", backup: "Направи backup", restore: "Възстанови", payRates: "Ставки", companyName: "Име на фирма (по избор)", weekdayPayRate: "Делнична ставка", saturdayPayRate: "Събота ставка", sundayPayRate: "Неделя ставка", pensionMode: "Пенсионен режим", noPension: "Без пенсия", manualPension: "Ръчна пенсия", pensionDeduction: "Пенсионно удържане", overtimeThreshold: "Праг за овъртайм (часове)", overtimePayRate: "Овъртайм ставка", foodAllowance: "Пари за храна на работен ден", nightOutPay: "Нощувка £", bonusPayRates: "Ставки за бонуси", customBonuses: "Допълнителни бонуси", customBonusName: "Име на бонус", customBonusRate: "Ставка", done: "Готово", paySetupV2: "Pay Setup v2", openPaySetup: "Отвори Pay Setup", currentProfile: "Текущ профил", profileName: "Име на профил", profileSaved: "Профилът е записан", createProfile: "Създай профил", updateProfile: "Обнови профила", saveAsNewProfile: "Запази като нов профил", newFromThis: "Нов от този", profilePreview: "Преглед на профил",
+    settingsTitle: "Настройки", backupRestore: "Архив / Възстановяване", recommended: "препоръчително", backupInfo: "Запазва копие на всички седмици, текущите данни, настройките, архива и сравнението с фиша. Възстановява при изчистване на данните или смяна на компютър.", backup: "Направи backup", restore: "Възстанови", payRates: "Ставки", companyName: "Име на фирма (по избор)", weekdayPayRate: "Делнична ставка", saturdayPayRate: "Събота ставка", sundayPayRate: "Неделя ставка", pensionMode: "Пенсионен режим", noPension: "Без пенсия", manualPension: "Ръчна пенсия", pensionDeduction: "Пенсионно удържане", overtimeThreshold: "Праг за овъртайм (часове)", overtimePayRate: "Овъртайм ставка", foodAllowance: "Пари за храна на работен ден", nightOutPay: "Нощувка £", bonusPayRates: "Ставки за бонуси", customBonuses: "Допълнителни бонуси", customBonusName: "Име на бонус", customBonusRate: "Ставка", done: "Готово", paySetupV2: "Pay Setup v2", openPaySetup: "Отвори Pay Setup", currentProfile: "Текущ профил", profileName: "Име на профил", profileSaved: "Профилът е записан", createProfile: "Създай профил", updateProfile: "Обнови профила", saveAsNewProfile: "Запази като нов профил", newFromThis: "Нов от този", profilePreview: "Преглед на профил", organisationName: "Фирма / агенция", loadProfile: "Зареди профил", applyProfile: "Приложи профил", applyFromNextEmptyDay: "Приложи от следващ празен ден", profileOnlySaved: "Профилът е записан. Приложи го когато е готов.", currentDraft: "Текущ draft",
     weekPreview: "Седмично превю", close: "Затвори", estimatedNet: "Очаквано нето", payslipNet: "Нето по фиш", difference: "Разлика", days: "Дни", noPoundsHere: "без £ тук", holiday: "Отпуск", off: "Почивен", showBreakdown: "Покажи разбивка", hideBreakdown: "Скрий разбивка", basePay: "Основно плащане", food: "Храна", tax: "Данък", ni: "NI", net: "Нето", splitRests: "Сплит почивки", back: "Назад", endWeek: "Край на седмицата",
     endWeekPreview: "Превю преди край", totalHours: "Общо часове", reducedRests: "9ч редуцирани", confirmInfo: "Потвърждението затваря седмицата, прави автоматичен backup и отваря следващата седмица. Избери как да се маркират оставащите дни.", confirmCloseWeek: "Потвърди и затвори", remainingOff: "Оставащите почивни", remainingHoliday: "Оставащите отпуск",
     from11hRest: "от 11ч почивка", nineHourOption: "9ч старт", reducedLimitReached: "лимитът за 9ч е достигнат", splitRestNotCounted: "", incompleteShift: "Незавършена смяна.", finishBeforeStart: "Крайният час е преди стартовия.", longShift: "Дълга смяна", shiftLimitExceeded: "Надвишен лимит 15ч", rest11: "Дневна почивка", rest9: "Съкратена почивка", previousShiftTooLongFor11h: "11ч почивка не е възможна", weeklyRest45Option: "Седмична", weeklyRest24Option: "Съкратена", owedLater: "по-късно", toFullWeeklyRest: "остават", weeklyRestComplete: "Седмична почивка", reducedWeeklyRest: "Съкратена седмична почивка", compensationMissing: "Липсват часове", weeklyRestRequired: "Нужна седмична почивка", dailyRestCompleted: "", violation: "Нарушена почивка", pending: "Няма старт", backupRestored: "Backup-ът е възстановен.", backupFailed: "Този backup файл не може да се възстанови.", installHelp: "Използвай менюто на браузъра и избери Инсталирай приложението / Добави на началния екран.", futureWeekClose: "Затвори празна седмица", fastCloseHint: "Тази седмица няма работни данни. Маркирай дните и я затвори без попълване ден по ден.", allOff: "Всички почивни", allHoliday: "Всички отпуск", chooseDays: "Избор по дни", closeFutureWeek: "Затвори седмицата", goToCurrentWeek: "Върни към текущата седмица", savedWeeks: "Запазени седмици", noSavedWeeks: "Няма запазени седмици", fullWeek: "пълна", partialWeek: "частична", selectSaturday: "Избери събота", savedFull: "Запазена пълна", savedPartial: "Запазена частична", emptyWeek: "Празна", restSnapshot: "Почивки", usedExtras: "Използвани бонуси / маркери", detailedView: "Подробен изглед", hideDailyDetails: "Скрий дните", archiveWatermark: "АРХИВ", editingArchive: "Редакция на стара запазена седмица"
@@ -87,6 +87,7 @@ type PayProfileV2 = {
   id: string;
   name: string;
   companyName: string;
+  organisationName?: string;
   sourceProfileId?: string | null;
   createdAt: string;
   updatedAt: string;
@@ -98,6 +99,7 @@ const ACTIVE_PAY_PROFILE_STORAGE_KEY = "driverPay_activePayProfileId_v2";
 
 function makeProfileId() { return `profile-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`; }
 function getProfileNameBase(settings: SettingsState) { return settings.companyName?.trim() || "Profile"; }
+function getOrganisationName(profile: PayProfileV2 | null | undefined, fallbackSettings?: SettingsState) { return profile?.organisationName || profile?.companyName || fallbackSettings?.companyName || ""; }
 function getNextProfileName(existing: PayProfileV2[], base = "Profile") {
   const cleanBase = base.trim() || "Profile";
   const names = new Set(existing.map((profile) => profile.name));
@@ -109,7 +111,7 @@ function getNextProfileName(existing: PayProfileV2[], base = "Profile") {
 function makeProfileFromSettings(settings: SettingsState, existing: PayProfileV2[] = [], name?: string, sourceProfileId?: string | null): PayProfileV2 {
   const now = new Date().toISOString();
   const profileName = getNextProfileName(existing, name?.trim() || getProfileNameBase(settings) || "Profile");
-  return { id: makeProfileId(), name: profileName, companyName: settings.companyName || "", sourceProfileId: sourceProfileId || null, createdAt: now, updatedAt: now, settingsSnapshot: settings };
+  return { id: makeProfileId(), name: profileName, companyName: settings.companyName || "", organisationName: settings.companyName || "", sourceProfileId: sourceProfileId || null, createdAt: now, updatedAt: now, settingsSnapshot: settings };
 }
 function sanitizePayProfile(raw: unknown): PayProfileV2 | null {
   const r = (raw || {}) as Partial<PayProfileV2>;
@@ -117,7 +119,7 @@ function sanitizePayProfile(raw: unknown): PayProfileV2 | null {
   const snapshot = sanitizeSettings((r as any).settingsSnapshot);
   const id = typeof r.id === "string" && r.id ? r.id : makeProfileId();
   const name = typeof r.name === "string" && r.name.trim() ? r.name.trim() : "Profile";
-  return { id, name, companyName: typeof r.companyName === "string" ? r.companyName : snapshot.companyName || "", sourceProfileId: typeof r.sourceProfileId === "string" ? r.sourceProfileId : null, createdAt: typeof r.createdAt === "string" ? r.createdAt : new Date().toISOString(), updatedAt: typeof r.updatedAt === "string" ? r.updatedAt : new Date().toISOString(), settingsSnapshot: snapshot };
+  const companyName = typeof r.companyName === "string" ? r.companyName : snapshot.companyName || ""; const organisationName = typeof (r as any).organisationName === "string" ? (r as any).organisationName : companyName; return { id, name, companyName, organisationName, sourceProfileId: typeof r.sourceProfileId === "string" ? r.sourceProfileId : null, createdAt: typeof r.createdAt === "string" ? r.createdAt : new Date().toISOString(), updatedAt: typeof r.updatedAt === "string" ? r.updatedAt : new Date().toISOString(), settingsSnapshot: snapshot };
 }
 function loadStoredPayProfiles(settings: SettingsState): PayProfileV2[] {
   if (typeof window === "undefined") return [makeProfileFromSettings(settings, [], settings.companyName || "Profile 1")];
@@ -1595,53 +1597,95 @@ function Row({ label, value, strong }: { label: string; value: string; strong?: 
 function BonusRow({ bonus, rate, onDelete, onQtyChange }: { bonus: BonusEntry; rate: string; onDelete: () => void; onQtyChange: (value: string) => void }) { return <div style={{ display: "grid", gridTemplateColumns: "1fr 86px 44px", gap: 8, alignItems: "stretch" }}><div style={{ padding: "10px 12px", borderRadius: 14, border: "1px solid #dbe3ee", background: "#f8fafc" }}><div style={{ fontSize: 13, fontWeight: 900, color: "#0f172a" }}>{bonus.type}</div><div style={{ marginTop: 2, fontSize: 12, color: "#64748b", fontWeight: 700 }}>{formatMoney(bonus.qty * parseDecimal(rate))}</div></div><input style={{ ...inputStyle, padding: "10px 8px", textAlign: "center", fontWeight: 900 }} inputMode="numeric" value={String(bonus.qty)} onChange={(e) => onQtyChange(e.target.value)} /><button type="button" style={{ ...buttonStyle, padding: "8px 6px", color: "#b91c1c" }} onClick={onDelete}>×</button></div>; }
 function SummarySection({ currentComputed, dayType }: { currentComputed: ComputedDay; dayType: DayType }) { const hasCompletedWork = dayType === "work" && currentComputed.workedMinutes != null; const bonusText = currentComputed.bonuses.length ? currentComputed.bonuses.map((b) => `${b.type} x${b.qty}`).join(", ") : (hasCompletedWork ? t("no") : ""); const isSoft = dayType === "holiday" || dayType === "off"; return <div style={{ ...sectionStyle, opacity: isSoft ? 0.68 : 1 }}><SectionHeading title={t("daySummary")} /><Row label={t("hours")} value={formatMinutes(currentComputed.workedMinutes)} /><Row label={t("overtime")} value={currentComputed.overtimeMinutes > 0 ? formatMinutes(currentComputed.overtimeMinutes) : (hasCompletedWork ? t("no") : "")} /><Row label={t("km")} value={currentComputed.kmRun == null ? "" : String(currentComputed.kmRun)} /><Row label={t("bonuses")} value={bonusText} /><Row label={t("nightOut")} value={currentComputed.nightOut ? t("yes") : t("no")} /></div>; }
 
+
 function PaySetupV2Modal(props: { settings: SettingsState; setSettings: React.Dispatch<React.SetStateAction<SettingsState>>; payProfiles: PayProfileV2[]; setPayProfiles: React.Dispatch<React.SetStateAction<PayProfileV2[]>>; activePayProfileId: string; setActivePayProfileId: (id: string) => void; onClose: () => void }) {
   const activeProfile = props.payProfiles.find((profile) => profile.id === props.activePayProfileId) || props.payProfiles[0] || makeProfileFromSettings(props.settings, [], "Profile 1");
   const [mode, setMode] = useState<"edit" | "createFromTemplate">("edit");
   const [sourceProfileId, setSourceProfileId] = useState<string | null>(null);
-  const [draftName, setDraftName] = useState(activeProfile.name || "Profile 1");
-  const [draftSettings, setDraftSettings] = useState<SettingsState>(activeProfile.settingsSnapshot || props.settings);
+  const [selectedProfileId, setSelectedProfileId] = useState(activeProfile.id);
+  const selectedProfile = props.payProfiles.find((profile) => profile.id === selectedProfileId) || activeProfile;
+  const [draftName, setDraftName] = useState(selectedProfile.name || "Profile 1");
+  const [draftOrganisation, setDraftOrganisation] = useState(getOrganisationName(selectedProfile, props.settings));
+  const [draftSettings, setDraftSettings] = useState<SettingsState>(selectedProfile.settingsSnapshot || props.settings);
   const [savedMessage, setSavedMessage] = useState("");
 
   function patchDraftSettings(next: Partial<SettingsState>) { setDraftSettings({ ...draftSettings, ...next }); }
-  function updateActiveProfile() {
-    const targetId = activeProfile.id;
-    const now = new Date().toISOString();
-    const cleanName = draftName.trim() || activeProfile.name || "Profile 1";
-    const updated = props.payProfiles.map((profile) => profile.id === targetId ? { ...profile, name: cleanName, companyName: draftSettings.companyName || "", updatedAt: now, settingsSnapshot: draftSettings } : profile);
-    props.setPayProfiles(updated);
-    props.setActivePayProfileId(targetId);
-    props.setSettings(draftSettings);
-    setSavedMessage(t("profileSaved"));
-  }
-  function createProfile(sourceId: string | null) {
-    const existing = props.payProfiles;
-    const cleanName = getNextProfileName(existing, draftName.trim() || getProfileNameBase(draftSettings) || "Profile");
-    const created = makeProfileFromSettings(draftSettings, existing, cleanName, sourceId);
-    props.setPayProfiles([...existing, created]);
-    props.setActivePayProfileId(created.id);
-    props.setSettings(draftSettings);
+
+  function loadProfile(profileId: string) {
+    const profile = props.payProfiles.find((item) => item.id === profileId);
+    if (!profile) return;
+    setSelectedProfileId(profile.id);
     setMode("edit");
     setSourceProfileId(null);
-    setDraftName(created.name);
-    setSavedMessage(t("profileSaved"));
-  }
-  function startNewFromThis() {
-    setMode("createFromTemplate");
-    setSourceProfileId(activeProfile.id);
-    setDraftName(getNextProfileName(props.payProfiles, activeProfile.name || "Profile"));
-    setDraftSettings({ ...activeProfile.settingsSnapshot, companyName: "" });
+    setDraftName(profile.name || "Profile 1");
+    setDraftOrganisation(getOrganisationName(profile, props.settings));
+    setDraftSettings(profile.settingsSnapshot || props.settings);
     setSavedMessage("");
   }
 
-  const primaryText = mode === "createFromTemplate" ? t("createProfile") : `${t("updateProfile")} ${draftName.trim() || activeProfile.name}`;
+  function updateProfileOnly() {
+    const targetId = selectedProfile.id;
+    const now = new Date().toISOString();
+    const cleanName = draftName.trim() || selectedProfile.name || "Profile 1";
+    const organisationName = draftOrganisation.trim();
+    const profileSettings = { ...draftSettings, companyName: organisationName };
+    const updated = props.payProfiles.map((profile) => profile.id === targetId ? { ...profile, name: cleanName, companyName: organisationName, organisationName, updatedAt: now, settingsSnapshot: profileSettings } : profile);
+    props.setPayProfiles(updated);
+    props.setActivePayProfileId(targetId);
+    // Important: do NOT call setSettings here. Updating a profile must not recalculate saved days/weeks.
+    setSavedMessage(t("profileOnlySaved"));
+  }
+
+  function createProfile(sourceId: string | null) {
+    const existing = props.payProfiles;
+    const organisationName = draftOrganisation.trim();
+    const profileSettings = { ...draftSettings, companyName: organisationName };
+    const cleanName = getNextProfileName(existing, draftName.trim() || organisationName || getProfileNameBase(profileSettings) || "Profile");
+    const created = makeProfileFromSettings(profileSettings, existing, cleanName, sourceId);
+    const createdWithOrganisation = { ...created, companyName: organisationName, organisationName };
+    props.setPayProfiles([...existing, createdWithOrganisation]);
+    props.setActivePayProfileId(createdWithOrganisation.id);
+    setSelectedProfileId(createdWithOrganisation.id);
+    setMode("edit");
+    setSourceProfileId(null);
+    setDraftName(createdWithOrganisation.name);
+    setSavedMessage(t("profileOnlySaved"));
+    // Important: create profile only stores the setup. It does not silently apply it to old/saved data.
+  }
+
+  function applyDraftToCurrentSettings() {
+    const organisationName = draftOrganisation.trim();
+    const nextSettings = { ...draftSettings, companyName: organisationName };
+    props.setSettings(nextSettings);
+    props.setActivePayProfileId(selectedProfile.id);
+    setSavedMessage(`${t("applyProfile")}: ${t("applyFromNextEmptyDay")}`);
+  }
+
+  function startNewFromThis() {
+    setMode("createFromTemplate");
+    setSourceProfileId(selectedProfile.id);
+    setDraftName(getNextProfileName(props.payProfiles, selectedProfile.name || "Profile"));
+    setDraftOrganisation(getOrganisationName(selectedProfile, props.settings));
+    setDraftSettings({ ...selectedProfile.settingsSnapshot });
+    setSavedMessage("");
+  }
+
+  const primaryText = mode === "createFromTemplate" ? t("createProfile") : `${t("updateProfile")} ${draftName.trim() || selectedProfile.name}`;
 
   return <Overlay onClose={props.onClose}><ModalCard><ModalTitle>{t("paySetupV2")}</ModalTitle>
+    {props.payProfiles.length > 0 && <div style={{ marginBottom: 12, padding: 12, borderRadius: 14, background: "#f8fafc", border: "1px solid #dbe3ee" }}>
+      <SectionHeading title={t("loadProfile")} right={String(props.payProfiles.length)} />
+      <select value={selectedProfileId} onChange={(event) => loadProfile(event.target.value)} style={{ ...inputStyle, width: "100%" }}>
+        {props.payProfiles.map((profile) => <option key={profile.id} value={profile.id}>{getOrganisationName(profile, props.settings) ? `${getOrganisationName(profile, props.settings)} — ${profile.name}` : profile.name}</option>)}
+      </select>
+    </div>}
+
     <div style={{ marginBottom: 12, padding: 12, borderRadius: 14, background: "#f8fafc", border: "1px solid #dbe3ee" }}>
-      <SectionHeading title={t("profilePreview")} right={mode === "createFromTemplate" ? t("newFromThis") : "Edit"} />
+      <SectionHeading title={t("profilePreview")} right={mode === "createFromTemplate" ? t("newFromThis") : t("currentDraft")} />
+      <SettingsInput label={t("organisationName")} textMode value={draftOrganisation} onChange={setDraftOrganisation} />
       <SettingsInput label={t("profileName")} textMode value={draftName} onChange={setDraftName} />
-      <SettingsInput label={t("companyName")} textMode value={draftSettings.companyName || ""} onChange={(value) => patchDraftSettings({ companyName: value })} />
     </div>
+
     <SectionHeading title={t("payRates")} />
     <SettingsInput label={t("weekdayPayRate")} value={draftSettings.weekdayRate} onChange={(value) => patchDraftSettings({ weekdayRate: value })} />
     <SettingsInput label={t("overtimeThreshold")} value={draftSettings.overtimeThresholdHours} onChange={(value) => patchDraftSettings({ overtimeThresholdHours: value })} />
@@ -1650,14 +1694,17 @@ function PaySetupV2Modal(props: { settings: SettingsState; setSettings: React.Di
     <SettingsInput label={t("sundayPayRate")} value={draftSettings.sundayRate} onChange={(value) => patchDraftSettings({ sundayRate: value })} />
     <SettingsInput label={t("foodAllowance")} value={draftSettings.foodAllowanceRate} onChange={(value) => patchDraftSettings({ foodAllowanceRate: value })} />
     <SettingsInput label={t("nightOutPay")} value={draftSettings.nightOutRate} onChange={(value) => patchDraftSettings({ nightOutRate: value })} />
+
     {savedMessage && <div style={{ padding: 10, borderRadius: 12, background: "#dcfce7", border: "1px solid #86efac", color: "#166534", fontWeight: 900, fontSize: 13, marginTop: 8 }}>{savedMessage}</div>}
+
     <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 8, marginTop: 12 }}>
-      <button style={{ ...buttonStyle, width: "100%", background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={() => mode === "createFromTemplate" ? createProfile(sourceProfileId) : updateActiveProfile()}>{primaryText}</button>
-      {mode !== "createFromTemplate" && <button style={{ ...buttonStyle, width: "100%" }} onClick={() => createProfile(activeProfile.id)}>{t("saveAsNewProfile")}</button>}
+      <button style={{ ...buttonStyle, width: "100%", background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={() => mode === "createFromTemplate" ? createProfile(sourceProfileId) : updateProfileOnly()}>{primaryText}</button>
+      <button style={{ ...buttonStyle, width: "100%" }} onClick={applyDraftToCurrentSettings}>{t("applyProfile")} — {t("applyFromNextEmptyDay")}</button>
+      {mode !== "createFromTemplate" && <button style={{ ...buttonStyle, width: "100%" }} onClick={() => createProfile(selectedProfile.id)}>{t("saveAsNewProfile")}</button>}
       {mode !== "createFromTemplate" && <button style={{ ...buttonStyle, width: "100%" }} onClick={startNewFromThis}>{t("newFromThis")}</button>}
       <button style={{ ...buttonStyle, width: "100%" }} onClick={props.onClose}>{t("done")}</button>
     </div>
-    <div style={{ marginTop: 10, fontSize: 11, color: "#64748b", fontWeight: 800 }}>Profile backup support is included in this build.</div>
+    <div style={{ marginTop: 10, fontSize: 11, color: "#64748b", fontWeight: 800 }}>Profile changes are saved separately. Applying them to saved periods must be explicit.</div>
   </ModalCard></Overlay>;
 }
 
