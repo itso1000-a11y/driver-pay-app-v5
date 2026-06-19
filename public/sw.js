@@ -1,4 +1,4 @@
-const CACHE_NAME = "driver-pay-v5-clean-update-zoom-cache-v5-0-0-build-02";
+const CACHE_NAME = "driver-pay-v5-1-0-pay-setup-v2-foundation";
 const APP_SHELL = ["/", "/index.html", "/manifest.webmanifest", "/icons/icon-v5-192.png", "/icons/icon-v5-512.png", "/favicon.ico", "/apple-touch-icon.png"];
 
 self.addEventListener("install", (event) => {

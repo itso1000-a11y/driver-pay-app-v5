@@ -1,0 +1,6 @@
+Driver Pay App v5.1.0 Pay Setup v2 foundation
+- Based on clean v5.0.0
+- Adds Pay Setup v2/Profile foundation in Settings
+- Keeps Day screen, Archive, KM carry, Rest logic unchanged
+- Adds Profile 1 auto layer and Edit/New from this/Create profile flow foundation
+- Backup export includes Pay Profiles metadata
