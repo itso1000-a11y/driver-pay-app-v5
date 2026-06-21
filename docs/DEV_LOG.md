@@ -31,3 +31,15 @@ The user must clearly control whether preview/pay values include estimated Tax/N
 
 LIMITATION:
 This still does not fix profile/snapshot recalculation. Day-level snapshot remains the next architecture fix.
+
+
+## v5.1.4 — Clear active Gross Only toggle
+
+PROBLEM:
+The PAYE/Gross Only buttons did not clearly show which mode was active after tapping.
+
+FIX:
+Active button now uses a clear dark selected state, a ✓ marker, aria-pressed, and a visible Current mode line.
+
+WHY:
+Mode selection affects whether preview values are gross-only or PAYE estimates. The user must not guess whether the tap worked.

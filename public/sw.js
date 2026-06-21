@@ -1,4 +1,4 @@
-const CACHE_NAME = "driver-pay-v5-1-3-gross-only-toggle";
+const CACHE_NAME = "driver-pay-v5-1-4-clear-active-toggle";
 const APP_SHELL = ["/", "/index.html", "/manifest.webmanifest", "/icons/icon-v5-192.png", "/icons/icon-v5-512.png", "/favicon.ico", "/apple-touch-icon.png"];
 
 self.addEventListener("install", (event) => {
