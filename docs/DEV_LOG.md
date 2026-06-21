@@ -16,3 +16,18 @@ Gross Only solves historical recalculation. Day-level pay snapshots are still re
 
 NEXT ARCHITECTURE FIX:
 Day pay snapshot + Quick Setup profile/apply flow.
+
+
+## v5.1.3 — Gross Only toggle visibility fix
+
+PROBLEM:
+v5.1.2 added Gross Only logic/indicator but the switch was not visible enough.
+
+FIX:
+Added a clear two-button PAYE Estimate / Gross Only toggle at the top of Settings.
+
+WHY:
+The user must clearly control whether preview/pay values include estimated Tax/NI/Pension or show gross-only values.
+
+LIMITATION:
+This still does not fix profile/snapshot recalculation. Day-level snapshot remains the next architecture fix.
