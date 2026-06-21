@@ -43,3 +43,25 @@ Active button now uses a clear dark selected state, a ✓ marker, aria-pressed, 
 
 WHY:
 Mode selection affects whether preview values are gross-only or PAYE estimates. The user must not guess whether the tap worked.
+
+
+## v5.1.5 — Gross Only select fixed from v5.1.4
+
+PROBLEM:
+The two-button PAYE/Gross Only toggle was unclear and could appear not to switch.
+
+FIX:
+Replaced it with a simple select/dropdown:
+- PAYE Estimate
+- Gross Only
+
+Gross Only now also changes the calculation:
+- Tax = 0
+- NI = 0
+- daily/weekly net = gross
+
+WHY:
+The user must be able to clearly select whether values are PAYE estimates or gross-only figures.
+
+LIMITATION:
+This does not fix profile/snapshot architecture.

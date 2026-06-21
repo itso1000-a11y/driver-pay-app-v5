@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 
 
 type Lang = "en" | "bg";
-const APP_VERSION = "v5.1.4";
+const APP_VERSION = "v5.1.5";
 const LANGUAGE_STORAGE_KEY = "driverPayV4_language";
 const ACTIVE_WEEK_STORAGE_KEY = "driverPayV4_activeSaturday";
 const CLOSED_WEEKS_STORAGE_KEY = "driverPayV4_closedWeeks";
@@ -1448,17 +1448,18 @@ export default function App() {
     const taxable = computedWeek.reduce((sum, day) => sum + day.taxablePay, 0);
     const untaxed = computedWeek.reduce((sum, day) => sum + day.untaxedPay, 0);
     const gross = taxable + untaxed;
-    const tax = Math.round(Math.max(0, taxable - 12570 / 52) * 0.2 * 100) / 100;
-    const ni = Math.round((taxable > 242 ? (taxable - 242) * 0.08 : 0) * 100) / 100;
+    const tax = settings.grossOnly ? 0 : Math.round(Math.max(0, taxable - 12570 / 52) * 0.2 * 100) / 100;
+    const ni = settings.grossOnly ? 0 : Math.round((taxable > 242 ? (taxable - 242) * 0.08 : 0) * 100) / 100;
     return { taxable, untaxed, gross, tax, ni, net: gross - tax - ni };
-  }, [computedWeek]);
+  }, [computedWeek, settings.grossOnly]);
 
   const taxedWeek = useMemo(() => computedWeek.map((day) => {
+    if (settings.grossOnly) return { ...day, tax: 0, ni: 0, net: day.total };
     const share = weeklyTaxModel.taxable > 0 ? day.taxablePay / weeklyTaxModel.taxable : 0;
     const tax = weeklyTaxModel.tax * share;
     const ni = weeklyTaxModel.ni * share;
     return { ...day, tax, ni, net: day.total - tax - ni };
-  }), [computedWeek, weeklyTaxModel]);
+  }), [computedWeek, weeklyTaxModel, settings.grossOnly]);
 
   const currentComputed = taxedWeek[currentIndex] ?? { ...currentDay, weekend: false, workedMinutes: null, overtimeMinutes: 0, kmRun: null, basePay: 0, overtimePay: 0, bonusPay: 0, holidayPayAmount: 0, nightOutPay: 0, foodAllowancePay: 0, taxablePay: 0, untaxedPay: 0, tax: 0, ni: 0, net: 0, total: 0 };
   const previousShiftAnchor = getLastCompletedWorkShiftBeforeIndex(days, currentIndex, getSaturdayDay(days).dateISO);
@@ -1736,10 +1737,10 @@ function SettingsModal({ settings, setSettings, days, setDays, archive, setArchi
   return <Overlay onClose={onClose}><ModalCard><ModalTitle>{t("settingsTitle")}</ModalTitle><SectionHeading title={t("language")} /><select style={{ ...inputStyle, marginBottom: 14 }} value={language} onChange={(e) => setLanguage(e.target.value as Lang)}><option value="en">English</option><option value="bg">Български</option></select><div style={{ marginBottom: 14, padding: 12, borderRadius: 14, border: "1px solid #dbe3ee", background: "#f8fafc" }}><SectionHeading title={t("backupRestore")} right={t("recommended")} /><div style={{ fontSize: 12, color: "#64748b", lineHeight: 1.35, marginBottom: 10 }}>{t("backupInfo")}</div><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}><button style={{ ...buttonStyle, background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={() => downloadDriverBackup(days, settings, payslipActualWeek, archive)}>{t("backup")}</button><button style={buttonStyle} onClick={() => fileInputRef.current?.click()}>{t("restore")}</button></div><input ref={fileInputRef} type="file" accept="application/json" style={{ display: "none" }} onChange={(e) => { const file = e.target.files?.[0]; if (file) restoreDriverBackupFile(file, { setDays, setSettings, setPayslipActualWeek, setArchive, setCurrentIndex, setSelectedSaturday, setHistoricalEditEnabled, onDone: onClose }); e.currentTarget.value = ""; }} /></div>
       <div style={{ marginBottom: 14, padding: 12, borderRadius: 14, border: settings.grossOnly ? "1px solid #86efac" : "1px solid #dbe3ee", background: settings.grossOnly ? "#ecfdf5" : "#f8fafc" }}>
         <SectionHeading title={t("payCalculationMode")} right={settings.grossOnly ? t("grossOnly") : t("payeEstimate")} />
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-          <button type="button" aria-pressed={!settings.grossOnly} onClick={() => setSettings({ ...settings, grossOnly: false })} style={{ ...buttonStyle, width: "100%", background: !settings.grossOnly ? "#0f172a" : "white", color: !settings.grossOnly ? "white" : "#0f172a", borderColor: !settings.grossOnly ? "#0f172a" : "#dbe3ee", boxShadow: !settings.grossOnly ? "0 0 0 2px rgba(15,23,42,.18)" : "none" }}>{!settings.grossOnly ? "✓ " : ""}{t("payeEstimate")}</button>
-          <button type="button" aria-pressed={settings.grossOnly} onClick={() => setSettings({ ...settings, grossOnly: true })} style={{ ...buttonStyle, width: "100%", background: settings.grossOnly ? "#0f172a" : "white", color: settings.grossOnly ? "white" : "#0f172a", borderColor: settings.grossOnly ? "#0f172a" : "#dbe3ee", boxShadow: settings.grossOnly ? "0 0 0 2px rgba(15,23,42,.18)" : "none" }}>{settings.grossOnly ? "✓ " : ""}{t("grossOnly")}</button>
-        </div>
+        <select value={settings.grossOnly ? "gross" : "paye"} onChange={(event) => setSettings({ ...settings, grossOnly: event.target.value === "gross" })} style={{ ...inputStyle, width: "100%", fontWeight: 900, borderColor: settings.grossOnly ? "#16a34a" : "#0f172a", background: settings.grossOnly ? "#ecfdf5" : "white" }}>
+          <option value="paye">{t("payeEstimate")}</option>
+          <option value="gross">{t("grossOnly")}</option>
+        </select>
         <div style={{ marginTop: 8, fontSize: 12, color: settings.grossOnly ? "#166534" : "#64748b", fontWeight: 800 }}>{t("currentMode")}: {settings.grossOnly ? t("grossOnly") : t("payeEstimate")}</div>
         <div style={{ marginTop: 4, fontSize: 12, color: settings.grossOnly ? "#166534" : "#64748b", fontWeight: 700 }}>{settings.grossOnly ? t("grossOnlyNote") : t("taxModeHelp")}</div>
       </div>
