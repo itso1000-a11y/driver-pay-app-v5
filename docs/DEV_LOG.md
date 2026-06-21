@@ -65,3 +65,21 @@ The user must be able to clearly select whether values are PAYE estimates or gro
 
 LIMITATION:
 This does not fix profile/snapshot architecture.
+
+
+## v5.1.6 — Gross Only select state fix
+
+PROBLEM:
+In v5.1.5 the Pay calculation mode select could show options but remain stuck on PAYE Estimate.
+
+FIX:
+- grossOnly is explicitly preserved by sanitizeSettings.
+- Select uses functional setSettings update.
+- Gross Only remains visible as the selected dropdown value.
+- Gross Only is real calculation mode: Tax = 0, NI = 0, daily/weekly net = gross.
+
+WHY:
+The selected mode must remain visible and must affect the calculation. This is not just a visual setting.
+
+LIMITATION:
+This still does not fix the separate profile/snapshot architecture issue.
