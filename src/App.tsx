@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 
 
 type Lang = "en" | "bg";
-const APP_VERSION = "v5.1.6";
+const APP_VERSION = "v5.1.7";
 const LANGUAGE_STORAGE_KEY = "driverPayV4_language";
 const ACTIVE_WEEK_STORAGE_KEY = "driverPayV4_activeSaturday";
 const CLOSED_WEEKS_STORAGE_KEY = "driverPayV4_closedWeeks";
@@ -558,10 +558,11 @@ function getSuggestedStartTimesForDay(anchor: PreviousShiftAnchor | null, curren
   const base = getSuggestedStartTimes(anchor.finishAbs, reducedCount, previousWorkedMinutes, previousSplitBreak);
   return {
     ...base,
-    // Daily start suggestions are only useful when the suggested start actually belongs
-    // to the current day. Weekly/long-rest targets are shown as helper information only.
+    // 11h remains the main start-field suggestion only when it belongs to the current day.
+    // 9h is a helper/boundary, not a main start value. Keep it visible even if it fell
+    // on the previous calendar day, because the driver may enter the actual Start later.
     h11: base.h11 != null && isSameLocalDayAbs(base.h11, current) ? base.h11 : null,
-    h9: base.h9 != null && isSameLocalDayAbs(base.h9, current) ? base.h9 : null,
+    h9: base.h9,
   };
 }
 

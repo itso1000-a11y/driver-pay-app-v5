@@ -83,3 +83,23 @@ The selected mode must remain visible and must affect the calculation. This is n
 
 LIMITATION:
 This still does not fix the separate profile/snapshot architecture issue.
+
+
+## v5.1.7 — Restore 9h helper visibility
+
+PROBLEM:
+The 9h reduced-rest helper could disappear when the 9h boundary was on the previous calendar day.
+
+CAUSE:
+The helper was filtered with isSameLocalDayAbs(...), so boundaries like Tue 23:40 were hidden when viewing Wednesday.
+
+FIX:
+Keep the 11h suggestion restricted to the current day as the main Start-field suggestion.
+Keep the 9h reduced-rest boundary visible as a helper when it is available, even if it is in the previous calendar day.
+
+WHY:
+The user may enter the actual Start later. The 9h option is a boundary/helper, not a live start button.
+
+IMPORTANT:
+This patch does not change the 72h weekly/long-rest helper rule.
+This patch does not touch pay, archive, profile, or Gross Only logic.
