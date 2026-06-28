@@ -27,3 +27,24 @@ Rule:
 
 Reason:
 The app works from real Finish → real/current Start context, not from a sticky day flag.
+
+
+## PROFILE-RESTORE-001 — saved weeks keep their active profile
+
+Problem:
+Archive/current week navigation could restore saved settings while the active profile selector still pointed at another profile. This created confusion and risked editing/applying the wrong profile.
+
+Rejected idea:
+Rebuild Pay Setup v2 or introduce company-specific behaviour.
+
+Reason rejected:
+The app direction is Payment Models, not company versions. This bug is about restoring the correct saved profile context, not redesigning Pay Engine.
+
+Accepted decision:
+Save `activePayProfileId` with each week/archive entry. When a week is loaded, restore that profile if it still exists. For older weeks without that field, resolve the closest profile by settings snapshot, then by organisation name.
+
+Reason:
+A saved week should reopen with the same profile context it had when saved. This keeps current/archive navigation stable without changing pay formulas or UI design.
+
+Boundary:
+No visual changes. No Rest Engine changes. No Pay Engine formula changes. No Archive rule redesign.

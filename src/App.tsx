@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 
 
 type Lang = "en" | "bg";
-const APP_VERSION = "v5.1.8";
+const APP_VERSION = "v5.1.9";
 const LANGUAGE_STORAGE_KEY = "driverPayV4_language";
 const ACTIVE_WEEK_STORAGE_KEY = "driverPayV4_activeSaturday";
 const CLOSED_WEEKS_STORAGE_KEY = "driverPayV4_closedWeeks";
@@ -167,7 +167,7 @@ type WeekTotals = {
   total: number;
 };
 
-type SavedWeekData = { days: DayRecord[]; settings: SettingsState; payslipActualWeek?: string };
+type SavedWeekData = { days: DayRecord[]; settings: SettingsState; payslipActualWeek?: string; activePayProfileId?: string };
 
 const BONUS_TYPES: BonusType[] = ["ADR", "Genset", "Splitter", "Driver Assist", "London Bonus"];
 const CUSTOM_BONUS_SLOT_COUNT = 6;
@@ -916,14 +916,46 @@ function getSavedWeekIndicators(): { saturdayISO: string; label: string; status:
   return items.sort((a, b) => b.saturdayISO.localeCompare(a.saturdayISO)).slice(0, 8);
 }
 
-function saveWeekData(days: DayRecord[], settings: SettingsState, payslipActualWeek: string) {
+
+function settingsProfileFingerprint(settings: SettingsState): string {
+  const clean = sanitizeSettings(settings);
+  return JSON.stringify({
+    grossOnly: clean.grossOnly,
+    companyName: clean.companyName,
+    weekdayRate: clean.weekdayRate,
+    saturdayRate: clean.saturdayRate,
+    sundayRate: clean.sundayRate,
+    pensionMode: clean.pensionMode,
+    pensionManualAmount: clean.pensionManualAmount,
+    overtimeThresholdHours: clean.overtimeThresholdHours,
+    overtimeRate: clean.overtimeRate,
+    foodAllowanceRate: clean.foodAllowanceRate,
+    nightOutRate: clean.nightOutRate,
+    bonusRates: clean.bonusRates,
+    customBonuses: clean.customBonuses,
+  });
+}
+function resolvePayProfileIdForWeek(profiles: PayProfileV2[], loaded: SavedWeekData): string {
+  if (loaded.activePayProfileId && profiles.some((profile) => profile.id === loaded.activePayProfileId)) return loaded.activePayProfileId;
+  const loadedFingerprint = settingsProfileFingerprint(loaded.settings);
+  const exactMatch = profiles.find((profile) => settingsProfileFingerprint(profile.settingsSnapshot) === loadedFingerprint);
+  if (exactMatch) return exactMatch.id;
+  const organisation = loaded.settings.companyName?.trim();
+  if (organisation) {
+    const nameMatch = profiles.find((profile) => getOrganisationName(profile).trim() === organisation);
+    if (nameMatch) return nameMatch.id;
+  }
+  return "";
+}
+
+function saveWeekData(days: DayRecord[], settings: SettingsState, payslipActualWeek: string, activePayProfileId?: string) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(getWeekStorageKey(getSaturdayDay(days).dateISO), JSON.stringify({ days, settings, payslipActualWeek }));
+  localStorage.setItem(getWeekStorageKey(getSaturdayDay(days).dateISO), JSON.stringify({ days, settings, payslipActualWeek, activePayProfileId: activePayProfileId || "" }));
 }
 
 function loadSavedWeekDataOrBlank(saturdayISO: string): SavedWeekData {
   const fallbackDays = buildPayrollWeek(saturdayISO);
-  const fallback = { days: fallbackDays, settings: initialSettings, payslipActualWeek: "" };
+  const fallback: SavedWeekData = { days: fallbackDays, settings: initialSettings, payslipActualWeek: "", activePayProfileId: "" };
   if (typeof window === "undefined") return fallback;
   try {
     const saved = localStorage.getItem(getWeekStorageKey(saturdayISO));
@@ -937,7 +969,12 @@ function loadSavedWeekDataOrBlank(saturdayISO: string): SavedWeekData {
     }
     if (!parsed) return fallback;
     const rawDays = Array.isArray(parsed) ? parsed : Array.isArray(parsed?.days) ? parsed.days : [];
-    return { days: fallbackDays.map((day, index) => sanitizeDayRecord(rawDays[index], day)), settings: Array.isArray(parsed) ? initialSettings : sanitizeSettings(parsed?.settings), payslipActualWeek: typeof parsed?.payslipActualWeek === "string" ? parsed.payslipActualWeek : "" };
+    return {
+      days: fallbackDays.map((day, index) => sanitizeDayRecord(rawDays[index], day)),
+      settings: Array.isArray(parsed) ? initialSettings : sanitizeSettings(parsed?.settings),
+      payslipActualWeek: typeof parsed?.payslipActualWeek === "string" ? parsed.payslipActualWeek : "",
+      activePayProfileId: typeof parsed?.activePayProfileId === "string" ? parsed.activePayProfileId : "",
+    };
   } catch {
     return fallback;
   }
@@ -1269,7 +1306,7 @@ export default function App() {
   const shiftValidationMessage = useMemo(() => getShiftValidationMessage(currentDay), [currentDay]);
 
   useEffect(() => { setSuppressStartKmSuggestion(false); }, [currentDay.id]);
-  useEffect(() => { if (typeof window !== "undefined") { localStorage.setItem("days", JSON.stringify(days)); localStorage.setItem("driverApp_days", JSON.stringify(days)); saveWeekData(days, settings, payslipActualWeek); } }, [days, settings, payslipActualWeek]);
+  useEffect(() => { if (typeof window !== "undefined") { localStorage.setItem("days", JSON.stringify(days)); localStorage.setItem("driverApp_days", JSON.stringify(days)); saveWeekData(days, settings, payslipActualWeek, activePayProfileId); } }, [days, settings, payslipActualWeek, activePayProfileId]);
   useEffect(() => { if (typeof window !== "undefined") localStorage.setItem("settings", JSON.stringify(settings)); }, [settings]);
   useEffect(() => { if (!payProfiles.length) return; const activeId = activePayProfileId && payProfiles.some((profile) => profile.id === activePayProfileId) ? activePayProfileId : payProfiles[0].id; if (activeId !== activePayProfileId) setActivePayProfileId(activeId); saveStoredPayProfiles(payProfiles, activeId); }, [payProfiles, activePayProfileId]);
   useEffect(() => { if (typeof window !== "undefined") { localStorage.setItem("archive", JSON.stringify(archive)); setSavedWeekIndicators(getSavedWeekIndicators()); } }, [archive, days]);
@@ -1350,7 +1387,20 @@ export default function App() {
   function updateBonusQty(id: string, rawValue: string) { const qty = Math.max(1, Number(digitsOnly(rawValue) || "1") || 1); updateCurrentDay("bonuses", currentDay.bonuses.map((bonus) => bonus.id === id ? { ...bonus, qty } : bonus)); }
   function addBonus() { const qty = Math.max(1, Number(draftBonusQty || "1") || 1); const existing = currentDay.bonuses.find((bonus) => bonus.type === draftBonusType); if (existing) { updateCurrentDay("bonuses", currentDay.bonuses.map((bonus) => bonus.id === existing.id ? { ...bonus, qty: bonus.qty + qty } : bonus)); } else { updateCurrentDay("bonuses", [...currentDay.bonuses, { id: `${Date.now()}-${Math.random()}`, type: draftBonusType, qty }]); } setDraftBonusQty("1"); setShowBonusForm(false); }
   function navigateLogical(direction: 1 | -1) { setCurrentIndex((prev) => getAdjacentLogicalIndex(days, prev, direction)); window.scrollTo({ top: 0, behavior: "smooth" }); }
-  function loadWeekBySaturday(saturdayISO: string, shouldClosePicker = false) { saveWeekData(days, settings, payslipActualWeek); const loaded = loadSavedWeekDataOrBlank(saturdayISO); setSelectedSaturday(saturdayISO); setDays(loaded.days); setSettings(sanitizeSettings(loaded.settings)); setPayslipActualWeek(loaded.payslipActualWeek || ""); setHistoricalEditEnabled(false); setCurrentIndex(getPreferredOpenDayIndex(loaded.days)); if (shouldClosePicker) setShowWeekPicker(false); window.scrollTo({ top: 0, behavior: "smooth" }); }
+  function loadWeekBySaturday(saturdayISO: string, shouldClosePicker = false) {
+    saveWeekData(days, settings, payslipActualWeek, activePayProfileId);
+    const loaded = loadSavedWeekDataOrBlank(saturdayISO);
+    setSelectedSaturday(saturdayISO);
+    setDays(loaded.days);
+    setSettings(sanitizeSettings(loaded.settings));
+    const loadedProfileId = resolvePayProfileIdForWeek(payProfiles, loaded);
+    if (loadedProfileId) setActivePayProfileId(loadedProfileId);
+    setPayslipActualWeek(loaded.payslipActualWeek || "");
+    setHistoricalEditEnabled(false);
+    setCurrentIndex(getPreferredOpenDayIndex(loaded.days));
+    if (shouldClosePicker) setShowWeekPicker(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
   function loadSelectedWeek() { loadWeekBySaturday(selectedSaturday); }
   function loadCurrentWeek() {
     const activeSaturday = getStartupPayrollSaturdayISO();
@@ -1528,7 +1578,7 @@ export default function App() {
 
   function saveClosedWeekCorrection(type: WeekArchiveType) {
     const closingSaturday = getSaturdayDay(days).dateISO;
-    saveWeekData(days, settings, payslipActualWeek);
+    saveWeekData(days, settings, payslipActualWeek, activePayProfileId);
     setArchive((prev) => {
       const existingIndex = prev.findIndex((item) => Array.isArray(item?.days) && getSaturdayDay(item.days).dateISO === closingSaturday);
       const existing = existingIndex >= 0 ? prev[existingIndex] : null;
@@ -1540,6 +1590,7 @@ export default function App() {
         updatedAt: new Date().toISOString(),
         days,
         settings,
+        activePayProfileId,
         totals: weekTotals,
         payslip: payslipActualWeek,
         type: existing?.type || type,
@@ -1569,9 +1620,9 @@ export default function App() {
     // Clear any old experimental Weekly Rest bridge state. Do not create one here.
     writeWeeklyRestCandidate(null);
     const carryKm = findLastKnownKm(finalDays);
-    saveWeekData(finalDays, settings, payslipActualWeek);
+    saveWeekData(finalDays, settings, payslipActualWeek, activePayProfileId);
     markWeekClosed(closingSaturday);
-    setArchive((prev) => prev.some((item) => getSaturdayDay(item.days || []).dateISO === closingSaturday) ? prev : [{ id: Date.now(), label: weekEndingLabel, createdAt: new Date().toISOString(), days: finalDays, settings, totals: weekTotals, payslip: payslipActualWeek, type }, ...prev]);
+    setArchive((prev) => prev.some((item) => getSaturdayDay(item.days || []).dateISO === closingSaturday) ? prev : [{ id: Date.now(), label: weekEndingLabel, createdAt: new Date().toISOString(), days: finalDays, settings, activePayProfileId, totals: weekTotals, payslip: payslipActualWeek, type }, ...prev]);
     const nextSaturday = toISODate(addDays(fromISODate(closingSaturday), 7));
     const nextWeek = loadSavedWeekDataOrBlank(nextSaturday);
     const mondayIndex = nextWeek.days.findIndex((d) => d.id === "mon");
@@ -1580,6 +1631,8 @@ export default function App() {
     setSelectedSaturday(nextSaturday);
     setDays(nextDays);
     setSettings(nextWeek.settings);
+    const nextProfileId = resolvePayProfileIdForWeek(payProfiles, nextWeek);
+    if (nextProfileId) setActivePayProfileId(nextProfileId);
     setPayslipActualWeek(nextWeek.payslipActualWeek || "");
     setCurrentIndex(mondayIndex >= 0 ? mondayIndex : getFirstIncompleteIndex(nextDays));
     setSavedWeekIndicators(getSavedWeekIndicators());

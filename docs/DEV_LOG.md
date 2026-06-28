@@ -124,3 +124,21 @@ A long previous shift affects the next relevant daily rest, not every later day 
 IMPORTANT:
 This is not a Monday-specific fix. It is based on the actual rest gap from previous Finish.
 This patch does not touch pay, archive, profile, or Gross Only logic.
+
+
+## v5.1.9 — Profile restore safety
+
+PROBLEM:
+When switching between archive/current weeks, the app could show or keep the wrong active Pay Setup profile while the week settings were restored from a different profile snapshot.
+
+FIX:
+- Saved week data now stores `activePayProfileId` with the week.
+- Loading an archived/current saved week restores the matching active profile when available.
+- Legacy saved weeks without `activePayProfileId` try to resolve the profile from the saved settings snapshot or organisation name.
+- End Week/archive save also carries the active profile id.
+
+WHY:
+A week should reopen with the profile/settings context it was saved with. Profile restore is workflow state, not a Pay Engine redesign.
+
+IMPORTANT:
+This patch does not change pay formulas, Rest Engine, Archive rules, layout, colour logic, or main screens.
