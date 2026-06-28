@@ -1,7 +1,7 @@
 {
-  "name": "Driver Pay App v5.1.7",
+  "name": "Driver Pay App v5.1.8",
   "short_name": "Driver Pay v5.1",
-  "description": "Driver Pay App v5.1.7 restore 9h helper visibility",
+  "description": "Driver Pay App v5.1.8 rest long-shift carry fix",
   "start_url": "/?app=driver-pay-v5-clean",
   "scope": "/",
   "display": "standalone",

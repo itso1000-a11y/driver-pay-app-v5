@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 
 
 type Lang = "en" | "bg";
-const APP_VERSION = "v5.1.7";
+const APP_VERSION = "v5.1.8";
 const LANGUAGE_STORAGE_KEY = "driverPayV4_language";
 const ACTIVE_WEEK_STORAGE_KEY = "driverPayV4_activeSaturday";
 const CLOSED_WEEKS_STORAGE_KEY = "driverPayV4_closedWeeks";
@@ -555,6 +555,13 @@ function isSameLocalDayAbs(absMinutes: number, day: DayRecord): boolean {
 
 function getSuggestedStartTimesForDay(anchor: PreviousShiftAnchor | null, current: DayRecord, reducedCount: number, previousWorkedMinutes: number | null, previousSplitBreak: boolean): SuggestedStarts {
   if (!anchor || current.dayType !== "work") return { h11: null, h9: null, h9Blocked: false, longPreviousShift: false, splitRestAvailable: false };
+  const helperEndAbs = getRestDisplayEndAbs(current) ?? getDayStartAbsMinutes(current);
+  const dailySuggestionWindowActive = helperEndAbs <= anchor.finishAbs + 24 * 60;
+  if (!dailySuggestionWindowActive) {
+    // After 24h+ this is no longer a daily-rest suggestion situation.
+    // Weekly/long-rest handling is separate; do not carry a >13h daily warning forward.
+    return { h11: null, h9: null, h9Blocked: false, longPreviousShift: false, splitRestAvailable: false };
+  }
   const base = getSuggestedStartTimes(anchor.finishAbs, reducedCount, previousWorkedMinutes, previousSplitBreak);
   return {
     ...base,
@@ -1467,13 +1474,16 @@ export default function App() {
   const previousShiftAnchor = getLastCompletedWorkShiftBeforeIndex(days, currentIndex, getSaturdayDay(days).dateISO);
   const restBeforeMinutes = getRestFromPreviousShiftMinutes(previousShiftAnchor, currentDay) ?? getRestBeforeMinutes(previousDay, currentDay);
   const previousWorked = previousShiftAnchor ? getWorkedMinutes(previousShiftAnchor.day) : (previousDay ? getWorkedMinutes(previousDay) : null);
+  const dailyRestWindowActive = restBeforeMinutes == null || restBeforeMinutes < 24 * 60;
+  const previousWorkedForDailyRest = dailyRestWindowActive ? previousWorked : null;
+  const previousSplitBreakForDailyRest = dailyRestWindowActive ? Boolean(previousShiftAnchor?.day.splitBreak || previousDay?.splitBreak) : false;
   const reducedCount = getWeeklyReducedRestCountBeforeIndex(days, currentIndex);
-  const effectiveRestStatus = getEffectiveRestStatus(restBeforeMinutes, previousWorked, Boolean(previousShiftAnchor?.day.splitBreak || previousDay?.splitBreak), reducedCount);
+  const effectiveRestStatus = getEffectiveRestStatus(restBeforeMinutes, previousWorkedForDailyRest, previousSplitBreakForDailyRest, reducedCount);
   const restBeforeColors = getRestCardPalette(restBeforeMinutes, effectiveRestStatus, reducedCount);
   const futureDayNoStart = !currentDay.start && currentDay.dateISO > toISODate(new Date());
   const displayRestColors = futureDayNoStart ? { ...restBeforeColors, label: "Future day" } : restBeforeColors;
   const displayRestValue = futureDayNoStart ? "No start time yet" : formatMinutes(restBeforeMinutes);
-  const suggestedTimes = getSuggestedStartTimesForDay(previousShiftAnchor, currentDay, reducedCount, previousWorked, Boolean(previousShiftAnchor?.day.splitBreak || previousDay?.splitBreak));
+  const suggestedTimes = getSuggestedStartTimesForDay(previousShiftAnchor, currentDay, reducedCount, previousWorkedForDailyRest, previousSplitBreakForDailyRest);
   const dailyPrimarySuggestedStart = getPrimarySuggestedStart(suggestedTimes);
   const weeklyRestCandidate = getWeeklyRestCandidateForSelectedWeek(selectedSaturday);
   const selectedWeekStartISO = toISODate(addDays(fromISODate(selectedSaturday), -6));

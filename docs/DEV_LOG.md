@@ -103,3 +103,24 @@ The user may enter the actual Start later. The 9h option is a boundary/helper, n
 IMPORTANT:
 This patch does not change the 72h weekly/long-rest helper rule.
 This patch does not touch pay, archive, profile, or Gross Only logic.
+
+
+## v5.1.8 — Stop long-shift daily warning carry-over
+
+PROBLEM:
+After a >13h shift, the “11h rest unavailable” daily warning could carry through End Week / Off days into a later week.
+
+CAUSE:
+The >13h previous-shift condition was still used even when the rest gap had already reached 24h+ and was no longer a daily-rest suggestion situation.
+
+FIX:
+- Daily 9h/11h suggestions are active only while the gap from the previous Finish is within the daily-rest window (<24h / up to 24h helper boundary).
+- Once the gap is 24h+, daily suggestions and the >13h daily warning stop.
+- Rest card still counts factual rest time.
+
+WHY:
+A long previous shift affects the next relevant daily rest, not every later day after weekly/long rest or End Week.
+
+IMPORTANT:
+This is not a Monday-specific fix. It is based on the actual rest gap from previous Finish.
+This patch does not touch pay, archive, profile, or Gross Only logic.

@@ -13,3 +13,17 @@ The app is not a live tachograph logger. A driver may start work first and enter
 
 Boundary:
 - The 72h weekly/long-rest helper handling is separate and is not changed by this patch.
+
+
+## REST-WEEK-CARRY-001 — long-shift warning carry-over fixed
+
+Decision:
+A >13h previous workday warning is a daily-rest context only. It must not be persisted as state or carried through End Week, Off days, or weekly/long rest.
+
+Rule:
+- If the gap from previous Finish is still in the daily-rest window, show the daily warning/helper when relevant.
+- If the gap is 24h+, stop daily 9h/11h suggestions and stop the >13h daily warning.
+- The Rest card still shows factual elapsed rest time.
+
+Reason:
+The app works from real Finish → real/current Start context, not from a sticky day flag.
