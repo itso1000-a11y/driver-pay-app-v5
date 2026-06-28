@@ -142,3 +142,8 @@ A week should reopen with the profile/settings context it was saved with. Profil
 
 IMPORTANT:
 This patch does not change pay formulas, Rest Engine, Archive rules, layout, colour logic, or main screens.
+
+
+### v5.1.9 release metadata correction
+
+Corrected release metadata so visible title, manifest, service-worker cache, package version and APP_VERSION all identify the same v5.1.9 profile restore build. No UI/layout/colour/engine logic changes.

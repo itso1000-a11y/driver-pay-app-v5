@@ -48,3 +48,15 @@ A saved week should reopen with the same profile context it had when saved. This
 
 Boundary:
 No visual changes. No Rest Engine changes. No Pay Engine formula changes. No Archive rule redesign.
+
+
+## VERSION-RELEASE-001 — PWA update version identity
+
+Decision:
+A real app update may bump the version, but the version must be changed consistently everywhere: APP_VERSION, package.json, browser title, manifest description/name where used, service-worker cache name, ZIP filename and release notes.
+
+Reason:
+For this PWA the update is normally offered inside the installed app/browser flow and accepted by the user. Mixed version strings make it unclear whether the installed app, browser tab, service worker and ZIP are the same build.
+
+Rule:
+Never ship a ZIP where title/footer/manifest/cache disagree.
