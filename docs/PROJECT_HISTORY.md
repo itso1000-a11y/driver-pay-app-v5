@@ -60,3 +60,22 @@ For this PWA the update is normally offered inside the installed app/browser flo
 
 Rule:
 Never ship a ZIP where title/footer/manifest/cache disagree.
+
+## Decision: Profile owns tax mode
+
+ID: PAY-PROFILE-TAX-001
+
+Problem:
+When moving between agency/LTD style work and normal company/PAYE work, the same driver may need different tax modes per profile. If a Gross Only profile loads as PAYE by default, a day/week can be saved with the wrong deductions and then the user has to edit archive data later.
+
+Accepted behaviour:
+A payment profile must store and restore its own tax calculation mode (`grossOnly` / PAYE estimate). Loading/applying a profile must restore that mode with the profile's rates and allowances.
+
+Reason:
+Tax mode is part of how the profile pays, not a temporary screen preference. It must travel with the profile to prevent accidental wrong pay calculations.
+
+Rejected behaviour:
+Defaulting every loaded profile to PAYE/tax ON.
+
+Reason rejected:
+Unsafe for agency/LTD gross-only weeks and can force unnecessary archive edits.

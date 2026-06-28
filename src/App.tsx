@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 
 
 type Lang = "en" | "bg";
-const APP_VERSION = "v5.1.9";
+const APP_VERSION = "v5.1.10";
 const LANGUAGE_STORAGE_KEY = "driverPayV4_language";
 const ACTIVE_WEEK_STORAGE_KEY = "driverPayV4_activeSaturday";
 const CLOSED_WEEKS_STORAGE_KEY = "driverPayV4_closedWeeks";
@@ -112,7 +112,7 @@ function getNextProfileName(existing: PayProfileV2[], base = "Profile") {
 function makeProfileFromSettings(settings: SettingsState, existing: PayProfileV2[] = [], name?: string, sourceProfileId?: string | null): PayProfileV2 {
   const now = new Date().toISOString();
   const profileName = getNextProfileName(existing, name?.trim() || getProfileNameBase(settings) || "Profile");
-  return { id: makeProfileId(), name: profileName, companyName: settings.companyName || "", organisationName: settings.companyName || "", sourceProfileId: sourceProfileId || null, createdAt: now, updatedAt: now, settingsSnapshot: settings };
+  return { id: makeProfileId(), name: profileName, companyName: settings.companyName || "", organisationName: settings.companyName || "", sourceProfileId: sourceProfileId || null, createdAt: now, updatedAt: now, settingsSnapshot: cloneSettingsSnapshot(settings) };
 }
 function sanitizePayProfile(raw: unknown): PayProfileV2 | null {
   const r = (raw || {}) as Partial<PayProfileV2>;
@@ -388,6 +388,10 @@ function sanitizeSettings(raw: unknown): SettingsState {
     },
     customBonuses: sanitizeCustomBonuses(r.customBonuses),
   };
+}
+
+function cloneSettingsSnapshot(settings: SettingsState): SettingsState {
+  return sanitizeSettings({ ...settings, grossOnly: Boolean(settings.grossOnly) });
 }
 
 function digitsOnly(value: string): string {
@@ -1675,10 +1679,10 @@ function PaySetupV2Modal(props: { settings: SettingsState; setSettings: React.Di
   const selectedProfile = props.payProfiles.find((profile) => profile.id === selectedProfileId) || activeProfile;
   const [draftName, setDraftName] = useState(selectedProfile.name || "Profile 1");
   const [draftOrganisation, setDraftOrganisation] = useState(getOrganisationName(selectedProfile, props.settings));
-  const [draftSettings, setDraftSettings] = useState<SettingsState>(selectedProfile.settingsSnapshot || props.settings);
+  const [draftSettings, setDraftSettings] = useState<SettingsState>(cloneSettingsSnapshot(selectedProfile.settingsSnapshot || props.settings));
   const [savedMessage, setSavedMessage] = useState("");
 
-  function patchDraftSettings(next: Partial<SettingsState>) { setDraftSettings({ ...draftSettings, ...next }); }
+  function patchDraftSettings(next: Partial<SettingsState>) { setDraftSettings((prev) => cloneSettingsSnapshot({ ...prev, ...next })); }
 
   function loadProfile(profileId: string) {
     const profile = props.payProfiles.find((item) => item.id === profileId);
@@ -1688,7 +1692,7 @@ function PaySetupV2Modal(props: { settings: SettingsState; setSettings: React.Di
     setSourceProfileId(null);
     setDraftName(profile.name || "Profile 1");
     setDraftOrganisation(getOrganisationName(profile, props.settings));
-    setDraftSettings(profile.settingsSnapshot || props.settings);
+    setDraftSettings(cloneSettingsSnapshot(profile.settingsSnapshot || props.settings));
     setSavedMessage("");
   }
 
@@ -1697,7 +1701,7 @@ function PaySetupV2Modal(props: { settings: SettingsState; setSettings: React.Di
     const now = new Date().toISOString();
     const cleanName = draftName.trim() || selectedProfile.name || "Profile 1";
     const organisationName = draftOrganisation.trim();
-    const profileSettings = { ...draftSettings, companyName: organisationName };
+    const profileSettings = cloneSettingsSnapshot({ ...draftSettings, companyName: organisationName });
     const updated = props.payProfiles.map((profile) => profile.id === targetId ? { ...profile, name: cleanName, companyName: organisationName, organisationName, updatedAt: now, settingsSnapshot: profileSettings } : profile);
     props.setPayProfiles(updated);
     props.setActivePayProfileId(targetId);
@@ -1708,7 +1712,7 @@ function PaySetupV2Modal(props: { settings: SettingsState; setSettings: React.Di
   function createProfile(sourceId: string | null) {
     const existing = props.payProfiles;
     const organisationName = draftOrganisation.trim();
-    const profileSettings = { ...draftSettings, companyName: organisationName };
+    const profileSettings = cloneSettingsSnapshot({ ...draftSettings, companyName: organisationName });
     const cleanName = getNextProfileName(existing, draftName.trim() || organisationName || getProfileNameBase(profileSettings) || "Profile");
     const created = makeProfileFromSettings(profileSettings, existing, cleanName, sourceId);
     const createdWithOrganisation = { ...created, companyName: organisationName, organisationName };
@@ -1724,7 +1728,7 @@ function PaySetupV2Modal(props: { settings: SettingsState; setSettings: React.Di
 
   function applyDraftToCurrentSettings() {
     const organisationName = draftOrganisation.trim();
-    const nextSettings = { ...draftSettings, companyName: organisationName };
+    const nextSettings = cloneSettingsSnapshot({ ...draftSettings, companyName: organisationName });
     props.setSettings(nextSettings);
     props.setActivePayProfileId(selectedProfile.id);
     setSavedMessage(`${t("applyProfile")}: ${t("applyFromNextEmptyDay")}`);
@@ -1735,7 +1739,7 @@ function PaySetupV2Modal(props: { settings: SettingsState; setSettings: React.Di
     setSourceProfileId(selectedProfile.id);
     setDraftName(getNextProfileName(props.payProfiles, selectedProfile.name || "Profile"));
     setDraftOrganisation(getOrganisationName(selectedProfile, props.settings));
-    setDraftSettings({ ...selectedProfile.settingsSnapshot });
+    setDraftSettings(cloneSettingsSnapshot(selectedProfile.settingsSnapshot || props.settings));
     setSavedMessage("");
   }
 
@@ -1753,6 +1757,14 @@ function PaySetupV2Modal(props: { settings: SettingsState; setSettings: React.Di
       <SectionHeading title={t("profilePreview")} right={mode === "createFromTemplate" ? t("newFromThis") : t("currentDraft")} />
       <SettingsInput label={t("organisationName")} textMode value={draftOrganisation} onChange={setDraftOrganisation} />
       <SettingsInput label={t("profileName")} textMode value={draftName} onChange={setDraftName} />
+      <div style={{ marginTop: 8 }}>
+        <label style={{ display: "block", fontSize: 12, fontWeight: 900, color: "#334155", marginBottom: 5 }}>{t("payCalculationMode")}</label>
+        <select value={draftSettings.grossOnly ? "gross" : "paye"} onChange={(event) => patchDraftSettings({ grossOnly: event.target.value === "gross" })} style={{ ...inputStyle, width: "100%", fontWeight: 900 }}>
+          <option value="paye">{t("payeEstimate")}</option>
+          <option value="gross">{t("grossOnly")}</option>
+        </select>
+        <div style={{ marginTop: 5, fontSize: 11, color: "#64748b", fontWeight: 800 }}>{draftSettings.grossOnly ? t("grossOnlyNote") : t("taxModeHelp")}</div>
+      </div>
     </div>
 
     <SectionHeading title={t("payRates")} />

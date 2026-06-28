@@ -147,3 +147,19 @@ This patch does not change pay formulas, Rest Engine, Archive rules, layout, col
 ### v5.1.9 release metadata correction
 
 Corrected release metadata so visible title, manifest, service-worker cache, package version and APP_VERSION all identify the same v5.1.9 profile restore build. No UI/layout/colour/engine logic changes.
+
+## v5.1.10 — Profile tax mode persistence
+
+Fixed profile payment-mode persistence.
+
+Changed:
+- Pay profiles now preserve `grossOnly` explicitly in the settings snapshot.
+- Loading a profile in Pay Setup v2 restores its PAYE/Gross Only mode into the draft.
+- Applying a profile restores the profile's saved tax mode together with rates and allowances.
+- Added a small Pay calculation mode selector inside Pay Setup v2 so the profile itself can be saved as PAYE estimate or Gross Only.
+
+Not changed:
+- No Rest Engine changes.
+- No Pay formula changes.
+- No Archive workflow changes.
+- No main screen layout, colour logic, or core UI semantics changed.
