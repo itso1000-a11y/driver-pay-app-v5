@@ -163,3 +163,19 @@ Not changed:
 - No Pay formula changes.
 - No Archive workflow changes.
 - No main screen layout, colour logic, or core UI semantics changed.
+
+## v5.1.11 — Profile settings and active profile cleanup
+
+Changed:
+- Active Pay Profile display uses `Employer/Agency → Profile/Client` style, for example `ARC → Turners`.
+- Settings screen uses the existing main visual field to show the active profile. No extra Settings rows were added.
+- Pay Setup v2 no longer shows `New from this`.
+- `Update Profile` is disabled when the draft is unchanged.
+- `Update Profile` archives the previous profile snapshot before saving a real change.
+- Updating the active profile also updates current Settings, including PAYE/Gross Only mode.
+
+Not changed:
+- Rest Engine untouched.
+- Pay formulas untouched.
+- Archive workflow untouched.
+- Main layout and colour logic untouched.

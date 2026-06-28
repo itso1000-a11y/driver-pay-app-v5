@@ -79,3 +79,24 @@ Defaulting every loaded profile to PAYE/tax ON.
 
 Reason rejected:
 Unsafe for agency/LTD gross-only weeks and can force unnecessary archive edits.
+
+## PROFILE-SETTINGS-001 — Active Pay Profile owns Settings context
+
+Decision:
+When an active Pay Profile exists, Settings are not a separate source of truth. They are the current working values of the active profile.
+
+Accepted behaviour:
+- The visible active profile should be clear, for example `ARC → Turners`.
+- The profile stores the pay model context, including PAYE/Gross Only mode.
+- Updating the active profile updates current Settings.
+- Updating an unchanged profile should be disabled/no-op.
+- The previous profile snapshot is archived before a real profile update.
+- Completed days must keep their saved/snapshot values and must not be silently recalculated by a later profile update.
+
+Rejected behaviour:
+- Treating Settings and Profiles as two independent competing systems.
+- Showing only the payer/agency name when multiple profiles can share it.
+- Keeping `New from this` as a duplicate of `Save as new profile`.
+
+Reason:
+The app's primary purpose is correct pay checking. The user must immediately know which pay profile is driving calculations, and profile changes must not accidentally corrupt already saved work.

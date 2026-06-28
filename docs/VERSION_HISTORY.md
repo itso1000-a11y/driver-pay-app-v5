@@ -15,3 +15,7 @@ Problem: profile/settings changes can still recalculate old days.
 
 ## v5.0.0
 STATUS: Clean v5 base/fallback.
+
+
+## v5.1.11
+Profile settings/tax mode cleanup for real-week testing. Active profile display, profile update apply behaviour, no-change disabled update, removed duplicate New from this.

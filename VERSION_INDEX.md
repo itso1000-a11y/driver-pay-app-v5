@@ -1,5 +1,42 @@
 # Driver Pay App — VERSION_INDEX
 
+## v5.1.11
+Date: 2026-06-28
+Base: v5.1.10
+Status: Test build
+User impact: High
+
+Purpose:
+Stabilise Pay Profile behaviour before a full real-work-week test.
+
+Changed:
+- Active Pay Profile display now uses the real profile name format, for example `ARC → Turners`.
+- Settings screen uses the existing main visual field to show the active Pay Profile, without adding new rows.
+- Pay profiles continue to preserve and restore PAYE / Gross Only mode as part of the profile snapshot.
+- `Update Profile` now applies the updated profile to current Settings when the updated profile is the active one.
+- `Update Profile` is disabled when there are no real changes.
+- The previous profile version is archived before an actual profile update.
+- `New from this` was removed to avoid duplicating `Save as new profile`.
+
+Not changed:
+- No Rest Engine changes.
+- No Pay formula changes.
+- No Archive workflow redesign.
+- No main screen layout or colour-logic changes.
+
+Known issues / test focus:
+- Needs full-week real test with Gross Only agency/LTD style profile and PAYE/company style profile.
+- Verify that saved/completed days do not unexpectedly recalculate after a profile update.
+- Verify installed PWA offers/accepts update normally.
+
+QA:
+- PROFILE-TAXMODE-001: RETEST
+- PROFILE-ACTIVE-DISPLAY-001: OPEN
+- PROFILE-UPDATE-001: OPEN
+
+Rollback:
+- Previous build: v5.1.10
+
 ## v5.1.10
 Date: 2026-06-28
 Base: v5.1.9

@@ -1,7 +1,7 @@
 {
-  "name": "Driver Pay App v5.1.10",
-  "short_name": "Driver Pay v5.1",
-  "description": "Driver Pay App v5.1.10 rest long-shift carry fix",
+  "name": "Driver Pay App v5.1.11",
+  "short_name": "Driver Pay 5.1.11",
+  "description": "Driver Pay App v5.1.11 profile settings and tax mode fix",
   "start_url": "/?app=driver-pay-v5-clean",
   "scope": "/",
   "display": "standalone",
