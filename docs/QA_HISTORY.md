@@ -1,4 +1,20 @@
 
+## REST-START-SOURCE-001
+Status: OPEN
+Build: v5.1.12
+Expected:
+- 11h suggestion displays `from 11h rest` under the Start field.
+- 9h suggestion displays `from 9h rest` under the Start field.
+- If 11h is unavailable, `11h rest unavailable` remains a separate explanation and does not replace `from 9h rest`.
+- Suggested Start times remain exactly the same as v5.1.11.
+
+## REST-9H-PREVIOUS-DAY-001
+Status: RETEST
+Build: v5.1.12
+Expected:
+The 9h helper remains visible even when the 9h boundary was on the previous calendar day.
+
+
 ## PROFILE-TAXMODE-001
 
 Status: OPEN

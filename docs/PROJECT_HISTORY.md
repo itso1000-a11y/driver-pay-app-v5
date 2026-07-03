@@ -1,5 +1,22 @@
 # Project History
 
+## REST-START-SOURCE-001 — Start helper source labels
+
+Decision:
+The Start field must clearly explain the source of the suggested Start time.
+
+Accepted behaviour:
+- If the suggested Start is based on 11h normal daily rest, show `from 11h rest`.
+- If the suggested Start is based on 9h reduced daily rest, show `from 9h rest`.
+- If 11h rest is unavailable, keep `11h rest unavailable` as a separate explanation. It must not replace `from 9h rest`.
+
+Boundary:
+v5.1.12 is a safe UX clarification only. It must not change Rest Engine logic, Start calculations, reduced rest logic, split break behaviour, weekly rest, 72h helper, End Week, Archive, or Pay Engine.
+
+Backlog:
+Review Split Break / Week Active wording later as a separate UX task.
+
+
 
 ## REST-9H-HELPER — accepted behaviour restored
 

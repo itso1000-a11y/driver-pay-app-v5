@@ -1,5 +1,25 @@
 # Driver Pay App — Dev Log
 
+## v5.1.12 — Safe Rest UX clarification
+
+CHANGE:
+Clarified the source label under the Start suggestion.
+
+DETAIL:
+- 11h-based Start suggestions display `from 11h rest`.
+- 9h-based Start suggestions display `from 9h rest`.
+- `11h rest unavailable` remains a separate explanation below the field when relevant.
+
+BOUNDARY:
+This is text/UI only. No Rest Engine, Start calculation, reduced rest, split break, weekly rest, 72h, End Week, Archive, or Pay Engine logic was changed.
+
+BACKLOG:
+Split Break / Week Active UX review later. No Split Break behaviour changes in this build.
+
+QA FOCUS:
+Confirm the 9h helper remains visible even when the 9h boundary is on the previous calendar day. Confirm all suggested Start times are unchanged from v5.1.11.
+
+
 ## v5.1.2 — Gross Only visible mode
 
 CHANGE:

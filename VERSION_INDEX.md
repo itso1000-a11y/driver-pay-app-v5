@@ -1,5 +1,38 @@
 # Driver Pay App — VERSION_INDEX
 
+## v5.1.12
+Date: 2026-07-03
+Base: v5.1.11
+Status: Test build
+User impact: Low
+
+Purpose:
+Clarify the Start helper text so the user can see whether the suggested Start time comes from 11h normal daily rest or 9h reduced daily rest.
+
+Changed:
+- 11h Start suggestions now show `from 11h rest` under the Start field.
+- 9h reduced Start suggestions now show `from 9h rest` under the Start field.
+- When 11h rest is unavailable, the explanation remains separate as `11h rest unavailable` and does not replace `from 9h rest`.
+- Added backlog note for later Split Break / Week Active UX review.
+
+Not changed:
+- No Rest Engine changes.
+- No Start calculation changes.
+- No Reduced Rest logic changes.
+- No Split Break behaviour changes.
+- No Weekly Rest, 72h Helper, End Week, Archive, or Pay Engine changes.
+
+Regression focus:
+- The 9h helper must remain visible even when the 9h boundary is on the previous calendar day.
+- All suggested Start times must remain exactly the same as v5.1.11.
+
+QA:
+- REST-START-SOURCE-001: OPEN
+- REST-9H-PREVIOUS-DAY-001: RETEST
+
+Rollback:
+- Previous build: v5.1.11
+
 ## v5.1.11
 Date: 2026-06-28
 Base: v5.1.10

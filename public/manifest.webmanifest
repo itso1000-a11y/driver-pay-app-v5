@@ -1,7 +1,7 @@
 {
-  "name": "Driver Pay App v5.1.11",
-  "short_name": "Driver Pay 5.1.11",
-  "description": "Driver Pay App v5.1.11 profile settings and tax mode fix",
+  "name": "Driver Pay App v5.1.12",
+  "short_name": "Driver Pay 5.1.12",
+  "description": "Driver Pay App v5.1.12 safe rest UX clarification",
   "start_url": "/?app=driver-pay-v5-clean",
   "scope": "/",
   "display": "standalone",
