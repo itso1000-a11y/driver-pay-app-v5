@@ -1,25 +1,5 @@
 # Driver Pay App — Dev Log
 
-## v5.1.12 — Safe Rest UX clarification
-
-CHANGE:
-Clarified the source label under the Start suggestion.
-
-DETAIL:
-- 11h-based Start suggestions display `from 11h rest`.
-- 9h-based Start suggestions display `from 9h rest`.
-- `11h rest unavailable` remains a separate explanation below the field when relevant.
-
-BOUNDARY:
-This is text/UI only. No Rest Engine, Start calculation, reduced rest, split break, weekly rest, 72h, End Week, Archive, or Pay Engine logic was changed.
-
-BACKLOG:
-Split Break / Week Active UX review later. No Split Break behaviour changes in this build.
-
-QA FOCUS:
-Confirm the 9h helper remains visible even when the 9h boundary is on the previous calendar day. Confirm all suggested Start times are unchanged from v5.1.11.
-
-
 ## v5.1.2 — Gross Only visible mode
 
 CHANGE:
@@ -199,3 +179,21 @@ Not changed:
 - Pay formulas untouched.
 - Archive workflow untouched.
 - Main layout and colour logic untouched.
+
+
+## v5.2.0 — Standard Weekly Rest Foundation
+
+CHANGE:
+Implemented the first standard-week Weekly Rest foundation. End Week now creates a Weekly Rest Candidate from the last completed Finish, then the next standard week still opens through the existing Monday workflow. The Worked / OT area is temporarily replaced by a single Weekly Rest card while the first post-End Week workday has not started.
+
+WHY:
+The application needs to feel like a complete driver rest/pay tool, not only a pay calculator. Weekly Rest was deliberately scoped to the standard model first to avoid destabilising profiles, Pay Setup v2, and future work-pattern features.
+
+UX RULE:
+Weekly Rest uses the same UX model as daily Start helpers: a main proposed time and a compact source helper. Rest Card remains facts only.
+
+LIMITS:
+No 4 on / 4 off, rotating shifts, variable work-cycle start, payday settings, or advanced Pay Setup changes in this build.
+
+QA FOCUS:
+End Week -> Monday workflow, Weekly Rest card replacement for Worked/OT, 45h/24h standard options, six-work-cycle reduced weekly priority, and no regression in profile behaviour.

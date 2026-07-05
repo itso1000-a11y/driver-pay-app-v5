@@ -1,21 +1,25 @@
 # Project History
 
-## REST-START-SOURCE-001 — Start helper source labels
+
+## WEEKLY-REST-STANDARD-FOUNDATION — locked v5.2.0 scope
 
 Decision:
-The Start field must clearly explain the source of the suggested Start time.
+Standard Weekly Rest is implemented as a Weekly Rest Candidate started by End Week. End Week remains a workflow marker, not a legal event. It starts the process from the last real Finish, but the engine decides what the rest becomes.
 
-Accepted behaviour:
-- If the suggested Start is based on 11h normal daily rest, show `from 11h rest`.
-- If the suggested Start is based on 9h reduced daily rest, show `from 9h rest`.
-- If 11h rest is unavailable, keep `11h rest unavailable` as a separate explanation. It must not replace `from 9h rest`.
+UX decision:
+During the first post-End Week workday, the Worked / OT area is replaced by one Weekly Rest card with the same total screen footprint. The card shows a large proposed start and a compact helper explaining whether it comes from 45h weekly rest or 24h reduced weekly rest.
 
-Boundary:
-v5.1.12 is a safe UX clarification only. It must not change Rest Engine logic, Start calculations, reduced rest logic, split break behaviour, weekly rest, 72h helper, End Week, Archive, or Pay Engine.
+Priority rule:
+45h weekly rest is the normal/main standard option. If six completed work cycles make the full 45h option unrealistic for the current cycle, 24h reduced weekly rest becomes the main proposal and the helper explains that 45h is unavailable.
 
-Backlog:
-Review Split Break / Week Active wording later as a separate UX task.
+72h rule:
+72h is only a UX helper window. It is not a legal rest type. After that window, weekly helper suggestions stop being useful and should not clutter the normal Start/Finish workflow.
 
+Temporary standard-week boundary:
+For v5.2.0 the existing standard model remains: after End Week, Saturday/Sunday can be marked Off and the app may open Monday as before. Variable/rotating work patterns are intentionally excluded until Pay Setup has work-pattern settings.
+
+Not changed:
+Pay Profiles, Pay Setup v2, profile tax mode, Archive logic, and the daily Rest Engine architecture are not redesigned by this work.
 
 
 ## REST-9H-HELPER — accepted behaviour restored

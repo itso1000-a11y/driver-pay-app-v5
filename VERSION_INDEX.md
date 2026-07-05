@@ -1,37 +1,48 @@
 # Driver Pay App — VERSION_INDEX
 
-## v5.1.12
-Date: 2026-07-03
+## v5.2.0
+Date: 2026-07-05
 Base: v5.1.11
 Status: Test build
-User impact: Low
+User impact: High
 
 Purpose:
-Clarify the Start helper text so the user can see whether the suggested Start time comes from 11h normal daily rest or 9h reduced daily rest.
+Start the Standard Weekly Rest Foundation without changing Pay Profiles or Pay Setup architecture.
 
 Changed:
-- 11h Start suggestions now show `from 11h rest` under the Start field.
-- 9h reduced Start suggestions now show `from 9h rest` under the Start field.
-- When 11h rest is unavailable, the explanation remains separate as `11h rest unavailable` and does not replace `from 9h rest`.
-- Added backlog note for later Split Break / Week Active UX review.
+- End Week now creates a Weekly Rest Candidate from the last completed Finish in the closed week.
+- The next standard week still opens in the existing Monday workflow for now.
+- Saturday/Sunday empty days after End Week remain Off in the standard model.
+- A dynamic Weekly Rest card replaces Worked / OT while the first post-End Week workday has not started.
+- Weekly Rest card uses the same UX model as daily Start suggestions: big proposed start time plus a small helper explaining the source.
+- 45h weekly rest is the main option unless six completed work cycles make the 24h reduced weekly rest the realistic option.
+- 24h reduced weekly option is shown as the helper when 45h is the main option.
+- If 24h becomes the main option, the helper explains that 45h is unavailable because six work cycles were completed.
+- Weekly helpers are limited to the 72h UX window.
+- Start helper text now shows `from 9h rest` when the main Start suggestion is based on reduced daily rest.
 
 Not changed:
-- No Rest Engine changes.
-- No Start calculation changes.
-- No Reduced Rest logic changes.
-- No Split Break behaviour changes.
-- No Weekly Rest, 72h Helper, End Week, Archive, or Pay Engine changes.
+- No Pay Profile architecture changes.
+- No Pay Setup v2 redesign.
+- No 4 on / 4 off or rotating work-pattern support.
+- No company-specific behaviour.
+- Rest Card remains facts only.
+- Main screen height is preserved by replacing Worked / OT with one Weekly Rest card instead of adding a new section.
 
-Regression focus:
-- The 9h helper must remain visible even when the 9h boundary is on the previous calendar day.
-- All suggested Start times must remain exactly the same as v5.1.11.
+Known limitations:
+- This is the standard-week foundation only.
+- Variable work-cycle starts, agency rota patterns, 4 on / 4 off, payday/week-start settings and advanced Pay Setup options are future work.
+- Compensation tracking is displayed as a simple +21h later note for 24h reduced weekly rest; full compensation ledger is future work.
 
 QA:
-- REST-START-SOURCE-001: OPEN
-- REST-9H-PREVIOUS-DAY-001: RETEST
+- WEEKLY-STANDARD-001: OPEN
+- WEEKLY-CARD-001: OPEN
+- WEEKLY-6CYCLE-001: OPEN
+- REST-9H-SOURCE-001: RETEST
 
 Rollback:
-- Previous build: v5.1.11
+- Previous stable test build: v5.1.11
+
 
 ## v5.1.11
 Date: 2026-06-28
