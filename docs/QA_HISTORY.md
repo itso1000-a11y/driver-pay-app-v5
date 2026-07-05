@@ -7,7 +7,7 @@
 
 ## REST-START-SOURCE-001
 Status: OPEN
-Build: v5.1.12
+Build: v5.2.2
 Expected:
 - 11h suggestion displays `from 11h rest` under the Start field.
 - 9h suggestion displays `from 9h rest` under the Start field.
@@ -16,7 +16,7 @@ Expected:
 
 ## REST-9H-PREVIOUS-DAY-001
 Status: RETEST
-Build: v5.1.12
+Build: v5.2.2
 Expected:
 The 9h helper remains visible even when the 9h boundary was on the previous calendar day.
 

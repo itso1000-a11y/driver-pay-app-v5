@@ -17,7 +17,7 @@ Accepted behaviour:
 - If 11h rest is unavailable, keep `11h rest unavailable` as a separate explanation. It must not replace `from 9h rest`.
 
 Boundary:
-v5.1.12 is a safe UX clarification only. It must not change Rest Engine logic, Start calculations, reduced rest logic, split break behaviour, weekly rest, 72h helper, End Week, Archive, or Pay Engine.
+v5.2.2 is a safe UX clarification only. It must not change Rest Engine logic, Start calculations, reduced rest logic, split break behaviour, weekly rest, 72h helper, End Week, Archive, or Pay Engine.
 
 Backlog:
 Review Split Break / Week Active wording later as a separate UX task.

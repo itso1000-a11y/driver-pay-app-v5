@@ -6,7 +6,7 @@
 
 # Driver Pay App — Dev Log
 
-## v5.1.12 — Safe Rest UX clarification
+## v5.2.2 — Safe Rest UX clarification
 
 CHANGE:
 Clarified the source label under the Start suggestion.

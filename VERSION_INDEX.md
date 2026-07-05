@@ -10,7 +10,7 @@
 
 Purpose: make the Weekly Rest Foundation actually activate after End Week / previous week close.
 
-Base: v5.1.12 safe rest UX patch.
+Base: v5.2.2 safe rest UX patch.
 
 Changes:
 - Weekly Rest Candidate is now stored after End Week using the last completed Finish in the closing week.

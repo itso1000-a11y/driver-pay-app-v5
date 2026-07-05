@@ -26,7 +26,7 @@ STATUS: Clean v5 base/fallback.
 ## v5.1.11
 Profile settings/tax mode cleanup for real-week testing. Active profile display, profile update apply behaviour, no-change disabled update, removed duplicate New from this.
 
-## v5.1.12
+## v5.2.2
 STATUS: Safe Rest UX patch.
 CHANGE: Start helper source labels clarified for 11h and 9h daily rest suggestions.
 BOUNDARY: Text/UI only. No Rest Engine, calculation, Weekly Rest, Split Break, End Week, Archive, or Pay Engine changes.
