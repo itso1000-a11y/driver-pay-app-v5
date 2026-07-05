@@ -72,3 +72,10 @@ Expected: Loading/applying Gross Only profile restores Gross Only; loading/apply
 - npm run build: PASS
 - Known existing warning: duplicate translation keys in src/App.tsx. Not introduced by this patch.
 - Manual test needed: close week on Friday, open next Monday, confirm Weekly Rest card appears in place of Worked / OT.
+
+
+## v5.2.4 - Day Off context data fix
+- Day Off Rest Card now reuses the existing previous-shift rest calculation instead of showing an empty card.
+- Day Off context now shows meaningful completed/off days only.
+- After End Week, Day Off can show the last completed week context instead of an empty new week.
+- No pay/profile/rest-engine changes.

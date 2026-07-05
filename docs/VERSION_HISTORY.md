@@ -45,3 +45,10 @@ STATUS: Safe Rest UX patch.
 CHANGE: Start helper source labels clarified for 11h and 9h daily rest suggestions.
 BOUNDARY: Text/UI only. No Rest Engine, calculation, Weekly Rest, Split Break, End Week, Archive, or Pay Engine changes.
 
+
+
+## v5.2.4 - Day Off context data fix
+- Day Off Rest Card now reuses the existing previous-shift rest calculation instead of showing an empty card.
+- Day Off context now shows meaningful completed/off days only.
+- After End Week, Day Off can show the last completed week context instead of an empty new week.
+- No pay/profile/rest-engine changes.

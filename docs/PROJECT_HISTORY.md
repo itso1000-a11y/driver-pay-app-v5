@@ -123,3 +123,10 @@ Rejected behaviour:
 
 Reason:
 The app's primary purpose is correct pay checking. The user must immediately know which pay profile is driving calculations, and profile changes must not accidentally corrupt already saved work.
+
+
+## v5.2.4 - Day Off context data fix
+- Day Off Rest Card now reuses the existing previous-shift rest calculation instead of showing an empty card.
+- Day Off context now shows meaningful completed/off days only.
+- After End Week, Day Off can show the last completed week context instead of an empty new week.
+- No pay/profile/rest-engine changes.

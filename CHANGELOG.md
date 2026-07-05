@@ -30,3 +30,10 @@
 - Removes package-lock from deploy ZIP to avoid Vercel registry lock issues.
 
 Build status: `npm install --no-package-lock` and `npm run build` completed successfully.
+
+
+## v5.2.4 - Day Off context data fix
+- Day Off Rest Card now reuses the existing previous-shift rest calculation instead of showing an empty card.
+- Day Off context now shows meaningful completed/off days only.
+- After End Week, Day Off can show the last completed week context instead of an empty new week.
+- No pay/profile/rest-engine changes.
