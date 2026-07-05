@@ -1,4 +1,18 @@
 
+## v5.2.3 — Day Off Context Polish
+
+- Day Off now keeps the existing Rest Card visible.
+- Day Off hides the unused Kilometres / Start km block.
+- Day Off hides Day Summary and shows compact Current Week context instead.
+- No changes to Pay Profiles, Pay Setup, pay calculation, Weekly Rest Engine, or Rest Card logic.
+
+## v5.2.2 – Version single-source sync
+
+- Added package.json-driven version sync via scripts/sync-version.mjs.
+- App UI version, HTML title, manifest and service-worker cache now update from one source before build.
+- No pay, profile, rest, weekly rest or layout logic changes.
+
+
 ## v5.2.2 – Weekly Rest Visual / Start Validation Fix
 - Weekly Rest preview card now uses existing app colours: standard dark main time, grey source helper, existing helper warning/success colours.
 - Added Start field violation validator: if entered Start is before the earliest legal rest boundary, the Start field turns red and shows “Rest not completed”.
