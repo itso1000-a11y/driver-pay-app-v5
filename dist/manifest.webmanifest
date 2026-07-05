@@ -1,0 +1,26 @@
+{
+  "name": "Driver Pay App v5.2.0",
+  "short_name": "Driver Pay 5.2.0",
+  "description": "Driver Pay App v5.2.0 standard weekly rest foundation",
+  "start_url": "/?app=driver-pay-v5-clean",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0f172a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/icon-v5-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-v5-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "id": "/?app=driver-pay-v5-clean"
+}

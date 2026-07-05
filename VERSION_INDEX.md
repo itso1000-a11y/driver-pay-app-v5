@@ -2,47 +2,76 @@
 
 ## v5.2.0
 Date: 2026-07-05
-Base: v5.1.11
+Base: v5.1.12
 Status: Test build
 User impact: High
 
 Purpose:
-Start the Standard Weekly Rest Foundation without changing Pay Profiles or Pay Setup architecture.
+Add the first standard-model Weekly Rest Foundation without changing Pay Profiles or special work-pattern architecture.
 
 Changed:
-- End Week now creates a Weekly Rest Candidate from the last completed Finish in the closed week.
-- The next standard week still opens in the existing Monday workflow for now.
-- Saturday/Sunday empty days after End Week remain Off in the standard model.
-- A dynamic Weekly Rest card replaces Worked / OT while the first post-End Week workday has not started.
-- Weekly Rest card uses the same UX model as daily Start suggestions: big proposed start time plus a small helper explaining the source.
-- 45h weekly rest is the main option unless six completed work cycles make the 24h reduced weekly rest the realistic option.
-- 24h reduced weekly option is shown as the helper when 45h is the main option.
-- If 24h becomes the main option, the helper explains that 45h is unavailable because six work cycles were completed.
-- Weekly helpers are limited to the 72h UX window.
-- Start helper text now shows `from 9h rest` when the main Start suggestion is based on reduced daily rest.
+- End Week creates a Weekly Rest Candidate from the last real Finish.
+- Standard model keeps the current Saturday/Sunday Off + Monday workflow for now.
+- Worked / OT area becomes a dynamic Weekly Rest card while weekly rest guidance is relevant.
+- Weekly Rest card mirrors the Daily Start UX: big start time, small source text.
+- 45h weekly rest is primary when realistic.
+- 24h reduced weekly rest becomes primary when 6 completed work cycles make 45h unrealistic for the current cycle.
+- 24h helper includes compensation wording.
+- 72h remains a UX helper visibility window only.
 
 Not changed:
-- No Pay Profile architecture changes.
-- No Pay Setup v2 redesign.
-- No 4 on / 4 off or rotating work-pattern support.
+- No Pay Profile redesign.
+- No Pay Setup v2 work-pattern settings.
+- No 4 on / 4 off or rotating shift logic.
 - No company-specific behaviour.
-- Rest Card remains facts only.
-- Main screen height is preserved by replacing Worked / OT with one Weekly Rest card instead of adding a new section.
+- No Pay Engine formula change.
 
-Known limitations:
-- This is the standard-week foundation only.
-- Variable work-cycle starts, agency rota patterns, 4 on / 4 off, payday/week-start settings and advanced Pay Setup options are future work.
-- Compensation tracking is displayed as a simple +21h later note for 24h reduced weekly rest; full compensation ledger is future work.
+Regression focus:
+- Existing profile/tax mode behaviour from v5.1.11/v5.1.12 must remain intact.
+- Daily 9h / 11h helpers must still behave as in v5.1.12.
+- PWA version identity must be consistent.
 
 QA:
-- WEEKLY-STANDARD-001: OPEN
-- WEEKLY-CARD-001: OPEN
-- WEEKLY-6CYCLE-001: OPEN
-- REST-9H-SOURCE-001: RETEST
+- REST-WEEKLY-STANDARD-001: OPEN
+- REST-WEEKLY-6CYCLE-001: OPEN
+- REST-WEEKLY-CARD-001: OPEN
+- PWA-VERSION-IDENTITY-001: RETEST
 
 Rollback:
-- Previous stable test build: v5.1.11
+- Previous build: v5.1.12
 
+## v5.1.12
+Date: 2026-07-03
+Base: v5.1.11
+Status: Test build
+User impact: Low
+
+Purpose:
+Clarify the Start helper text so the user can see whether the suggested Start time comes from 11h normal daily rest or 9h reduced daily rest.
+
+Changed:
+- 11h Start suggestions now show `from 11h rest` under the Start field.
+- 9h reduced Start suggestions now show `from 9h rest` under the Start field.
+- When 11h rest is unavailable, the explanation remains separate as `11h rest unavailable` and does not replace `from 9h rest`.
+- Added backlog note for later Split Break / Week Active UX review.
+
+Not changed:
+- No Rest Engine changes.
+- No Start calculation changes.
+- No Reduced Rest logic changes.
+- No Split Break behaviour changes.
+- No Weekly Rest, 72h Helper, End Week, Archive, or Pay Engine changes.
+
+Regression focus:
+- The 9h helper must remain visible even when the 9h boundary is on the previous calendar day.
+- All suggested Start times must remain exactly the same as v5.1.11.
+
+QA:
+- REST-START-SOURCE-001: OPEN
+- REST-9H-PREVIOUS-DAY-001: RETEST
+
+Rollback:
+- Previous build: v5.1.11
 
 ## v5.1.11
 Date: 2026-06-28

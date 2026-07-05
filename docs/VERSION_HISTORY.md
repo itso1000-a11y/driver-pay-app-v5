@@ -20,12 +20,13 @@ STATUS: Clean v5 base/fallback.
 ## v5.1.11
 Profile settings/tax mode cleanup for real-week testing. Active profile display, profile update apply behaviour, no-change disabled update, removed duplicate New from this.
 
+## v5.1.12
+STATUS: Safe Rest UX patch.
+CHANGE: Start helper source labels clarified for 11h and 9h daily rest suggestions.
+BOUNDARY: Text/UI only. No Rest Engine, calculation, Weekly Rest, Split Break, End Week, Archive, or Pay Engine changes.
+
 
 ## v5.2.0
-STATUS: Test / Standard Weekly Rest Foundation.
-
-CHANGE:
-Adds the first standard-week Weekly Rest candidate and dynamic Weekly Rest card. End Week remains a marker and the standard Monday workflow is preserved for this version.
-
-LIMITATION:
-No 4 on / 4 off, floating work patterns, advanced compensation ledger, or Pay Setup week-start/payday settings yet.
+STATUS: Standard Weekly Rest Foundation test build.
+CHANGE: End Week creates a Weekly Rest Candidate. Worked / OT area becomes a dynamic Weekly Rest card for standard weekly rest guidance. 45h/24h suggestions are based on completed work cycles.
+BOUNDARY: Standard model only. No Pay Profiles redesign. No 4 on / 4 off or variable work pattern settings.

@@ -1,12 +1,6 @@
-# Driver Pay App — Known Issues / Deferred Work
+# Driver Pay App — Known Issues
 
 ## Deferred after v5.2.0
-
-- 4 on / 4 off and rotating work-pattern support.
-- Variable work-cycle start settings in Pay Setup.
-- Payday / pay-period setup.
-- Full weekly rest compensation ledger.
-- Daily fallback display inside Weekly Rest mode.
-- Split Break secondary text review (`Week active`).
-
-These are intentionally excluded from v5.2.0 to protect the stable profile and pay setup architecture.
+- 4 on / 4 off and variable work patterns are not included.
+- Pay Setup v2 still needs future options for work-cycle start, pay day and pay period.
+- Weekly Rest Foundation currently keeps the standard Saturday/Sunday Off + Monday open workflow. This may change later when Work Patterns are added.
