@@ -1,25 +1,5 @@
 # Driver Pay App — Dev Log
 
-## v5.2.0 — Standard Weekly Rest Foundation
-
-CHANGE:
-Added the first standard Weekly Rest Foundation.
-
-DETAIL:
-- End Week now creates a Weekly Rest Candidate from the last completed Finish in the closing week.
-- Candidate stores the closing week, anchor Finish time and completed work-cycle count.
-- The next standard app week still opens in the existing Monday workflow.
-- While the candidate is active, the Worked / OT space is replaced by a same-size Weekly Rest card.
-- Under 6 completed work cycles, the Weekly Rest card prioritises 45h weekly rest and shows 24h as the helper option.
-- At 6 completed work cycles, the Weekly Rest card prioritises 24h reduced weekly rest and explains that 45h is unavailable.
-- 72h is used only as a helper visibility window.
-
-BOUNDARY:
-No Pay Profiles architecture change. No 4 on / 4 off. No variable Work Pattern. No Pay Setup v2 work-pattern settings. No Pay formula changes.
-
-QA FOCUS:
-Test End Week after 5 and 6 completed work cycles. Confirm the Weekly Rest card appears in place of Worked / OT, then disappears after the next Start/shift. Confirm PWA update behaviour.
-
 ## v5.1.12 — Safe Rest UX clarification
 
 CHANGE:

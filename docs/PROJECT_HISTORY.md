@@ -1,27 +1,5 @@
 # Project History
 
-## REST-WEEKLY-STANDARD-FOUNDATION — accepted v5.2.0 scope
-
-Decision:
-v5.2.0 covers only the standard Weekly Rest model. Exceptions such as 4 on / 4 off, rotating shifts and variable work patterns are explicitly deferred to future Pay Setup / Work Pattern settings.
-
-Accepted behaviour:
-- End Week remains a workflow marker, not a legal event.
-- End Week starts a Weekly Rest Candidate from the last real Finish.
-- For this standard build, the existing Saturday/Sunday Off and Monday open workflow may remain.
-- Weekly Rest guidance appears in the Worked / OT space as a dynamic card with the same general footprint.
-- The Weekly Rest card uses the same UX philosophy as the Daily Start helper: a big suggested start time and a small helper explaining the source of that time.
-- 45h weekly rest is the main suggestion when realistic.
-- 24h reduced weekly rest is the helper option when available.
-- If 6 completed work cycles have already occurred, 24h reduced weekly rest becomes the main suggestion and the helper explains that 45h is unavailable.
-- 72h is not a legal rest type. It is only a UX helper visibility window.
-
-Reason:
-This completes a meaningful Standard Weekly Rest layer without disturbing the stable Pay Profiles architecture or opening the larger Work Pattern problem too early.
-
-Boundary:
-Do not add 4 on / 4 off, variable week starts, payday settings, Pay Setup v2 work patterns or company-specific behaviour in this build.
-
 ## REST-START-SOURCE-001 — Start helper source labels
 
 Decision:

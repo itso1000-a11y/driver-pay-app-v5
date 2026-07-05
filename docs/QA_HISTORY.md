@@ -1,29 +1,3 @@
-# Driver Pay App — QA History
-
-## REST-WEEKLY-STANDARD-001
-Status: OPEN
-Build: v5.2.0
-Expected:
-After End Week in a standard week, the next week opens in the current Monday workflow and shows a Weekly Rest card in place of Worked / OT while no new shift has started.
-
-## REST-WEEKLY-6CYCLE-001
-Status: OPEN
-Build: v5.2.0
-Expected:
-- With fewer than 6 completed work cycles, Weekly Rest card shows the 45h start as primary and 24h as helper.
-- With 6 completed work cycles, Weekly Rest card shows 24h reduced weekly rest as primary and explains that 45h is unavailable.
-
-## REST-WEEKLY-CARD-001
-Status: OPEN
-Build: v5.2.0
-Expected:
-Weekly Rest card replaces Worked / OT only during the active standard weekly-rest helper window. It must not increase the main screen length and Worked / OT must return once the driver starts working.
-
-## PWA-VERSION-IDENTITY-001
-Status: RETEST
-Build: v5.2.0
-Expected:
-APP_VERSION, browser title, manifest, service-worker cache and ZIP filename all identify v5.2.0 so the installed PWA can detect the update.
 
 ## REST-START-SOURCE-001
 Status: OPEN
@@ -71,3 +45,10 @@ Expected: Update Profile is disabled with no changes. When changed, it archives 
 Status: RETEST
 Build: v5.1.11
 Expected: Loading/applying Gross Only profile restores Gross Only; loading/applying PAYE profile restores PAYE estimate.
+
+## v5.2.1 QA – Standard Weekly Rest Candidate Fix
+
+- npm install --no-package-lock: PASS
+- npm run build: PASS
+- Known existing warning: duplicate translation keys in src/App.tsx. Not introduced by this patch.
+- Manual test needed: close week on Friday, open next Monday, confirm Weekly Rest card appears in place of Worked / OT.

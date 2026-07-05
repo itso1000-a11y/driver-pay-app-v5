@@ -1,160 +1,18 @@
-# Driver Pay App — VERSION_INDEX
+# Version Index
 
-## v5.2.0
-Date: 2026-07-05
-Base: v5.1.12
-Status: Test build
-User impact: High
+## v5.2.1 – Standard Weekly Rest Candidate Fix
 
-Purpose:
-Add the first standard-model Weekly Rest Foundation without changing Pay Profiles or special work-pattern architecture.
+Purpose: make the Weekly Rest Foundation actually activate after End Week / previous week close.
 
-Changed:
-- End Week creates a Weekly Rest Candidate from the last real Finish.
-- Standard model keeps the current Saturday/Sunday Off + Monday workflow for now.
-- Worked / OT area becomes a dynamic Weekly Rest card while weekly rest guidance is relevant.
-- Weekly Rest card mirrors the Daily Start UX: big start time, small source text.
-- 45h weekly rest is primary when realistic.
-- 24h reduced weekly rest becomes primary when 6 completed work cycles make 45h unrealistic for the current cycle.
-- 24h helper includes compensation wording.
-- 72h remains a UX helper visibility window only.
+Base: v5.1.12 safe rest UX patch.
 
-Not changed:
-- No Pay Profile redesign.
-- No Pay Setup v2 work-pattern settings.
-- No 4 on / 4 off or rotating shift logic.
-- No company-specific behaviour.
-- No Pay Engine formula change.
-
-Regression focus:
-- Existing profile/tax mode behaviour from v5.1.11/v5.1.12 must remain intact.
-- Daily 9h / 11h helpers must still behave as in v5.1.12.
-- PWA version identity must be consistent.
+Changes:
+- Weekly Rest Candidate is now stored after End Week using the last completed Finish in the closing week.
+- Candidate can be recovered from the previous saved week if the app is already on the next Monday.
+- Worked / OT area is replaced by a same-area compact Weekly Rest card while candidate is active.
+- Standard model only: existing Sunday/Monday workflow is kept.
+- 4 on / 4 off, variable week starts and Pay Setup work-pattern settings remain out of scope.
 
 QA:
-- REST-WEEKLY-STANDARD-001: OPEN
-- REST-WEEKLY-6CYCLE-001: OPEN
-- REST-WEEKLY-CARD-001: OPEN
-- PWA-VERSION-IDENTITY-001: RETEST
-
-Rollback:
-- Previous build: v5.1.12
-
-## v5.1.12
-Date: 2026-07-03
-Base: v5.1.11
-Status: Test build
-User impact: Low
-
-Purpose:
-Clarify the Start helper text so the user can see whether the suggested Start time comes from 11h normal daily rest or 9h reduced daily rest.
-
-Changed:
-- 11h Start suggestions now show `from 11h rest` under the Start field.
-- 9h reduced Start suggestions now show `from 9h rest` under the Start field.
-- When 11h rest is unavailable, the explanation remains separate as `11h rest unavailable` and does not replace `from 9h rest`.
-- Added backlog note for later Split Break / Week Active UX review.
-
-Not changed:
-- No Rest Engine changes.
-- No Start calculation changes.
-- No Reduced Rest logic changes.
-- No Split Break behaviour changes.
-- No Weekly Rest, 72h Helper, End Week, Archive, or Pay Engine changes.
-
-Regression focus:
-- The 9h helper must remain visible even when the 9h boundary is on the previous calendar day.
-- All suggested Start times must remain exactly the same as v5.1.11.
-
-QA:
-- REST-START-SOURCE-001: OPEN
-- REST-9H-PREVIOUS-DAY-001: RETEST
-
-Rollback:
-- Previous build: v5.1.11
-
-## v5.1.11
-Date: 2026-06-28
-Base: v5.1.10
-Status: Test build
-User impact: High
-
-Purpose:
-Stabilise Pay Profile behaviour before a full real-work-week test.
-
-Changed:
-- Active Pay Profile display now uses the real profile name format, for example `ARC → Turners`.
-- Settings screen uses the existing main visual field to show the active Pay Profile, without adding new rows.
-- Pay profiles continue to preserve and restore PAYE / Gross Only mode as part of the profile snapshot.
-- `Update Profile` now applies the updated profile to current Settings when the updated profile is the active one.
-- `Update Profile` is disabled when there are no real changes.
-- The previous profile version is archived before an actual profile update.
-- `New from this` was removed to avoid duplicating `Save as new profile`.
-
-Not changed:
-- No Rest Engine changes.
-- No Pay formula changes.
-- No Archive workflow redesign.
-- No main screen layout or colour-logic changes.
-
-Known issues / test focus:
-- Needs full-week real test with Gross Only agency/LTD style profile and PAYE/company style profile.
-- Verify that saved/completed days do not unexpectedly recalculate after a profile update.
-- Verify installed PWA offers/accepts update normally.
-
-QA:
-- PROFILE-TAXMODE-001: RETEST
-- PROFILE-ACTIVE-DISPLAY-001: OPEN
-- PROFILE-UPDATE-001: OPEN
-
-Rollback:
-- Previous build: v5.1.10
-
-## v5.1.10
-Date: 2026-06-28
-Base: v5.1.9
-Status: Test build
-User impact: Medium
-
-Purpose:
-Fix profile tax mode persistence when switching between PAYE/company work and gross-only agency/LTD style work.
-
-Changed:
-- Profiles preserve `grossOnly` explicitly in their settings snapshot.
-- Pay Setup v2 draft restores the selected profile's PAYE/Gross Only mode.
-- Applying a profile applies the stored tax mode with the rest of the profile settings.
-- Added Pay calculation mode selector inside Pay Setup v2 profile editor.
-
-Not changed:
-- No Rest Engine changes.
-- No Pay formula changes.
-- No Archive workflow changes.
-- No main screen layout or colour-logic changes.
-
-Known issues:
-- Needs real-device test with one PAYE profile and one Gross Only profile.
-
-QA:
-- PROFILE-TAXMODE-001: OPEN
-
-Rollback:
-- Previous build: v5.1.9
-
-## v5.1.9
-Date: 2026-06-28
-Base: v5.1.8
-Status: Test build
-User impact: Medium
-
-Purpose:
-Profile restore safety.
-
-Changed:
-- Week data stores `activePayProfileId`.
-- Archive/current week profile restore improved.
-
-Known issues:
-- Profile tax mode may not restore correctly when switching between PAYE and Gross Only profiles.
-
-Fixed in:
-- v5.1.10
+- Build passed locally with Vite.
+- Vercel deploy ZIP intentionally excludes package-lock.json and node_modules.
