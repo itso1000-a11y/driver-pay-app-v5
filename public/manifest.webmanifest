@@ -1,7 +1,7 @@
 {
-  "name": "Driver Pay App v5.2.1",
-  "short_name": "Driver Pay 5.2.1",
-  "description": "Driver Pay App v5.2.1 standard weekly rest candidate fix",
+  "name": "Driver Pay App v5.2.2",
+  "short_name": "Driver Pay 5.2.2",
+  "description": "Driver Pay App v5.2.2 standard weekly rest candidate fix",
   "start_url": "/?app=driver-pay-v5-clean",
   "scope": "/",
   "display": "standalone",

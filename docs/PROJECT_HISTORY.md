@@ -1,3 +1,9 @@
+
+## v5.2.2 – Weekly Rest Visual / Start Validation Fix
+- Weekly Rest preview card now uses existing app colours: standard dark main time, grey source helper, existing helper warning/success colours.
+- Added Start field violation validator: if entered Start is before the earliest legal rest boundary, the Start field turns red and shows “Rest not completed”.
+- Legal entered Start values remain visually standard. Rest Card logic is not changed by this UX validator.
+
 # Project History
 
 ## REST-START-SOURCE-001 — Start helper source labels
