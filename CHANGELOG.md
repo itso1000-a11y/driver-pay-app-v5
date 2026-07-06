@@ -37,3 +37,8 @@ Build status: `npm install --no-package-lock` and `npm run build` completed succ
 - Day Off context now shows meaningful completed/off days only.
 - After End Week, Day Off can show the last completed week context instead of an empty new week.
 - No pay/profile/rest-engine changes.
+
+## v5.2.5 - Weekly Rest Finish UX Fix
+- Fixed Weekly Rest preview reappearing after Finish is entered on the first work day after weekly rest.
+- Weekly Rest preview now only shows while the weekly rest candidate is active and the current day has no Start.
+- Keeps completed Weekly Rest in the Rest Card while the normal Work Day screen continues after Start/Finish.

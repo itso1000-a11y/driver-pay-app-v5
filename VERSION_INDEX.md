@@ -43,3 +43,6 @@ QA:
 - Day Off context now shows meaningful completed/off days only.
 - After End Week, Day Off can show the last completed week context instead of an empty new week.
 - No pay/profile/rest-engine changes.
+
+## v5.2.5
+- Weekly Rest Finish UX Fix: normal work-day screen remains after Start and Finish; Weekly preview does not return after Finish.

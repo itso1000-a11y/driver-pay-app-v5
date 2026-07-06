@@ -1649,7 +1649,7 @@ export default function App() {
     !currentDay.finish &&
     !dayHasDestructiveWorkData(currentDay)
   );
-  const weeklyRestCandidateActive = Boolean(weeklyRestBaseActive && !userStartedBeforeWeeklyRest && !(currentDay.start && !currentDay.finish));
+  const weeklyRestCandidateActive = Boolean(weeklyRestBaseActive && !userStartedBeforeWeeklyRest && !currentDay.start);
   const weeklyRestRequiredMinutes = 45 * 60;
   const weeklyRestPrimaryStart = getWeeklyRestPrimaryStart(weeklyRestCandidate ? { finishAbs: weeklyRestCandidate.finishAbs } : null, weeklyRestCandidateActive, weeklyRestForceReduced);
   const weeklyRestPlan = getWeeklyRestPlan(weeklyRestCandidate, currentDay, weeklyRestCandidateActive);
