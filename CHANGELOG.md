@@ -42,3 +42,12 @@ Build status: `npm install --no-package-lock` and `npm run build` completed succ
 - Fixed Weekly Rest preview reappearing after Finish is entered on the first work day after weekly rest.
 - Weekly Rest preview now only shows while the weekly rest candidate is active and the current day has no Start.
 - Keeps completed Weekly Rest in the Rest Card while the normal Work Day screen continues after Start/Finish.
+
+## v5.2.6 — Weekly rest clarity and archive safety
+- Replaced user-visible “work cycles” wording with “working days”.
+- Restored the Split Rest note that it does not use a 9h reduced daily rest.
+- Past Day Off rest cards now clarify that the value is measured to the end of that day.
+- Reduced weekly rest now shows that compensation is due.
+- Week Preview can show one compact line for the last completed weekly rest.
+- Repeated End Week on an unchanged archived week no longer rewrites it and confirms “Week already saved”.
+- Existing pressed-button feedback remains in place.

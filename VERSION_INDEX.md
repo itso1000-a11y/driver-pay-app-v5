@@ -46,3 +46,5 @@ QA:
 
 ## v5.2.5
 - Weekly Rest Finish UX Fix: normal work-day screen remains after Start and Finish; Weekly preview does not return after Finish.
+
+- v5.2.6 — Weekly rest wording, Split Rest clarification, last weekly rest preview, and safe repeated End Week feedback.
