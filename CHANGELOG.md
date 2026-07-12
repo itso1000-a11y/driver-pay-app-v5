@@ -51,3 +51,10 @@ Build status: `npm install --no-package-lock` and `npm run build` completed succ
 - Week Preview can show one compact line for the last completed weekly rest.
 - Repeated End Week on an unchanged archived week no longer rewrites it and confirms “Week already saved”.
 - Existing pressed-button feedback remains in place.
+
+## v5.2.7 — Weekly rest regime priority fix
+- Weekly-rest mode now overrides daily 9h/11h suggestions on the first Work Day after End Week.
+- The weekly-rest Start suggestion is shown in the main Start field.
+- The explanatory Weekly Rest card no longer duplicates the Start proposal.
+- An early Start is evaluated consistently as insufficient weekly rest: Start and Rest Card both show the violation state.
+- After a valid Start, normal Work Day calculation continues and Worked/OT remain available after Finish.

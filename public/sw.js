@@ -1,4 +1,4 @@
-const CACHE_NAME = "driver-pay-v5-2-6";
+const CACHE_NAME = "driver-pay-v5-2-7";
 const APP_SHELL = ["/", "/index.html", "/manifest.webmanifest", "/icons/icon-v5-192.png", "/icons/icon-v5-512.png", "/favicon.ico", "/apple-touch-icon.png"];
 
 self.addEventListener("install", (event) => {
