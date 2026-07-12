@@ -58,3 +58,8 @@ Build status: `npm install --no-package-lock` and `npm run build` completed succ
 - The explanatory Weekly Rest card no longer duplicates the Start proposal.
 - An early Start is evaluated consistently as insufficient weekly rest: Start and Rest Card both show the violation state.
 - After a valid Start, normal Work Day calculation continues and Worked/OT remain available after Finish.
+
+## v5.2.8 — Weekly rest ended clarity
+- When the weekly-rest legal start is on an earlier day, the Start field stays empty and the helper shows when the weekly rest ended (for example, `Weekly rest ended Sun 14:20`).
+- Incomplete weekly-rest cards now use the compact wording: `Weekly rest` / duration / `Not completed`.
+- No rest-engine or pay-calculation changes.

@@ -49,3 +49,7 @@ QA:
 
 - v5.2.6 — Weekly rest wording, Split Rest clarification, last weekly rest preview, and safe repeated End Week feedback.
 - v5.2.7 — Weekly-rest priority: one active rest regime, weekly Start in main field, consistent weekly violation Rest Card.
+
+### v5.2.8
+- Weekly-rest past-target Start helper clarity.
+- Compact incomplete weekly-rest Rest Card wording.
