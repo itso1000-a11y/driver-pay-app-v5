@@ -1,3 +1,13 @@
+## v5.2.10 — Contextual Weekly Rest Helper & Exact Compensation Card
+
+- Weekly Rest helper now contains proposals only; compensation warnings were removed from the helper.
+- On the current or a future day, expired 24h options are hidden instead of suggesting a Start in the past.
+- Historical days keep the original option so late data entry remains understandable.
+- After a real Start is entered, reduced weekly-rest compensation appears in the Rest card with exact owed hours, calendar deadline and fixed-week number.
+- Reduced Weekly Rest labels no longer contain a vague “Compensation due” suffix without values.
+- No Pay Engine changes.
+
+
 ## v5.2.9 — Complete Backup Snapshot & Weekly Compensation Info
 
 - Backup now captures a complete localStorage snapshot, including all current and future app keys, Pay Profiles/history, weekly-rest candidate, language, archived and active weeks.
