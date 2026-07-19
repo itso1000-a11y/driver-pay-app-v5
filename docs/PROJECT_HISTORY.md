@@ -1,3 +1,19 @@
+## v5.2.11 — Indivisible Weekly Rest Compensation
+
+- Base inspected first: v5.2.10 already calculated exact reduced weekly-rest compensation and its deadline, but had no compensation ledger or completion logic.
+- Added a small persistent compensation ledger that keeps each reduced weekly-rest obligation separate.
+- Compensation is indivisible: shorter extra rests do not reduce the outstanding amount and two partial periods are never added together.
+- One obligation is completed only when one later continuous rest contains at least 9h base rest plus the full compensation, occurs after the reduction, and is no later than the stored deadline.
+- Multiple obligations remain separate; a single rest completes at most the earliest eligible obligation in this version.
+- Old data without the ledger remains valid and is sanitised conservatively; no compensation is invented as completed.
+- Backup v2 automatically includes the ledger through the existing complete localStorage snapshot.
+- Removed the ISO week number from compensation displays; the real calendar deadline remains.
+- Helper now shows only “45h unavailable”; “6 working days completed” was removed.
+- Start Card keeps “Weekly rest ended” before a real Start and removes it after Start.
+- Pay Engine and unrelated Rest Engine behaviour were not changed.
+
+Build status: production Vite build passed.
+
 
 ## v5.2.2 – Weekly Rest Visual / Start Validation Fix
 - Weekly Rest preview card now uses existing app colours: standard dark main time, grey source helper, existing helper warning/success colours.
