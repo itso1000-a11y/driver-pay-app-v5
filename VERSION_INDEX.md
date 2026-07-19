@@ -1,3 +1,12 @@
+## v5.2.9 — Complete Backup Snapshot & Weekly Compensation Info
+
+- Backup now captures a complete localStorage snapshot, including all current and future app keys, Pay Profiles/history, weekly-rest candidate, language, archived and active weeks.
+- Restore v2 replaces the stored app state atomically and reloads the app; rollback protects the existing state if restore fails.
+- Older v1 backup files remain supported.
+- Reduced weekly rest now shows the exact compensation owed (45h minus achieved rest), a calendar deadline, and the fixed-week number.
+- Deadline uses the fixed week in which the reduced weekly rest started, giving the earliest safe date until explicit cross-week attribution is added.
+- No Pay Engine changes and no change to how weekly rest itself is measured.
+
 
 ## v5.2.3 — Day Off Context Polish
 

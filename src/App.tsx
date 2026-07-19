@@ -20,7 +20,7 @@ const UI_TEXT: Record<Lang, Record<string, string>> = {
     settingsTitle: "Settings", backupRestore: "Backup / Restore", recommended: "recommended", backupInfo: "Save a copy of all weeks, current entries, settings, archive, and payslip comparison. Restore it if Edge data is cleared or you move to another computer.", backup: "Backup", restore: "Restore", payRates: "Pay rates", companyName: "Company name (optional)", weekdayPayRate: "Weekday pay rate", saturdayPayRate: "Saturday pay rate", sundayPayRate: "Sunday pay rate", pensionMode: "Pension mode", noPension: "No pension", manualPension: "Ръчна пенсия", pensionDeduction: "Удръжка pension", payCalculationMode: "Режим на смятане", payeEstimate: "PAYE estimate", grossOnly: "Gross Only", taxOn: "Tax ON", taxOff: "Tax OFF", taxModeHelp: "Switch between PAYE estimate and gross-only pay.", currentMode: "Current mode", grossOnlyNote: "Tax, NI и pension са OFF. Прегледът показва бруто.", deductionsOff: "Удръжките са изключени", payCalculationMode: "Pay calculation mode", payeEstimate: "PAYE estimate", grossOnly: "Gross Only", taxOn: "Данъци ON", taxOff: "Данъци OFF", taxModeHelp: "Превключва между PAYE estimate и gross-only pay.", currentMode: "Current mode", grossOnlyNote: "Tax, NI and pension are OFF. Preview shows gross pay.", deductionsOff: "Deductions off", payCalculationMode: "Pay calculation mode", payeEstimate: "PAYE estimate", grossOnly: "Gross Only", grossOnlyNote: "Tax, NI and pension are OFF. Preview shows gross pay.", deductionsOff: "Deductions off", overtimeThreshold: "Overtime threshold (hours)", overtimePayRate: "Overtime pay rate", foodAllowance: "Food allowance per worked day", nightOutPay: "Night out pay", bonusPayRates: "Bonus pay rates", customBonuses: "Custom bonuses", customBonusName: "Bonus name", customBonusRate: "Rate", done: "Done", paySetupV2: "Pay Setup v2", openPaySetup: "Open Pay Setup", currentProfile: "Current profile", activePayProfile: "Active Pay Profile", profileName: "Profile name", profileSaved: "Profile saved", createProfile: "Create profile", updateProfile: "Update profile", saveAsNewProfile: "Save as new profile", newFromThis: "New from this", profilePreview: "Profile preview", organisationName: "Company / Agency", loadProfile: "Load profile", applyProfile: "Apply profile", applyFromNextEmptyDay: "Apply from next empty day", profileOnlySaved: "Profile saved. Apply it when ready.", currentDraft: "Current draft",
     weekPreview: "Week Preview", close: "Close", estimatedNet: "Estimated Net", payslipNet: "Payslip Net", difference: "Difference", days: "Days", noPoundsHere: "no £ here", holiday: "Holiday", off: "Off", showBreakdown: "Show breakdown", hideBreakdown: "Hide breakdown", basePay: "Base pay", food: "Food", tax: "Tax", ni: "NI", net: "Net", splitRests: "Split rests", back: "Back", endWeek: "End Week",
     endWeekPreview: "End Week Preview", totalHours: "Total hours", reducedRests: "Reduced rests", confirmInfo: "Confirming will close this week, save an automatic backup, and open the next week. Choose how to mark the remaining days.", confirmCloseWeek: "Confirm & Close Week", remainingOff: "Remaining Off", remainingHoliday: "Remaining Holiday",
-    from11hRest: "from 11h rest", from9hRest: "from 9h rest", nineHourOption: "9h option", reducedLimitReached: "No reduced rests left", reducedLeft: "Left", noReducedLeft: "No reduced rests left", splitRestNotCounted: "Does not count as 9h reduced rest", incompleteShift: "Incomplete shift.", finishBeforeStart: "Finish time is before start.", longShift: "Long shift", shiftLimitExceeded: "15h limit exceeded", rest11: "Daily rest", rest9: "Reduced rest", previousShiftTooLongFor11h: "11h rest unavailable", weeklyRest45Option: "45h weekly", weeklyRest24Option: "24h option", owedLater: "later", toFullWeeklyRest: "left", weeklyRestCard: "Weekly Rest", from45hWeeklyRest: "from 45h weekly rest", from24hReducedWeeklyRest: "from 24h reduced weekly rest", weekly45Unavailable: "45h unavailable", sixWorkCyclesCompleted: "6 working days completed", compensationRequired: "Compensation due", weeklyRestComplete: "Weekly rest", reducedWeeklyRest: "Reduced weekly rest", compensationMissing: "Hours missing", weeklyRestRequired: "Weekly rest needed", dailyRestCompleted: "", violation: "Rest violation", pending: "No start yet", restNotCompleted: "Rest not completed", weeklyRestEnded: "Weekly rest ended", notCompleted: "Not completed", backupRestored: "Backup restored successfully.", backupFailed: "This backup file could not be restored.", installHelp: "Use your browser menu and choose Install app / Add to Home screen.", futureWeekClose: "Close empty week", fastCloseHint: "This week has no work data. Mark the days and close it without filling day by day.", allOff: "All Off", allHoliday: "All Holiday", chooseDays: "Choose days", closeFutureWeek: "Close this week", goToCurrentWeek: "Go to current week", savedWeeks: "Saved weeks", noSavedWeeks: "No saved weeks yet", fullWeek: "full", partialWeek: "partial", selectSaturday: "Select Saturday", savedFull: "Saved full", savedPartial: "Saved partial", emptyWeek: "Empty", restSnapshot: "Rest snapshot", usedExtras: "Used extras / markers", detailedView: "Detailed view", hideDailyDetails: "Hide daily details", archiveWatermark: "ARCHIVE", editingArchive: "Archive edit mode"
+    from11hRest: "from 11h rest", from9hRest: "from 9h rest", nineHourOption: "9h option", reducedLimitReached: "No reduced rests left", reducedLeft: "Left", noReducedLeft: "No reduced rests left", splitRestNotCounted: "Does not count as 9h reduced rest", incompleteShift: "Incomplete shift.", finishBeforeStart: "Finish time is before start.", longShift: "Long shift", shiftLimitExceeded: "15h limit exceeded", rest11: "Daily rest", rest9: "Reduced rest", previousShiftTooLongFor11h: "11h rest unavailable", weeklyRest45Option: "45h weekly", weeklyRest24Option: "24h option", owedLater: "later", toFullWeeklyRest: "left", weeklyRestCard: "Weekly Rest", from45hWeeklyRest: "from 45h weekly rest", from24hReducedWeeklyRest: "from 24h reduced weekly rest", weekly45Unavailable: "45h unavailable", sixWorkCyclesCompleted: "6 working days completed", compensationRequired: "Compensation due", compensateBy: "Compensate by", fixedWeek: "Week", weeklyRestComplete: "Weekly rest", reducedWeeklyRest: "Reduced weekly rest", compensationMissing: "Hours missing", weeklyRestRequired: "Weekly rest needed", dailyRestCompleted: "", violation: "Rest violation", pending: "No start yet", restNotCompleted: "Rest not completed", weeklyRestEnded: "Weekly rest ended", notCompleted: "Not completed", backupRestored: "Backup restored successfully.", backupFailed: "This backup file could not be restored.", installHelp: "Use your browser menu and choose Install app / Add to Home screen.", futureWeekClose: "Close empty week", fastCloseHint: "This week has no work data. Mark the days and close it without filling day by day.", allOff: "All Off", allHoliday: "All Holiday", chooseDays: "Choose days", closeFutureWeek: "Close this week", goToCurrentWeek: "Go to current week", savedWeeks: "Saved weeks", noSavedWeeks: "No saved weeks yet", fullWeek: "full", partialWeek: "partial", selectSaturday: "Select Saturday", savedFull: "Saved full", savedPartial: "Saved partial", emptyWeek: "Empty", restSnapshot: "Rest snapshot", usedExtras: "Used extras / markers", detailedView: "Detailed view", hideDailyDetails: "Hide daily details", archiveWatermark: "ARCHIVE", editingArchive: "Archive edit mode"
   },
   bg: {
     chooseLanguage: "Избери език", appTitle: APP_TITLE, currentDay: "Текущ ден", install: "Инсталирай", week: "Седмица", settings: "Настройки", language: "Език",
@@ -33,7 +33,7 @@ const UI_TEXT: Record<Lang, Record<string, string>> = {
     settingsTitle: "Настройки", backupRestore: "Архив / Възстановяване", recommended: "препоръчително", backupInfo: "Запазва копие на всички седмици, текущите данни, настройките, архива и сравнението с фиша. Възстановява при изчистване на данните или смяна на компютър.", backup: "Направи backup", restore: "Възстанови", payRates: "Ставки", companyName: "Име на фирма (по избор)", weekdayPayRate: "Делнична ставка", saturdayPayRate: "Събота ставка", sundayPayRate: "Неделя ставка", pensionMode: "Пенсионен режим", noPension: "Без пенсия", manualPension: "Ръчна пенсия", pensionDeduction: "Пенсионно удържане", overtimeThreshold: "Праг за овъртайм (часове)", overtimePayRate: "Овъртайм ставка", foodAllowance: "Пари за храна на работен ден", nightOutPay: "Нощувка £", bonusPayRates: "Ставки за бонуси", customBonuses: "Допълнителни бонуси", customBonusName: "Име на бонус", customBonusRate: "Ставка", done: "Готово", paySetupV2: "Pay Setup v2", openPaySetup: "Отвори Pay Setup", currentProfile: "Текущ профил", activePayProfile: "Активен Pay Profile", profileName: "Име на профил", profileSaved: "Профилът е записан", createProfile: "Създай профил", updateProfile: "Обнови профила", saveAsNewProfile: "Запази като нов профил", newFromThis: "Нов от този", profilePreview: "Преглед на профил", organisationName: "Фирма / агенция", loadProfile: "Зареди профил", applyProfile: "Приложи профил", applyFromNextEmptyDay: "Приложи от следващ празен ден", profileOnlySaved: "Профилът е записан. Приложи го когато е готов.", currentDraft: "Текущ draft",
     weekPreview: "Седмично превю", close: "Затвори", estimatedNet: "Очаквано нето", payslipNet: "Нето по фиш", difference: "Разлика", days: "Дни", noPoundsHere: "без £ тук", holiday: "Отпуск", off: "Почивен", showBreakdown: "Покажи разбивка", hideBreakdown: "Скрий разбивка", basePay: "Основно плащане", food: "Храна", tax: "Данък", ni: "NI", net: "Нето", splitRests: "Сплит почивки", back: "Назад", endWeek: "Край на седмицата",
     endWeekPreview: "Превю преди край", totalHours: "Общо часове", reducedRests: "9ч редуцирани", confirmInfo: "Потвърждението затваря седмицата, прави автоматичен backup и отваря следващата седмица. Избери как да се маркират оставащите дни.", confirmCloseWeek: "Потвърди и затвори", remainingOff: "Оставащите почивни", remainingHoliday: "Оставащите отпуск",
-    from11hRest: "от 11ч почивка", from9hRest: "от 9ч почивка", nineHourOption: "9ч старт", reducedLimitReached: "лимитът за 9ч е достигнат", splitRestNotCounted: "Не се брои като 9ч съкратена почивка", incompleteShift: "Незавършена смяна.", finishBeforeStart: "Крайният час е преди стартовия.", longShift: "Дълга смяна", shiftLimitExceeded: "Надвишен лимит 15ч", rest11: "Дневна почивка", rest9: "Съкратена почивка", previousShiftTooLongFor11h: "11ч почивка не е възможна", weeklyRest45Option: "45ч седмична", weeklyRest24Option: "24ч вариант", owedLater: "по-късно", toFullWeeklyRest: "остават", weeklyRestCard: "Седмична почивка", from45hWeeklyRest: "от 45ч седмична почивка", from24hReducedWeeklyRest: "от 24ч съкратена седмична почивка", weekly45Unavailable: "45ч не е възможна", sixWorkCyclesCompleted: "6 работни дни са завършени", compensationRequired: "Дължиш компенсация", weeklyRestComplete: "Седмична почивка", reducedWeeklyRest: "Съкратена седмична почивка", compensationMissing: "Липсват часове", weeklyRestRequired: "Нужна седмична почивка", dailyRestCompleted: "", violation: "Нарушена почивка", pending: "Няма старт", restNotCompleted: "Почивката не е спазена", weeklyRestEnded: "Седмичната почивка приключи", notCompleted: "Не е завършена", backupRestored: "Backup-ът е възстановен.", backupFailed: "Този backup файл не може да се възстанови.", installHelp: "Използвай менюто на браузъра и избери Инсталирай приложението / Добави на началния екран.", futureWeekClose: "Затвори празна седмица", fastCloseHint: "Тази седмица няма работни данни. Маркирай дните и я затвори без попълване ден по ден.", allOff: "Всички почивни", allHoliday: "Всички отпуск", chooseDays: "Избор по дни", closeFutureWeek: "Затвори седмицата", goToCurrentWeek: "Върни към текущата седмица", savedWeeks: "Запазени седмици", noSavedWeeks: "Няма запазени седмици", fullWeek: "пълна", partialWeek: "частична", selectSaturday: "Избери събота", savedFull: "Запазена пълна", savedPartial: "Запазена частична", emptyWeek: "Празна", restSnapshot: "Почивки", usedExtras: "Използвани бонуси / маркери", detailedView: "Подробен изглед", hideDailyDetails: "Скрий дните", archiveWatermark: "АРХИВ", editingArchive: "Редакция на стара запазена седмица"
+    from11hRest: "от 11ч почивка", from9hRest: "от 9ч почивка", nineHourOption: "9ч старт", reducedLimitReached: "лимитът за 9ч е достигнат", splitRestNotCounted: "Не се брои като 9ч съкратена почивка", incompleteShift: "Незавършена смяна.", finishBeforeStart: "Крайният час е преди стартовия.", longShift: "Дълга смяна", shiftLimitExceeded: "Надвишен лимит 15ч", rest11: "Дневна почивка", rest9: "Съкратена почивка", previousShiftTooLongFor11h: "11ч почивка не е възможна", weeklyRest45Option: "45ч седмична", weeklyRest24Option: "24ч вариант", owedLater: "по-късно", toFullWeeklyRest: "остават", weeklyRestCard: "Седмична почивка", from45hWeeklyRest: "от 45ч седмична почивка", from24hReducedWeeklyRest: "от 24ч съкратена седмична почивка", weekly45Unavailable: "45ч не е възможна", sixWorkCyclesCompleted: "6 работни дни са завършени", compensationRequired: "Дължиш компенсация", compensateBy: "Върни до", fixedWeek: "Седмица", weeklyRestComplete: "Седмична почивка", reducedWeeklyRest: "Съкратена седмична почивка", compensationMissing: "Липсват часове", weeklyRestRequired: "Нужна седмична почивка", dailyRestCompleted: "", violation: "Нарушена почивка", pending: "Няма старт", restNotCompleted: "Почивката не е спазена", weeklyRestEnded: "Седмичната почивка приключи", notCompleted: "Не е завършена", backupRestored: "Backup-ът е възстановен.", backupFailed: "Този backup файл не може да се възстанови.", installHelp: "Използвай менюто на браузъра и избери Инсталирай приложението / Добави на началния екран.", futureWeekClose: "Затвори празна седмица", fastCloseHint: "Тази седмица няма работни данни. Маркирай дните и я затвори без попълване ден по ден.", allOff: "Всички почивни", allHoliday: "Всички отпуск", chooseDays: "Избор по дни", closeFutureWeek: "Затвори седмицата", goToCurrentWeek: "Върни към текущата седмица", savedWeeks: "Запазени седмици", noSavedWeeks: "Няма запазени седмици", fullWeek: "пълна", partialWeek: "частична", selectSaturday: "Избери събота", savedFull: "Запазена пълна", savedPartial: "Запазена частична", emptyWeek: "Празна", restSnapshot: "Почивки", usedExtras: "Използвани бонуси / маркери", detailedView: "Подробен изглед", hideDailyDetails: "Скрий дните", archiveWatermark: "АРХИВ", editingArchive: "Редакция на стара запазена седмица"
   }
 };
 function t(key: string): string { return UI_TEXT[uiLang]?.[key] || UI_TEXT.en[key] || key; }
@@ -781,7 +781,33 @@ function getWeeklyRestCandidateForSelectedWeek(selectedSaturdayISO: string): Wee
   return { closingSaturdayISO: previousSaturdayISO, finishAbs: anchor.finishAbs };
 }
 
-function getLastCompletedWeeklyRestInfo(selectedSaturdayISO: string, days: DayRecord[]): { minutes: number; reduced: boolean } | null {
+type WeeklyRestInfo = {
+  minutes: number;
+  reduced: boolean;
+  compensationMinutes: number;
+  compensationDeadlineISO: string | null;
+  fixedWeekNumber: number | null;
+};
+
+function getISOWeekInfo(date: Date): { year: number; week: number; monday: Date; sunday: Date } {
+  const local = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const weekday = local.getDay() || 7;
+  const monday = addDays(local, 1 - weekday);
+  const sunday = addDays(monday, 6);
+  const thursday = addDays(monday, 3);
+  const firstThursday = new Date(thursday.getFullYear(), 0, 4);
+  const firstWeekday = firstThursday.getDay() || 7;
+  const firstWeekMonday = addDays(firstThursday, 1 - firstWeekday);
+  const week = Math.floor((monday.getTime() - firstWeekMonday.getTime()) / (7 * 86400000)) + 1;
+  return { year: thursday.getFullYear(), week, monday, sunday };
+}
+
+function formatAppDate(iso: string): string {
+  const date = fromISODate(iso);
+  return new Intl.DateTimeFormat(uiLang === "bg" ? "bg-BG" : "en-GB", { day: "2-digit", month: "short", year: "numeric" }).format(date);
+}
+
+function getLastCompletedWeeklyRestInfo(selectedSaturdayISO: string, days: DayRecord[]): WeeklyRestInfo | null {
   const candidate = getWeeklyRestCandidateForSelectedWeek(selectedSaturdayISO);
   if (!candidate) return null;
   for (const index of getOrderedDayIndices(days)) {
@@ -791,7 +817,22 @@ function getLastCompletedWeeklyRestInfo(selectedSaturdayISO: string, days: DayRe
     const startAbs = getDayTimeAbsMinutes(day, start);
     if (startAbs > candidate.finishAbs) {
       const minutes = Math.max(0, startAbs - candidate.finishAbs);
-      return { minutes, reduced: minutes >= 24 * 60 && minutes < 45 * 60 };
+      const reduced = minutes >= 24 * 60 && minutes < 45 * 60;
+      const compensationMinutes = reduced ? Math.max(0, 45 * 60 - minutes) : 0;
+      if (!reduced) return { minutes, reduced, compensationMinutes, compensationDeadlineISO: null, fixedWeekNumber: null };
+
+      // Until explicit cross-week attribution is added, use the fixed week in which
+      // the reduced weekly rest started. This gives the earliest safe deadline.
+      const restStart = new Date(candidate.finishAbs * 60000);
+      const fixedWeek = getISOWeekInfo(restStart);
+      const deadline = addDays(fixedWeek.sunday, 21);
+      return {
+        minutes,
+        reduced,
+        compensationMinutes,
+        compensationDeadlineISO: toISODate(deadline),
+        fixedWeekNumber: fixedWeek.week,
+      };
     }
   }
   return null;
@@ -1145,8 +1186,10 @@ function runDevTests() {
 }
 
 
+type StorageSnapshot = Record<string, string>;
+
 type DriverBackup = {
-  version: 1;
+  version: 2;
   exportedAt: string;
   activeWeekSaturdayISO: string;
   days: DayRecord[];
@@ -1157,7 +1200,36 @@ type DriverBackup = {
   closedWeeks?: string[];
   payProfiles?: PayProfileV2[];
   activePayProfileId?: string;
+  storageSnapshot: StorageSnapshot;
 };
+
+function collectLocalStorageSnapshot(): StorageSnapshot {
+  const snapshot: StorageSnapshot = {};
+  if (typeof window === "undefined") return snapshot;
+  for (let i = 0; i < localStorage.length; i += 1) {
+    const key = localStorage.key(i);
+    if (key == null) continue;
+    const value = localStorage.getItem(key);
+    if (value != null) snapshot[key] = value;
+  }
+  return snapshot;
+}
+
+function restoreLocalStorageSnapshot(snapshot: StorageSnapshot) {
+  if (typeof window === "undefined") return;
+  const rollback = collectLocalStorageSnapshot();
+  try {
+    localStorage.clear();
+    Object.entries(snapshot).forEach(([key, value]) => {
+      if (typeof key !== "string" || typeof value !== "string") throw new Error("Invalid storage snapshot");
+      localStorage.setItem(key, value);
+    });
+  } catch (error) {
+    localStorage.clear();
+    Object.entries(rollback).forEach(([key, value]) => localStorage.setItem(key, value));
+    throw error;
+  }
+}
 
 function collectSavedWeeksFromLocalStorage(): Record<string, SavedWeekData> {
   const savedWeeks: Record<string, SavedWeekData> = {};
@@ -1176,8 +1248,16 @@ function collectSavedWeeksFromLocalStorage(): Record<string, SavedWeekData> {
 
 function downloadDriverBackup(days: DayRecord[], settings: SettingsState, payslipActualWeek: string, archive: any[]) {
   const activeWeekSaturdayISO = getSaturdayDay(days).dateISO;
+  // Flush current in-memory state before taking the complete storage snapshot.
+  localStorage.setItem(getWeekStorageKey(activeWeekSaturdayISO), JSON.stringify({ days, settings, payslipActualWeek, activePayProfileId: localStorage.getItem(ACTIVE_PAY_PROFILE_STORAGE_KEY) || "" }));
+  localStorage.setItem(ACTIVE_WEEK_STORAGE_KEY, activeWeekSaturdayISO);
+  localStorage.setItem("days", JSON.stringify(days));
+  localStorage.setItem("driverApp_days", JSON.stringify(days));
+  localStorage.setItem("settings", JSON.stringify(settings));
+  localStorage.setItem("archive", JSON.stringify(archive));
+
   const backup: DriverBackup = {
-    version: 1,
+    version: 2,
     exportedAt: new Date().toISOString(),
     activeWeekSaturdayISO,
     days,
@@ -1187,9 +1267,9 @@ function downloadDriverBackup(days: DayRecord[], settings: SettingsState, paysli
     savedWeeks: collectSavedWeeksFromLocalStorage(),
     closedWeeks: readClosedWeeks(),
     payProfiles: loadStoredPayProfiles(settings),
-    activePayProfileId: typeof window !== "undefined" ? localStorage.getItem(ACTIVE_PAY_PROFILE_STORAGE_KEY) || undefined : undefined,
+    activePayProfileId: localStorage.getItem(ACTIVE_PAY_PROFILE_STORAGE_KEY) || undefined,
+    storageSnapshot: collectLocalStorageSnapshot(),
   };
-  backup.savedWeeks[activeWeekSaturdayISO] = { days, settings, payslipActualWeek };
   const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -1214,7 +1294,17 @@ function restoreDriverBackupFile(file: File, callbacks: {
   const reader = new FileReader();
   reader.onload = () => {
     try {
-      const parsed = JSON.parse(String(reader.result || "{}")) as Partial<DriverBackup>;
+      const parsed = JSON.parse(String(reader.result || "{}")) as Partial<DriverBackup> & { version?: number };
+      if (parsed.version === 2 && parsed.storageSnapshot && typeof parsed.storageSnapshot === "object") {
+        const snapshot = Object.fromEntries(Object.entries(parsed.storageSnapshot).filter(([key, value]) => typeof key === "string" && typeof value === "string")) as StorageSnapshot;
+        if (!Object.keys(snapshot).length) throw new Error("Empty storage snapshot");
+        restoreLocalStorageSnapshot(snapshot);
+        window.alert(t("backupRestored"));
+        window.location.reload();
+        return;
+      }
+
+      // Backward-compatible restore for older version 1 backup files.
       const restoredDays = Array.isArray(parsed.days) ? parsed.days : [];
       const restoredSettings = parsed.settings ? sanitizeSettings(parsed.settings) : initialSettings;
       const restoredArchive = Array.isArray(parsed.archive) ? parsed.archive : [];
@@ -1229,6 +1319,7 @@ function restoreDriverBackupFile(file: File, callbacks: {
               days: fallbackDays.map((day, index) => sanitizeDayRecord(rawWeek.days?.[index], day)),
               settings: sanitizeSettings(rawWeek.settings),
               payslipActualWeek: typeof rawWeek.payslipActualWeek === "string" ? rawWeek.payslipActualWeek : "",
+              activePayProfileId: typeof rawWeek.activePayProfileId === "string" ? rawWeek.activePayProfileId : "",
             };
             localStorage.setItem(getWeekStorageKey(saturdayISO), JSON.stringify(cleanedWeek));
           }
@@ -1236,8 +1327,14 @@ function restoreDriverBackupFile(file: File, callbacks: {
       }
       const activeSaturday = typeof parsed.activeWeekSaturdayISO === "string" ? parsed.activeWeekSaturdayISO : getSaturdayDay(restoredDays).dateISO;
       if (Array.isArray(parsed.closedWeeks)) localStorage.setItem(CLOSED_WEEKS_STORAGE_KEY, JSON.stringify(parsed.closedWeeks.filter((item) => typeof item === "string")));
-      if (Array.isArray(parsed.payProfiles)) { const restoredProfiles = parsed.payProfiles.map(sanitizePayProfile).filter(Boolean) as PayProfileV2[]; if (restoredProfiles.length) { localStorage.setItem(PAY_PROFILES_STORAGE_KEY, JSON.stringify(restoredProfiles)); if (typeof parsed.activePayProfileId === "string") localStorage.setItem(ACTIVE_PAY_PROFILE_STORAGE_KEY, parsed.activePayProfileId); } }
-      localStorage.setItem(getWeekStorageKey(activeSaturday), JSON.stringify({ days: restoredDays, settings: restoredSettings, payslipActualWeek: restoredPayslip }));
+      if (Array.isArray(parsed.payProfiles)) {
+        const restoredProfiles = parsed.payProfiles.map(sanitizePayProfile).filter(Boolean) as PayProfileV2[];
+        if (restoredProfiles.length) {
+          localStorage.setItem(PAY_PROFILES_STORAGE_KEY, JSON.stringify(restoredProfiles));
+          if (typeof parsed.activePayProfileId === "string") localStorage.setItem(ACTIVE_PAY_PROFILE_STORAGE_KEY, parsed.activePayProfileId);
+        }
+      }
+      localStorage.setItem(getWeekStorageKey(activeSaturday), JSON.stringify({ days: restoredDays, settings: restoredSettings, payslipActualWeek: restoredPayslip, activePayProfileId: parsed.activePayProfileId || "" }));
       localStorage.setItem(ACTIVE_WEEK_STORAGE_KEY, activeSaturday);
       localStorage.setItem("days", JSON.stringify(restoredDays));
       localStorage.setItem("driverApp_days", JSON.stringify(restoredDays));
@@ -1995,7 +2092,7 @@ function SettingsModal({ settings, setSettings, days, setDays, archive, setArchi
       </div>
 <div style={{ marginBottom: 14, padding: 12, borderRadius: 14, border: "1px solid #dbe3ee", background: "#f8fafc" }}><SectionHeading title={t("paySetupV2")} right="v2" /><div style={{ fontSize: 12, color: "#64748b", lineHeight: 1.35, marginBottom: 10 }}>{t("activePayProfile")}: {activeProfileLabel || "Profile 1"}</div><button style={{ ...buttonStyle, width: "100%", background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={onOpenPaySetupV2}>{t("openPaySetup")}</button></div><SectionHeading title={t("payRates")} />{activePayProfile ? <Field label={t("activePayProfile")}><input style={{ ...inputStyle, marginBottom: 8, fontWeight: 900 }} type="text" value={activeProfileLabel} readOnly /></Field> : <SettingsInput label={t("companyName")} textMode value={settings.companyName || ""} onChange={(v) => setSettings({ ...settings, companyName: v })} />}<SettingsInput label={t("weekdayPayRate")} value={settings.weekdayRate} onChange={(v) => setSettings({ ...settings, weekdayRate: v })} /><SettingsInput label={t("saturdayPayRate")} value={settings.saturdayRate} onChange={(v) => setSettings({ ...settings, saturdayRate: v })} /><SettingsInput label={t("sundayPayRate")} value={settings.sundayRate} onChange={(v) => setSettings({ ...settings, sundayRate: v })} /><div style={{marginTop:8}}><label>{t("pensionMode")}</label><select value={settings.pensionMode} onChange={(e)=>setSettings({...settings,pensionMode:e.target.value})}><option value="none">{t("noPension")}</option><option value="manual">{t("manualPension")}</option></select>{settings.pensionMode==="manual" && <SettingsInput label={t("pensionDeduction")} value={settings.pensionManualAmount} onChange={(v)=>setSettings({...settings,pensionManualAmount:v})} />}</div><SettingsInput label={t("overtimeThreshold")} value={settings.overtimeThresholdHours} onChange={(v) => setSettings({ ...settings, overtimeThresholdHours: v })} /><SettingsInput label={t("overtimePayRate")} value={settings.overtimeRate} onChange={(v) => setSettings({ ...settings, overtimeRate: v })} /><SettingsInput label={t("foodAllowance")} value={settings.foodAllowanceRate} onChange={(v) => setSettings({ ...settings, foodAllowanceRate: v })} /><SettingsInput label={t("nightOutPay")} value={settings.nightOutRate} onChange={(v) => setSettings({ ...settings, nightOutRate: v })} /><SectionHeading title={t("bonusPayRates")} />{BONUS_TYPES.map((bonusType) => <SettingsInput key={bonusType} label={bonusType} value={settings.bonusRates[bonusType]} onChange={(v) => setSettings({ ...settings, bonusRates: { ...settings.bonusRates, [bonusType]: v } })} />)}<SectionHeading title={t("customBonuses")} />{settings.customBonuses.map((customBonus, index) => <div key={customBonus.id} style={{ display: "grid", gridTemplateColumns: "1fr 92px", gap: 8, marginBottom: 8 }}><input style={inputStyle} value={customBonus.name} onChange={(e) => { const customBonuses = settings.customBonuses.map((item, itemIndex) => itemIndex === index ? { ...item, name: e.target.value } : item); setSettings({ ...settings, customBonuses }); }} placeholder={`${t("customBonusName")} ${index + 1}`} /><input style={inputStyle} inputMode="decimal" value={customBonus.rate} onChange={(e) => { const customBonuses = settings.customBonuses.map((item, itemIndex) => itemIndex === index ? { ...item, rate: e.target.value } : item); setSettings({ ...settings, customBonuses }); }} placeholder={t("customBonusRate")} /></div>)}<div style={{ marginTop: 12, padding: 10, borderRadius: 12, background: "#f8fafc", border: "1px solid #e2e8f0", color: "#64748b", fontSize: 12, fontWeight: 800 }}>Driver Pay App {APP_VERSION}</div><button style={{ ...buttonStyle, width: "100%", marginTop: 8, background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={onClose}>{t("done")}</button></ModalCard></Overlay>;
 }
-function WeekViewModal(props: { weekEndingLabel: string; settings: SettingsState; weekTotals: WeekTotals; payslipActualWeek: string; setPayslipActualWeek: (value: string) => void; weekDifference: number; weekBonusSummary: Record<BonusType | "nightOuts", number>; lastWeeklyRestInfo: { minutes: number; reduced: boolean } | null; previewWeek: ComputedDay[]; taxedWeek: ComputedDay[]; setCurrentIndex: (index: number) => void; close: () => void; endWeek: (type: WeekArchiveType, dayTypeOverrides?: Record<string, DayType>) => void; goToCurrentWeek: () => void }) {
+function WeekViewModal(props: { weekEndingLabel: string; settings: SettingsState; weekTotals: WeekTotals; payslipActualWeek: string; setPayslipActualWeek: (value: string) => void; weekDifference: number; weekBonusSummary: Record<BonusType | "nightOuts", number>; lastWeeklyRestInfo: WeeklyRestInfo | null; previewWeek: ComputedDay[]; taxedWeek: ComputedDay[]; setCurrentIndex: (index: number) => void; close: () => void; endWeek: (type: WeekArchiveType, dayTypeOverrides?: Record<string, DayType>) => void; goToCurrentWeek: () => void }) {
   const p = props;
   const [showDetails, setShowDetails] = useState(false);
   const [showCloseConfirm, setShowCloseConfirm] = useState(false);
@@ -2043,7 +2140,7 @@ function WeekViewModal(props: { weekEndingLabel: string; settings: SettingsState
     return <Overlay onClose={() => setShowCloseConfirm(false)}><ModalCard><ModalTitle>{t("endWeekPreview")}</ModalTitle><div style={{ fontSize: 14, fontWeight: 800, color: "#334155", marginBottom: 12 }}>{p.weekEndingLabel}</div><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}><MiniStat label={t("totalHours")} value={formatMinutes(p.weekTotals.worked)} /><MiniStat label={t("km")} value={String(p.weekTotals.km)} /><MiniStat label={t("estimatedNet")} value={formatMoney(p.weekTotals.net)} /><label style={{ ...inputStyle, padding: 10, display: "grid", gap: 3 }}><div style={{ fontSize: 11, fontWeight: 900, color: "#64748b" }}>{t("payslipNet")}</div><input style={{ border: 0, outline: 0, background: "transparent", fontSize: 20, fontWeight: 900, width: "100%" }} type="text" inputMode="decimal" value={p.payslipActualWeek} onChange={(e) => p.setPayslipActualWeek(e.target.value)} placeholder="0.00" /></label><MiniStat label={t("reducedRests")} value={String(restSummary.reduced)} /><MiniStat label={t("splitRests")} value={String(splitDays.length)} /></div>{usedExtras.length > 0 && <div style={{ marginTop: 12, padding: 12, borderRadius: 14, border: "1px solid #e2e8f0", background: "#f8fafc" }}><div style={{ fontSize: 12, fontWeight: 900, color: "#475569", marginBottom: 8 }}>{t("usedExtras")}</div><div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>{usedExtras.map((item) => <span key={item} style={{ padding: "5px 9px", borderRadius: 999, background: "#e2e8f0", color: "#334155", fontSize: 12, fontWeight: 900 }}>{item}</span>)}</div></div>}<div style={{ ...differenceStyle, borderRadius: 14, padding: 12, marginTop: 12 }}><div style={{ fontSize: 12, marginBottom: 4 }}>{t("difference")}</div><div style={{ fontSize: 22, fontWeight: 900 }}>{hasPayslip ? formatMoney(p.weekDifference) : "—"}</div></div><div style={{ display: "grid", gap: 10, marginTop: 14 }}><button style={{ ...closeTypeStyle, background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={() => closeAndExit("worked")}>{t("confirmCloseWeek")}</button><div style={{ borderTop: "1px solid #e2e8f0", paddingTop: 10 }}><div style={{ fontSize: 12, color: "#64748b", fontWeight: 800, marginBottom: 6 }}>Mark only empty remaining days:</div><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}><button style={closeTypeStyle} onClick={() => closeAndExit("off")}>{t("remainingOff")}</button><button style={closeTypeStyle} onClick={() => closeAndExit("holiday")}>{t("remainingHoliday")}</button></div></div><button style={buttonStyle} onClick={() => setShowCloseConfirm(false)}>{t("back")}</button></div></ModalCard></Overlay>;
   }
 
-  return <Overlay onClose={p.close}><ModalCard><div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}><div><ModalTitle>{t("weekPreview")}</ModalTitle><div style={{ fontSize: 14, fontWeight: 800, color: "#334155", marginTop: 4 }}>{p.weekEndingLabel}</div>{p.settings.companyName?.trim() && <div style={{ fontSize: 12, fontWeight: 900, color: "#64748b", marginTop: 4 }}>{p.settings.companyName.trim()}</div>}</div><button style={{ ...buttonStyle, padding: "8px 12px" }} onClick={p.close}>{t("close")}</button></div><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 10 }}><MiniStat label={t("hours")} value={formatMinutes(p.weekTotals.worked)} /><MiniStat label={t("ot")} value={p.weekTotals.overtime > 0 ? formatMinutes(p.weekTotals.overtime) : "—"} /><MiniStat label={t("km")} value={p.weekTotals.km ? String(p.weekTotals.km) : "—"} /><MiniStat label={t("estimatedNet")} value={formatMoney(p.weekTotals.net)} /><MiniStat label={t("bonuses")} value={bonusCount ? `x${bonusCount}` : "—"} /><MiniStat label={t("nightOut")} value={nightOutDays.length ? `x${nightOutDays.length}` : "—"} /></div>{p.lastWeeklyRestInfo && <div style={{ marginTop: 12, padding: "9px 12px", borderRadius: 14, border: "1px solid #e2e8f0", background: "#f8fafc", display: "flex", justifyContent: "space-between", gap: 10, fontSize: 13, fontWeight: 900 }}><span>{t("lastWeeklyRest")}</span><span>{formatMinutes(p.lastWeeklyRestInfo.minutes)}{p.lastWeeklyRestInfo.reduced ? ` • ${t("reducedWeeklyRest")} • ${t("compensationRequired")}` : ""}</span></div>}<div style={{ marginTop: 12, padding: 12, borderRadius: 14, border: "1px solid #e2e8f0", background: "#f8fafc" }}><div style={{ fontSize: 13, fontWeight: 900, marginBottom: 8 }}>{t("restSnapshot")}</div><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}><MiniStat label="11h" value={String(restSummary.good)} /><MiniStat label="9h" value={String(restSummary.reduced)} /><MiniStat label="SR" value={String(splitDays.length)} /></div>{restSummary.violation > 0 && <div style={{ marginTop: 8, color: "#b91c1c", fontWeight: 900 }}>Rest warnings: {restSummary.violation}</div>}</div><button style={{ ...buttonStyle, width: "100%", marginTop: 12, background: showDetails ? "#e2e8f0" : "#f8fafc" }} onClick={() => setShowDetails((value) => !value)}>{showDetails ? t("hideDailyDetails") : t("detailedView")}</button>{showDetails && <div style={{ marginTop: 12 }}><SectionHeading title={t("days")} right={t("noPoundsHere")} />{p.previewWeek.map((day) => { const originalIndex = p.taxedWeek.findIndex((d) => d.id === day.id); const isWorked = day.dayType === "work" && day.workedMinutes != null; const hasNightOut = Boolean(day.nightOut); return <button key={day.id} onClick={() => { p.setCurrentIndex(originalIndex); p.close(); window.scrollTo({ top: 0, behavior: "smooth" }); }} style={{ ...buttonStyle, display: "grid", gap: 5, textAlign: "left", padding: 12, marginBottom: 8, background: day.splitBreak ? "linear-gradient(135deg,#ecfccb 0%,#fef08a 100%)" : "#fff" }}><div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}><div style={{ fontWeight: 900, fontSize: 16 }}>{dayNameLabel(day.dayName)} · {day.dateLabel}</div><div style={{ display: "flex", gap: 5 }}>{hasNightOut && <span style={{ padding: "2px 8px", borderRadius: 999, background: "#dcfce7", color: "#166534", fontSize: 11, fontWeight: 900 }}>NO</span>}{day.splitBreak && <span style={{ padding: "2px 8px", borderRadius: 999, background: "#fde047", color: "#365314", fontSize: 11, fontWeight: 900 }}>SR</span>}</div></div><div style={{ fontSize: 13, color: "#475569", fontWeight: 700 }}>{day.dayType === "holiday" ? t("holiday") : day.dayType === "off" ? t("off") : `${normalizeTime(day.start) || "—"} → ${normalizeTime(day.finish) || "—"}`}</div><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 10px", fontSize: 12, color: "#0f172a", alignItems: "start" }}><span style={{ whiteSpace: "nowrap" }}>{t("hours")}: <b>{formatMinutes(day.workedMinutes)}</b></span><span style={{ whiteSpace: "nowrap" }}>{t("km")}: <b>{day.kmRun ?? "—"}</b></span><span style={{ whiteSpace: "nowrap" }}>{t("ot")}: <b>{day.overtimeMinutes > 0 ? formatMinutes(day.overtimeMinutes) : "—"}</b></span></div>{isWorked && <div style={{ fontSize: 12, color: "#64748b" }}>{t("bonuses")}: {bonusTextForDay(day)}</div>}</button>; })}</div>}<div style={{ marginTop: 12, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}><button style={buttonStyle} onClick={p.close}>{t("back")}</button><button style={{ ...buttonStyle, background: "#0f172a", color: "white", borderColor: "#0f172a", fontWeight: 900 }} onClick={() => setShowCloseConfirm(true)}>{t("endWeek")}</button></div></ModalCard></Overlay>;
+  return <Overlay onClose={p.close}><ModalCard><div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}><div><ModalTitle>{t("weekPreview")}</ModalTitle><div style={{ fontSize: 14, fontWeight: 800, color: "#334155", marginTop: 4 }}>{p.weekEndingLabel}</div>{p.settings.companyName?.trim() && <div style={{ fontSize: 12, fontWeight: 900, color: "#64748b", marginTop: 4 }}>{p.settings.companyName.trim()}</div>}</div><button style={{ ...buttonStyle, padding: "8px 12px" }} onClick={p.close}>{t("close")}</button></div><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 10 }}><MiniStat label={t("hours")} value={formatMinutes(p.weekTotals.worked)} /><MiniStat label={t("ot")} value={p.weekTotals.overtime > 0 ? formatMinutes(p.weekTotals.overtime) : "—"} /><MiniStat label={t("km")} value={p.weekTotals.km ? String(p.weekTotals.km) : "—"} /><MiniStat label={t("estimatedNet")} value={formatMoney(p.weekTotals.net)} /><MiniStat label={t("bonuses")} value={bonusCount ? `x${bonusCount}` : "—"} /><MiniStat label={t("nightOut")} value={nightOutDays.length ? `x${nightOutDays.length}` : "—"} /></div>{p.lastWeeklyRestInfo && <div style={{ marginTop: 12, padding: "9px 12px", borderRadius: 14, border: "1px solid #e2e8f0", background: "#f8fafc", display: "grid", gap: 5, fontSize: 13, fontWeight: 900 }}><div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}><span>{t("lastWeeklyRest")}</span><span>{formatMinutes(p.lastWeeklyRestInfo.minutes)}{p.lastWeeklyRestInfo.reduced ? ` • ${t("reducedWeeklyRest")}` : ""}</span></div>{p.lastWeeklyRestInfo.reduced && <><div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}><span>{t("compensationRequired")}</span><span>{formatMinutes(p.lastWeeklyRestInfo.compensationMinutes)}</span></div>{p.lastWeeklyRestInfo.compensationDeadlineISO && <div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}><span>{t("compensateBy")}</span><span>{formatAppDate(p.lastWeeklyRestInfo.compensationDeadlineISO)}{p.lastWeeklyRestInfo.fixedWeekNumber ? ` • ${t("fixedWeek")} ${p.lastWeeklyRestInfo.fixedWeekNumber}` : ""}</span></div>}</>}</div>}<div style={{ marginTop: 12, padding: 12, borderRadius: 14, border: "1px solid #e2e8f0", background: "#f8fafc" }}><div style={{ fontSize: 13, fontWeight: 900, marginBottom: 8 }}>{t("restSnapshot")}</div><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}><MiniStat label="11h" value={String(restSummary.good)} /><MiniStat label="9h" value={String(restSummary.reduced)} /><MiniStat label="SR" value={String(splitDays.length)} /></div>{restSummary.violation > 0 && <div style={{ marginTop: 8, color: "#b91c1c", fontWeight: 900 }}>Rest warnings: {restSummary.violation}</div>}</div><button style={{ ...buttonStyle, width: "100%", marginTop: 12, background: showDetails ? "#e2e8f0" : "#f8fafc" }} onClick={() => setShowDetails((value) => !value)}>{showDetails ? t("hideDailyDetails") : t("detailedView")}</button>{showDetails && <div style={{ marginTop: 12 }}><SectionHeading title={t("days")} right={t("noPoundsHere")} />{p.previewWeek.map((day) => { const originalIndex = p.taxedWeek.findIndex((d) => d.id === day.id); const isWorked = day.dayType === "work" && day.workedMinutes != null; const hasNightOut = Boolean(day.nightOut); return <button key={day.id} onClick={() => { p.setCurrentIndex(originalIndex); p.close(); window.scrollTo({ top: 0, behavior: "smooth" }); }} style={{ ...buttonStyle, display: "grid", gap: 5, textAlign: "left", padding: 12, marginBottom: 8, background: day.splitBreak ? "linear-gradient(135deg,#ecfccb 0%,#fef08a 100%)" : "#fff" }}><div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}><div style={{ fontWeight: 900, fontSize: 16 }}>{dayNameLabel(day.dayName)} · {day.dateLabel}</div><div style={{ display: "flex", gap: 5 }}>{hasNightOut && <span style={{ padding: "2px 8px", borderRadius: 999, background: "#dcfce7", color: "#166534", fontSize: 11, fontWeight: 900 }}>NO</span>}{day.splitBreak && <span style={{ padding: "2px 8px", borderRadius: 999, background: "#fde047", color: "#365314", fontSize: 11, fontWeight: 900 }}>SR</span>}</div></div><div style={{ fontSize: 13, color: "#475569", fontWeight: 700 }}>{day.dayType === "holiday" ? t("holiday") : day.dayType === "off" ? t("off") : `${normalizeTime(day.start) || "—"} → ${normalizeTime(day.finish) || "—"}`}</div><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 10px", fontSize: 12, color: "#0f172a", alignItems: "start" }}><span style={{ whiteSpace: "nowrap" }}>{t("hours")}: <b>{formatMinutes(day.workedMinutes)}</b></span><span style={{ whiteSpace: "nowrap" }}>{t("km")}: <b>{day.kmRun ?? "—"}</b></span><span style={{ whiteSpace: "nowrap" }}>{t("ot")}: <b>{day.overtimeMinutes > 0 ? formatMinutes(day.overtimeMinutes) : "—"}</b></span></div>{isWorked && <div style={{ fontSize: 12, color: "#64748b" }}>{t("bonuses")}: {bonusTextForDay(day)}</div>}</button>; })}</div>}<div style={{ marginTop: 12, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}><button style={buttonStyle} onClick={p.close}>{t("back")}</button><button style={{ ...buttonStyle, background: "#0f172a", color: "white", borderColor: "#0f172a", fontWeight: 900 }} onClick={() => setShowCloseConfirm(true)}>{t("endWeek")}</button></div></ModalCard></Overlay>;
 }
 
 function Overlay({ children, onClose }: { children: React.ReactNode; onClose: () => void }) { return <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,0.45)", padding: 12, zIndex: 100, overflow: "auto" }} onMouseDown={onClose}><div onMouseDown={(e) => e.stopPropagation()}>{children}</div></div>; }
