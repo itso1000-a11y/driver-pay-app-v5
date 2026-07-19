@@ -1,3 +1,10 @@
+## v5.2.13 — QA TypeScript Validation Fix
+
+- Full QA found 14 TS1117 duplicate-property errors in the English `UI_TEXT` object.
+- Root cause: repeated pay/tax translation entries accumulated on one source line; JavaScript used the final values, but strict TypeScript validation rejected the object.
+- Removed only shadowed duplicate entries and retained the previously effective values.
+- No application logic or visual output changed.
+
 ## v5.2.12 — Safe Start Suggestion Regression Fix
 
 - Base: v5.2.11 indivisible weekly compensation test build.

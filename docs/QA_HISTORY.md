@@ -1,3 +1,11 @@
+## v5.2.13 — Full baseline QA
+
+- v5.2.12 failed strict TypeScript validation with 14 TS1117 duplicate-property errors in the English translation object.
+- Root cause fixed by removing shadowed duplicates while retaining the exact values previously used at runtime.
+- Exact v5.2.11 → v5.2.12 comparison passed: only the intended daily Start auto-accept path in `updateTimeValue`, version metadata, release documentation and rebuilt output changed; no CSS, Pay Engine, Archive, Weekly Rest Engine or compensation-ledger changes were found.
+- Required version bump to v5.2.13 because source and release documentation changed.
+- Production build, strict TypeScript validation, version identity, startup, persistence, Start/Finish, rest, weekly compensation, archive, pay, navigation, and PWA checks rerun as recorded in `QA_FULL_REPORT_v5.2.13.md`.
+
 ## v5.2.12 — Start proposal auto-accept regression QA
 
 - Valid daily proposal 07:00 + Finish 15:00: Start must become 07:00 immediately and worked hours must calculate.

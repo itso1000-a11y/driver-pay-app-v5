@@ -1,3 +1,9 @@
+## v5.2.13 — QA TypeScript Validation Fix
+
+- A full baseline QA pass exposed duplicate English translation keys that Vite warned about and TypeScript rejected.
+- The safe correction removes only shadowed duplicates and preserves the effective v5.2.12 text values.
+- Rest Engine, Pay Engine, Archive, storage, navigation, and layout remain unchanged.
+
 ## v5.2.12 — Safe Start Suggestion Regression Fix
 
 - Base: v5.2.11 indivisible weekly compensation test build.

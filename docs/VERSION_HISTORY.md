@@ -1,3 +1,9 @@
+## v5.2.13 — QA TypeScript Validation Fix
+
+- Removed duplicate English UI translation keys discovered by full QA.
+- Preserved the exact effective v5.2.12 runtime values.
+- No behavioural or visual redesign changes.
+
 ## v5.2.12 — Safe Start Suggestion Regression Fix
 
 - Base: v5.2.11 indivisible weekly compensation test build.

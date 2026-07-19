@@ -1,3 +1,10 @@
+## v5.2.13 — QA TypeScript Validation Fix
+
+- Base: v5.2.12 safe Start suggestion regression fix.
+- Removed duplicate English translation keys that caused TypeScript TS1117 validation failures while preserving v5.2.12 runtime text and behaviour.
+- No UI, Rest Engine, Pay Engine, Archive, persistence, or navigation logic changed.
+- Version advanced to v5.2.13 after QA-required source correction.
+
 ## v5.2.12 — Safe Start Suggestion Regression Fix
 
 - Base: v5.2.11 indivisible weekly compensation test build.
