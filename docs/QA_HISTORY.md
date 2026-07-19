@@ -1,3 +1,12 @@
+## v5.2.12 — Start proposal auto-accept regression QA
+
+- Valid daily proposal 07:00 + Finish 15:00: Start must become 07:00 immediately and worked hours must calculate.
+- Existing manual Start must not be overwritten when Finish is entered.
+- Empty/invalid Finish must not accept the proposal.
+- Weekly-rest proposal must not be silently converted by this daily-only path.
+- Outstanding compensation must not affect Start acceptance or day completion.
+- Compensation ledger threshold scenarios from v5.2.11 remain unchanged.
+
 ## v5.2.11 — Indivisible Weekly Rest Compensation
 
 - Base inspected first: v5.2.10 already calculated exact reduced weekly-rest compensation and its deadline, but had no compensation ledger or completion logic.

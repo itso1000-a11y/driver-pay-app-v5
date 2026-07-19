@@ -1,3 +1,12 @@
+## v5.2.12 — Safe Start Suggestion Regression Fix
+
+- Base: v5.2.11 indivisible weekly compensation test build.
+- Restored the fast-entry workflow for a valid daily Start proposal: entering Finish now atomically saves the current daily proposal as the real Start and saves Finish in the same state update.
+- Existing manual Start values are never overwritten.
+- Weekly-rest proposals are not silently accepted by this path.
+- Compensation ledger, indivisible compensation, deadlines, Weekly Rest Engine, Daily Rest Engine, Start validation, Finish formatting, Save & Next and Pay Engine were not changed.
+- Version advanced to v5.2.12.
+
 ## v5.2.11 — Indivisible Weekly Rest Compensation
 
 - Base inspected first: v5.2.10 already calculated exact reduced weekly-rest compensation and its deadline, but had no compensation ledger or completion logic.

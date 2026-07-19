@@ -1651,7 +1651,17 @@ export default function App() {
   function updateCurrentDay<K extends keyof DayRecord>(key: K, value: DayRecord[K]) { if (weekLocked) return; setDays((prev) => prev.map((day, index) => (index === currentIndex ? { ...day, [key]: value } : day))); }
   function updateTimeValue(field: "start" | "finish", rawValue: string) {
     if (rawValue === "") { updateCurrentDay(field, ""); return; }
-    updateCurrentDay(field, formatTimeInput(rawValue));
+    const formattedValue = formatTimeInput(rawValue);
+    if (field === "finish" && !normalizeTime(currentDay.start || "") && dailyPrimarySuggestedStart) {
+      // Restore the established fast-entry workflow: entering Finish accepts the
+      // current valid DAILY Start proposal as the real Start in the same update.
+      // Weekly-rest proposals remain suggestions and compensation state is irrelevant.
+      setDays((prev) => prev.map((day, index) => index === currentIndex
+        ? { ...day, start: dailyPrimarySuggestedStart, finish: formattedValue }
+        : day));
+      return;
+    }
+    updateCurrentDay(field, formattedValue);
   }
   function normalizeTimeValue(field: "start" | "finish") { updateCurrentDay(field, normalizeTime(currentDay[field] || "")); }
   function updateKmValue(field: "startKm" | "finishKm", rawValue: string) {
