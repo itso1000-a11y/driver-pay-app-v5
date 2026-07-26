@@ -1,6 +1,6 @@
 # Driver Pay App — Master Project Reference
 
-**Current documented release:** v5.2.14  
+**Current documented release:** v5.2.15  
 **Purpose of this file:** primary continuity reference for every future development session.
 
 ## 1. Project purpose
@@ -35,6 +35,18 @@ Do not begin implementation until the existing behaviour and prior decisions hav
 - Green means compliant/complete, yellow means reduced or attention, red means a real infringement/error, grey means neutral or suggested.
 - Every functional fix receives its own version or subversion.
 - Version identity must match across package metadata, UI, title, manifest, service worker, documentation, output and ZIP filename.
+
+
+## Backup, Restore and future cloud synchronisation — locked architecture
+
+- Backup/Restore is the current mechanism for transferring and synchronising the complete application state between devices.
+- A Restore replaces the destination device state with the backup state; it must not silently merge stale local data.
+- After Restore, the application continues from the restored state.
+- Recorded historical facts come from the backup. Derived/live values may be recalculated only when the result is safe and unambiguous.
+- A failed Restore must preserve the destination's previous state through atomic rollback.
+- Future Cloud Sync must use the same state format and the same restore/recalculation rules. Cloud is a transport layer, not a separate Rest, Pay, Archive or Compensation engine.
+- Rest Engine, Pay Engine, Archive and Compensation logic must not depend on whether state arrived from local storage, a backup file or a future cloud service.
+
 
 ## 4. Current architecture summary
 

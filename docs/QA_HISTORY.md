@@ -1,3 +1,15 @@
+## v5.2.15 — Backup/Restore round-trip QA
+
+- Scope: test infrastructure only; no production UI or logic modification.
+- Representative phone state exported as a complete storage snapshot.
+- Restore into a computer state containing different and stale data passed.
+- Exact snapshot equality after restore passed.
+- Stale destination-only keys were removed rather than merged.
+- Current/saved week facts, kilometres, settings, archive, pay profiles, weekly-rest candidate and compensation ledger survived unchanged.
+- Simulated storage write failure triggered full rollback to the original destination state.
+- Static production guards confirmed version-2 complete snapshot export, snapshot restore, rollback protection and reload path remain present.
+- Production build revalidation was attempted, but dependency installation timed out in this environment; the existing v5.2.14 production bundle was retained with version identity updated because production application source remained byte-for-byte unchanged.
+
 ## v5.2.14 — Documentation-only release QA
 
 - Scope: documentation continuity foundation and version identity only.

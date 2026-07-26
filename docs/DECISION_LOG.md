@@ -1,3 +1,12 @@
+## Locked — Backup/Restore and future cloud sync
+
+- Backup/Restore transfers the complete application state between devices.
+- Restore replaces destination state rather than merging stale data.
+- Historical facts are restored from the backup; derived/live values may be recalculated only when safe and unambiguous.
+- Restore failure must roll back atomically.
+- Future cloud sync must reuse the same state contract and restore/recalculation rules; cloud is transport only.
+- No separate cloud-specific Rest, Pay, Archive or Compensation logic.
+
 # Driver Pay App — Decision Log
 
 This file records accepted decisions that must be checked before changing behaviour. Later entries may clarify an earlier decision, but accepted rules are not silently discarded.

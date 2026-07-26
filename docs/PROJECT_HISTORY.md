@@ -1,3 +1,13 @@
+## v5.2.15 — Backup/Restore Round-Trip QA Foundation
+
+- Base: v5.2.14 documentation continuity foundation.
+- Added isolated automated QA for complete Backup → Restore state transfer.
+- The test verifies that a backup from one device replaces the second device's local state and produces an identical complete storage snapshot.
+- The test covers current week data, saved weeks, settings, archive, pay profiles, active profile, weekly-rest candidate, closed weeks, language and weekly-compensation ledger.
+- Added an atomic rollback test: a failed restore must leave the pre-existing local state unchanged.
+- Added production-source guards confirming that the current version-2 backup still exports the complete localStorage snapshot and restores it before reload.
+- No application UI, user-facing text, Rest Engine, Pay Engine, Archive, navigation, layout, colour, calculation or production behaviour changed.
+
 ## v5.2.14 — Documentation Continuity Foundation
 
 - Established the permanent AI-readable project reference and release workflow.
