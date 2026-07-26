@@ -1,3 +1,12 @@
+## v5.2.14 — Documentation-only release QA
+
+- Scope: documentation continuity foundation and version identity only.
+- `src/App.tsx` SHA-256 compared with v5.2.13: unchanged.
+- New permanent documentation presence and paths checked.
+- Version metadata synchronised to 5.2.14.
+- No interactive browser regression was required for application behaviour because functional source was not changed.
+- Dependency installation/build revalidation was attempted but timed out in the execution environment; this is recorded as blocked, not as an application failure.
+
 ## v5.2.13 — Full baseline QA
 
 - v5.2.12 failed strict TypeScript validation with 14 TS1117 duplicate-property errors in the English translation object.

@@ -1,3 +1,10 @@
+## v5.2.14 — Documentation Continuity Foundation
+
+- Established the permanent AI-readable project reference and release workflow.
+- Consolidated locked architecture and behaviour decisions without changing application logic.
+- Added explicit startup order, change classification, QA levels and future backlog boundaries.
+- Application source remains unchanged from v5.2.13.
+
 ## v5.2.13 — QA TypeScript Validation Fix
 
 - Full QA found 14 TS1117 duplicate-property errors in the English `UI_TEXT` object.

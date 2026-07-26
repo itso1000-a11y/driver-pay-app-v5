@@ -1,3 +1,15 @@
+## v5.2.14 — Documentation Continuity Foundation
+
+- Base: v5.2.13 QA TypeScript validation fix.
+- Added a permanent master project reference and AI continuity workflow.
+- Added consolidated decision, architecture, release/QA workflow and backlog documents.
+- Formalised the rule that future work must inspect history and locked decisions before changing Rest Engine, Pay Engine, Pay Profiles, Archive or storage.
+- Formalised documentation maintenance, one-change-per-version, version consistency and QA-level rules.
+- No functional application source, UI, Rest Engine, Pay Engine, Archive, storage, navigation, layout, colour or calculation logic changed.
+- `src/App.tsx` remains byte-for-byte unchanged from v5.2.13.
+
+Validation status: ZIP/source/documentation checks completed. Dependency installation/build revalidation was attempted but the execution environment timed out; v5.2.13 build output is retained with version identity regenerated for v5.2.14.
+
 ## v5.2.13 — QA TypeScript Validation Fix
 
 - Base: v5.2.12 safe Start suggestion regression fix.

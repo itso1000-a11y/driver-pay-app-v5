@@ -1,3 +1,10 @@
+## v5.2.14 — Documentation Continuity Foundation
+
+- Established the permanent AI-readable project reference and release workflow.
+- Consolidated locked architecture and behaviour decisions without changing application logic.
+- Added explicit startup order, change classification, QA levels and future backlog boundaries.
+- Application source remains unchanged from v5.2.13.
+
 ## v5.2.13 — QA TypeScript Validation Fix
 
 - A full baseline QA pass exposed duplicate English translation keys that Vite warned about and TypeScript rejected.
