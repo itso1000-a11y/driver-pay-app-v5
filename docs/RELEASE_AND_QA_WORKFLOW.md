@@ -10,6 +10,8 @@
 
 ## During editing
 
+- Every functional or source change must advance the application version before handoff. Do not accumulate multiple materially different checkpoints under the same version number.
+- Use a short descriptive release/checkpoint name alongside the number (for example `v5.2.16-weekly-rest-endweek-intent`) so the artifact remains identifiable later.
 - Keep a strict scope boundary.
 - Avoid unrelated formatting churn.
 - Record root cause and accepted behaviour.

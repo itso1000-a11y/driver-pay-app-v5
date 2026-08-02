@@ -16,7 +16,7 @@ const UI_TEXT: Record<Lang, Record<string, string>> = {
     weekEndingSaturday: "Week ending Saturday", loadSelected: "Load selected", currentWeek: "Current week", previous: "Prev", next: "Next",
     dayType: "Day type", workDay: "Work day", holidayDay: "Holiday day", offDay: "Day Off", shift: "Shift", weekend: "Weekend", start: "Start", finish: "Finish", worked: "Worked", ot: "OT",
     kilometres: "Kilometres", suggested: "suggested", startKm: "Start km", finishKm: "Finish km", kmRun: "KM run", startKmManual: "Start km can be corrected manually.", startKmSuggested: "Grey start km is suggested from {source}. Type over it if it is wrong.", fromFinishKm: "from {source} finish km", lastSavedDay: "last saved day", lastWeek: "last week",
-    restFromPreviousDay: "Rest from previous shift", noPreviousDay: "No previous shift found.", currentRest: "Current rest", restAtEndOfDay: "Rest at end of day", lastWeeklyRest: "Last weekly rest", weekAlreadySaved: "Week already saved. No changes.", weekUpdated: "Changes saved. Week updated.", weekCompleted: "Week completed.", workingTomorrow: "Working tomorrow?", workingTomorrowYes: "Yes, work tomorrow", workingTomorrowNo: "No, start weekly rest", holidayPay: "Holiday pay", taxed: "taxed", splitBreak: "Split break", weekActive: "Week active", nightOut: "Night out", bonuses: "Bonuses", addBonus: "Add bonus", add: "Add", noBonusesAdded: "No bonuses added.", saveNext: "Save & Next", weekView: "Week View",
+    restFromPreviousDay: "Rest from previous shift", noPreviousDay: "No previous shift found.", currentRest: "Current rest", restAtEndOfDay: "Rest at end of day", lastWeeklyRest: "Last weekly rest", weekAlreadySaved: "Week already saved. No changes.", weekUpdated: "Changes saved. Week updated.", weekCompleted: "Week completed.", holidayPay: "Holiday pay", taxed: "taxed", splitBreak: "Split break", weekActive: "Week active", nightOut: "Night out", bonuses: "Bonuses", addBonus: "Add bonus", add: "Add", noBonusesAdded: "No bonuses added.", saveNext: "Save & Next", weekView: "Week View",
     daySummary: "Day summary", hours: "Hours", overtime: "Overtime", km: "KM", yes: "Yes", no: "No", delete: "Delete",
     settingsTitle: "Settings", backupRestore: "Backup / Restore", recommended: "recommended", backupInfo: "Save a copy of all weeks, current entries, settings, archive, and payslip comparison. Restore it if Edge data is cleared or you move to another computer.", backup: "Backup", restore: "Restore", payRates: "Pay rates", companyName: "Company name (optional)", weekdayPayRate: "Weekday pay rate", saturdayPayRate: "Saturday pay rate", sundayPayRate: "Sunday pay rate", pensionMode: "Pension mode", noPension: "No pension", manualPension: "Ръчна пенсия", pensionDeduction: "Удръжка pension", payCalculationMode: "Pay calculation mode", payeEstimate: "PAYE estimate", grossOnly: "Gross Only", taxOn: "Данъци ON", taxOff: "Данъци OFF", taxModeHelp: "Превключва между PAYE estimate и gross-only pay.", currentMode: "Current mode", grossOnlyNote: "Tax, NI and pension are OFF. Preview shows gross pay.", deductionsOff: "Deductions off", overtimeThreshold: "Overtime threshold (hours)", overtimePayRate: "Overtime pay rate", foodAllowance: "Food allowance per worked day", nightOutPay: "Night out pay", bonusPayRates: "Bonus pay rates", customBonuses: "Custom bonuses", customBonusName: "Bonus name", customBonusRate: "Rate", done: "Done", paySetupV2: "Pay Setup v2", openPaySetup: "Open Pay Setup", currentProfile: "Current profile", activePayProfile: "Active Pay Profile", profileName: "Profile name", profileSaved: "Profile saved", createProfile: "Create profile", updateProfile: "Update profile", saveAsNewProfile: "Save as new profile", newFromThis: "New from this", profilePreview: "Profile preview", organisationName: "Company / Agency", loadProfile: "Load profile", applyProfile: "Apply profile", applyFromNextEmptyDay: "Apply from next empty day", profileOnlySaved: "Profile saved. Apply it when ready.", currentDraft: "Current draft",
     weekPreview: "Week Preview", close: "Close", estimatedNet: "Estimated Net", payslipNet: "Payslip Net", difference: "Difference", days: "Days", noPoundsHere: "no £ here", holiday: "Holiday", off: "Off", showBreakdown: "Show breakdown", hideBreakdown: "Hide breakdown", basePay: "Base pay", food: "Food", tax: "Tax", ni: "NI", net: "Net", splitRests: "Split rests", back: "Back", endWeek: "End Week",
@@ -29,7 +29,7 @@ const UI_TEXT: Record<Lang, Record<string, string>> = {
     weekEndingSaturday: "Седмица до събота", loadSelected: "Зареди избраната", currentWeek: "Текуща седмица", previous: "Назад", next: "Напред",
     dayType: "Тип ден", workDay: "Работен ден", holidayDay: "Отпуск", offDay: "Почивен ден", shift: "Смяна", weekend: "Уикенд", start: "Старт", finish: "Край", worked: "Работено", ot: "OT",
     kilometres: "Километри", suggested: "подсказано", startKm: "Старт км", finishKm: "Край км", kmRun: "Км", startKmManual: "Старт км може да се коригира ръчно.", startKmSuggested: "Сивият старт км е подсказан от {source}. Напиши отгоре, ако е грешен.", fromFinishKm: "от {source} краен км", lastSavedDay: "последен ден", lastWeek: "предишна седмица",
-    restFromPreviousDay: "Почивка от предишната смяна", noPreviousDay: "Няма предишна смяна.", currentRest: "Текуща почивка", restAtEndOfDay: "Почивка до края на деня", lastWeeklyRest: "Последна седмична почивка", weekAlreadySaved: "Седмицата вече е запазена. Няма промени.", weekUpdated: "Промените са запазени. Седмицата е обновена.", weekCompleted: "Седмицата е приключена.", workingTomorrow: "Ще работиш ли утре?", workingTomorrowYes: "Да, работя утре", workingTomorrowNo: "Не, започвам седмична почивка", holidayPay: "Отпуск £", taxed: "облагаемо", splitBreak: "Сплит почивка", weekActive: "Маркирано тази седмица", nightOut: "Нощувка", bonuses: "Бонуси", addBonus: "Добави бонус", add: "Добави", noBonusesAdded: "Няма добавени бонуси.", saveNext: "Запази и следващ", weekView: "Седмица",
+    restFromPreviousDay: "Почивка от предишната смяна", noPreviousDay: "Няма предишна смяна.", currentRest: "Текуща почивка", restAtEndOfDay: "Почивка до края на деня", lastWeeklyRest: "Последна седмична почивка", weekAlreadySaved: "Седмицата вече е запазена. Няма промени.", weekUpdated: "Промените са запазени. Седмицата е обновена.", weekCompleted: "Седмицата е приключена.", holidayPay: "Отпуск £", taxed: "облагаемо", splitBreak: "Сплит почивка", weekActive: "Маркирано тази седмица", nightOut: "Нощувка", bonuses: "Бонуси", addBonus: "Добави бонус", add: "Добави", noBonusesAdded: "Няма добавени бонуси.", saveNext: "Запази и следващ", weekView: "Седмица",
     daySummary: "Дневно превю", hours: "Часове", overtime: "Овъртайм", km: "Км", yes: "Да", no: "Не", delete: "Изтрий",
     settingsTitle: "Настройки", backupRestore: "Архив / Възстановяване", recommended: "препоръчително", backupInfo: "Запазва копие на всички седмици, текущите данни, настройките, архива и сравнението с фиша. Възстановява при изчистване на данните или смяна на компютър.", backup: "Направи backup", restore: "Възстанови", payRates: "Ставки", companyName: "Име на фирма (по избор)", weekdayPayRate: "Делнична ставка", saturdayPayRate: "Събота ставка", sundayPayRate: "Неделя ставка", pensionMode: "Пенсионен режим", noPension: "Без пенсия", manualPension: "Ръчна пенсия", pensionDeduction: "Пенсионно удържане", overtimeThreshold: "Праг за овъртайм (часове)", overtimePayRate: "Овъртайм ставка", foodAllowance: "Пари за храна на работен ден", nightOutPay: "Нощувка £", bonusPayRates: "Ставки за бонуси", customBonuses: "Допълнителни бонуси", customBonusName: "Име на бонус", customBonusRate: "Ставка", done: "Готово", paySetupV2: "Pay Setup v2", openPaySetup: "Отвори Pay Setup", currentProfile: "Текущ профил", activePayProfile: "Активен Pay Profile", profileName: "Име на профил", profileSaved: "Профилът е записан", createProfile: "Създай профил", updateProfile: "Обнови профила", saveAsNewProfile: "Запази като нов профил", newFromThis: "Нов от този", profilePreview: "Преглед на профил", organisationName: "Фирма / агенция", loadProfile: "Зареди профил", applyProfile: "Приложи профил", applyFromNextEmptyDay: "Приложи от следващ празен ден", profileOnlySaved: "Профилът е записан. Приложи го когато е готов.", currentDraft: "Текущ draft",
     weekPreview: "Седмично превю", close: "Затвори", estimatedNet: "Очаквано нето", payslipNet: "Нето по фиш", difference: "Разлика", days: "Дни", noPoundsHere: "без £ тук", holiday: "Отпуск", off: "Почивен", showBreakdown: "Покажи разбивка", hideBreakdown: "Скрий разбивка", basePay: "Основно плащане", food: "Храна", tax: "Данък", ni: "NI", net: "Нето", splitRests: "Сплит почивки", back: "Назад", endWeek: "Край на седмицата",
@@ -519,20 +519,6 @@ function getOrderedDayIndices(days: DayRecord[]): number[] {
   return DAY_ORDER.map((id) => days.findIndex((d) => d.id === id)).filter((index) => index !== -1);
 }
 
-function getChronologicalDayIndices(days: DayRecord[]): number[] {
-  // Timeline-safe ordering. Unlike getOrderedDayIndices(), this keeps every occurrence
-  // of Mon/Tue/... across multiple pay periods and orders them by real calendar date.
-  return days
-    .map((day, index) => ({ day, index }))
-    .filter(({ day }) => Boolean(day?.dateISO))
-    .sort((a, b) => {
-      const byDate = a.day.dateISO.localeCompare(b.day.dateISO);
-      if (byDate !== 0) return byDate;
-      return DAY_ORDER.indexOf(a.day.id) - DAY_ORDER.indexOf(b.day.id);
-    })
-    .map(({ index }) => index);
-}
-
 function getPreviousLogicalDay(days: DayRecord[], index: number): DayRecord | undefined {
   const ordered = getOrderedDayIndices(days);
   const pos = ordered.indexOf(index);
@@ -823,7 +809,7 @@ function detectQualifyingWeeklyRests(days: DayRecord[]): RecognizedWeeklyRest[] 
   let previousFinishAbs: number | null = null;
   let previousWorkDateISO: string | null = null;
 
-  for (const index of getChronologicalDayIndices(days)) {
+  for (const index of getOrderedDayIndices(days)) {
     const day = days[index];
     if (!day || day.dayType !== "work") continue;
 
@@ -894,66 +880,6 @@ function getWeeklyRestTimelineSnapshot(currentDays: DayRecord[], archive: any[])
   const timelineDays = buildWeeklyRestTimelineDays(currentDays, archive);
   const recognized = detectQualifyingWeeklyRests(timelineDays);
   return { recognized, latest: recognized.length ? recognized[recognized.length - 1] : null };
-}
-
-type WeeklyRestCycleSnapshot = {
-  known: boolean;
-  anchorRest: RecognizedWeeklyRest | null;
-  completedWorkCycles: number;
-  lastCompletedFinishAbs: number | null;
-};
-
-function getWeeklyRestCycleSnapshot(currentDays: DayRecord[], archive: any[]): WeeklyRestCycleSnapshot {
-  // Read-only cycle accounting built only from factual, already-recognized weekly rest.
-  // It deliberately does not fall back to End Week candidates and does not drive UI/state yet.
-  const timelineDays = buildWeeklyRestTimelineDays(currentDays, archive);
-  const timeline = getWeeklyRestTimelineSnapshot(currentDays, archive);
-  const anchorRest = timeline.latest;
-  if (!anchorRest) {
-    return { known: false, anchorRest: null, completedWorkCycles: 0, lastCompletedFinishAbs: null };
-  }
-
-  let completedWorkCycles = 0;
-  let lastCompletedFinishAbs: number | null = null;
-
-  for (const day of timelineDays) {
-    if (!day || day.dayType !== "work") continue;
-
-    const dayStartAbs = getDayStartAbsMinutes(day);
-    if (dayStartAbs + 24 * 60 <= anchorRest.endAbs) continue;
-
-    const start = normalizeTime(day.start || "");
-    const finish = normalizeTime(day.finish || "");
-    const startAbs = start ? getDayTimeAbsMinutes(day, start) : null;
-    const finishAbs = finish ? getDayTimeAbsMinutes(day, finish) : null;
-
-    // Conservative boundary: once a touched Work day after the anchor is incomplete
-    // or chronologically invalid, the cycle is no longer safe to infer across it.
-    if (dayHasEnteredData(day) && (startAbs == null || finishAbs == null || finishAbs <= startAbs)) {
-      return { known: false, anchorRest, completedWorkCycles: 0, lastCompletedFinishAbs: null };
-    }
-
-    // Completely untouched Work placeholders are not factual work cycles.
-    if (startAbs == null || finishAbs == null) continue;
-    if (startAbs < anchorRest.endAbs || finishAbs <= startAbs) continue;
-
-    completedWorkCycles += 1;
-    if (lastCompletedFinishAbs == null || finishAbs > lastCompletedFinishAbs) lastCompletedFinishAbs = finishAbs;
-  }
-
-  return { known: true, anchorRest, completedWorkCycles, lastCompletedFinishAbs };
-}
-
-function getWeeklyRestCycleSnapshotBeforeDate(currentDays: DayRecord[], archive: any[], cutoffDateISO: string): WeeklyRestCycleSnapshot {
-  // A weekly-rest Start decision belongs to the boundary before the selected work day.
-  // Excluding the selected day keeps that ownership stable after Start is entered, while
-  // preserving the conservative unknown fallback for any ambiguous earlier Work day.
-  const priorCurrentDays = currentDays.filter((day) => day?.dateISO && day.dateISO < cutoffDateISO);
-  const priorArchive = (Array.isArray(archive) ? archive : []).map((entry: any) => ({
-    ...entry,
-    days: Array.isArray(entry?.days) ? entry.days.filter((day: any) => day?.dateISO && day.dateISO < cutoffDateISO) : [],
-  }));
-  return getWeeklyRestCycleSnapshot(priorCurrentDays, priorArchive);
 }
 
 type WeeklyCompensationObligation = {
@@ -1079,12 +1005,14 @@ function getWeeklyRestPrimaryStart(anchor: { finishAbs: number } | null, enabled
   return absMinutesToLocalTime(forceReduced ? targets.reducedStart : targets.fullStart);
 }
 
-function getWeeklyRestPlan(anchor: { finishAbs: number } | null, current: DayRecord, enabled: boolean, forceReduced = false, cycles = 0) {
-  if (!enabled || !anchor || current.dayType !== "work") return null;
-  const targets = getWeeklyRestTargets(anchor);
+function getWeeklyRestPlan(candidate: WeeklyRestCandidate | null, current: DayRecord, enabled: boolean) {
+  if (!enabled || !candidate || current.dayType !== "work") return null;
+  const targets = getWeeklyRestTargets(candidate);
   if (!targets) return null;
   const helperEndAbs = getRestDisplayEndAbs(current) ?? getDayStartAbsMinutes(current);
-  if (helperEndAbs > anchor.finishAbs + 72 * 60) return null;
+  if (helperEndAbs > candidate.finishAbs + 72 * 60) return null;
+  const cycles = getWeeklyRestWorkCycleCount(candidate);
+  const forceReduced = cycles >= 6;
   const primaryAbs = forceReduced ? targets.reducedStart : targets.fullStart;
   const primaryHelp = forceReduced ? t("from24hReducedWeeklyRest") : t("from45hWeeklyRest");
   // Helper is for actionable proposals only. On the live/current or a future day,
@@ -1991,63 +1919,16 @@ export default function App() {
     previousShiftIsInsideSelectedWeek &&
     previousShiftAnchor.finishAbs > weeklyRestCandidate.finishAbs
   );
-  const weeklyRestCycleSnapshot = getWeeklyRestCycleSnapshotBeforeDate(days, Array.isArray(archive) ? archive : [], currentDay.dateISO);
-  // Conservative due gate: when the factual cross-week timeline is known, a recent
-  // qualifying weekly rest may suppress the legacy End Week candidate until six
-  // completed work cycles have actually occurred after that rest. If the timeline is
-  // unknown, preserve the legacy behaviour exactly. This gate only decides whether
-  // the existing weekly-rest candidate may drive Start suggestions; it does not mark
-  // days, mutate storage, create obligations, or change End Week behaviour.
-  const weeklyRestDueByTimeline = weeklyRestCycleSnapshot.known
-    ? weeklyRestCycleSnapshot.completedWorkCycles >= 6
-    : null;
-  const timelineWeeklyRestAnchor = weeklyRestCycleSnapshot.known &&
-    weeklyRestCycleSnapshot.completedWorkCycles >= 6 &&
-    weeklyRestCycleSnapshot.lastCompletedFinishAbs != null
-      ? { finishAbs: weeklyRestCycleSnapshot.lastCompletedFinishAbs }
-      : null;
-  // Keep timeline priority stable even after the user enters Start. The visual
-  // timeline base is active only while Start is empty, but the path itself remains
-  // the owner of this weekly-rest decision for the current work day. This prevents
-  // the legacy End Week candidate from re-activating after Start and accidentally
-  // creating a compensation obligation from an older anchor.
-  const timelineWeeklyRestPathEligible = Boolean(
-    timelineWeeklyRestAnchor &&
-    currentDay.dayType === "work"
-  );
-  const timelineWeeklyRestBaseActive = Boolean(
-    timelineWeeklyRestPathEligible &&
-    !currentDay.start
-  );
-  const legacyWeeklyRestBaseActive = Boolean(
-    !timelineWeeklyRestPathEligible &&
-    weeklyRestCandidate &&
-    selectedSaturday > weeklyRestCandidate.closingSaturdayISO &&
-    currentDay.dayType === "work" &&
-    !hasCompletedWorkBeforeCurrentInThisWeek &&
-    (weeklyRestDueByTimeline == null || weeklyRestDueByTimeline)
-  );
-  // Timeline-derived due state has priority because it follows the factual regulatory
-  // cycle across pay-period boundaries. The legacy End Week candidate remains the
-  // compatibility fallback when the cross-week timeline cannot establish a due anchor.
-  const weeklyRestBaseActive = timelineWeeklyRestBaseActive || legacyWeeklyRestBaseActive;
-  const weeklyRestAnchor = timelineWeeklyRestBaseActive
-    ? timelineWeeklyRestAnchor
-    : (weeklyRestCandidate ? { finishAbs: weeklyRestCandidate.finishAbs } : null);
-  const weeklyRestCycles = timelineWeeklyRestBaseActive
-    ? weeklyRestCycleSnapshot.completedWorkCycles
-    : getWeeklyRestWorkCycleCount(weeklyRestCandidate);
-  // For the new timeline-driven path, keep the normal 45h proposal primary and expose
-  // the 24h reduced option only as the secondary helper. Preserve legacy behaviour
-  // unchanged for the old End Week candidate path.
-  const weeklyRestForceReduced = timelineWeeklyRestBaseActive ? false : weeklyRestCycles >= 6;
-  const weeklyRestBasePrimaryStart = getWeeklyRestPrimaryStart(weeklyRestAnchor, weeklyRestBaseActive, weeklyRestForceReduced);
-  const weeklyRestTargets = getWeeklyRestTargets(weeklyRestAnchor);
+  const weeklyRestBaseActive = Boolean(weeklyRestCandidate && selectedSaturday > weeklyRestCandidate.closingSaturdayISO && currentDay.dayType === "work" && !hasCompletedWorkBeforeCurrentInThisWeek);
+  const weeklyRestCycles = getWeeklyRestWorkCycleCount(weeklyRestCandidate);
+  const weeklyRestForceReduced = weeklyRestCycles >= 6;
+  const weeklyRestBasePrimaryStart = getWeeklyRestPrimaryStart(weeklyRestCandidate ? { finishAbs: weeklyRestCandidate.finishAbs } : null, weeklyRestBaseActive, weeklyRestForceReduced);
+  const weeklyRestTargets = getWeeklyRestTargets(weeklyRestCandidate);
   // Only one rest regime may drive the screen. While the first work day after End Week
   // is still being evaluated, weekly-rest logic overrides all daily 9h/11h suggestions.
   const weeklyRestCandidateActive = Boolean(weeklyRestBaseActive && !currentDay.start);
   const weeklyRestRequiredMinutes = 45 * 60;
-  const weeklyRestPlan = getWeeklyRestPlan(weeklyRestAnchor, currentDay, weeklyRestCandidateActive, weeklyRestForceReduced, weeklyRestCycles);
+  const weeklyRestPlan = getWeeklyRestPlan(weeklyRestCandidate, currentDay, weeklyRestCandidateActive);
   const emptySuggestedTimes: SuggestedStarts = { h11: null, h9: null, h9Blocked: false, longPreviousShift: false, splitRestAvailable: false };
   const suggestedTimes = weeklyRestBaseActive ? emptySuggestedTimes : rawSuggestedTimes;
   const dailyPrimarySuggestedStart = getPrimarySuggestedStart(suggestedTimes);
@@ -2090,18 +1971,13 @@ export default function App() {
     }
     return { days: taxedWeek, currentIndex, title: t("currentWeek") };
   }, [taxedWeek, currentIndex, currentDay.dayType, weeklyRestCandidate, selectedSaturday]);
-  const completedWeeklyRestInfo = legacyWeeklyRestBaseActive && displayStartValue
+  const completedWeeklyRestInfo = weeklyRestBaseActive && displayStartValue
     ? getLastCompletedWeeklyRestInfo(selectedSaturday, days)
     : null;
   const completedWeeklyCompensationStatus = useMemo(() => getCompensationStatus(completedWeeklyRestInfo?.sourceKey || null), [completedWeeklyRestInfo?.sourceKey, weeklyCompensationRevision]);
 
   useEffect(() => {
     if (archiveMode || typeof window === "undefined") return;
-    // Checkpoint safety rule: a timeline-driven weekly-rest Start must not mutate
-    // the compensation ledger yet. Timeline recognition is intentionally ahead of
-    // compensation integration; keep all legacy create/complete writes isolated
-    // until that integration is designed and tested explicitly.
-    if (timelineWeeklyRestPathEligible) return;
     let ledger = readWeeklyCompensationLedger();
     let changed = false;
 
@@ -2135,7 +2011,7 @@ export default function App() {
     }
 
     if (changed) { writeWeeklyCompensationLedger(ledger); setWeeklyCompensationRevision((value) => value + 1); }
-  }, [archiveMode, timelineWeeklyRestPathEligible, completedWeeklyRestInfo?.sourceKey, completedWeeklyRestInfo?.compensationMinutes, completedWeeklyRestInfo?.compensationDeadlineISO, completedWeeklyRestInfo?.sourceStartAbs, enteredStartAbs, restBeforeMinutes, currentDay.dateISO, weeklyRestCandidate?.closingSaturdayISO]);
+  }, [archiveMode, completedWeeklyRestInfo?.sourceKey, completedWeeklyRestInfo?.compensationMinutes, completedWeeklyRestInfo?.compensationDeadlineISO, completedWeeklyRestInfo?.sourceStartAbs, enteredStartAbs, restBeforeMinutes, currentDay.dateISO, weeklyRestCandidate?.closingSaturdayISO]);
   // Weekly compensation is a fact shown with exact parameters below the Rest card,
   // never as a vague helper warning.
   const restContextHelp = !displayStartValue ? "" : (weeklyRestBaseActive ? "" : getRestContextHelp(restBeforeMinutes));
@@ -2205,18 +2081,12 @@ export default function App() {
     setArchive((prev) => prev.some((item) => getSaturdayDay(item.days || []).dateISO === closingSaturday) ? prev : [{ id: Date.now(), label: weekEndingLabel, createdAt: new Date().toISOString(), days: finalDays, settings, activePayProfileId, totals: weekTotals, payslip: payslipActualWeek, type }, ...prev]);
   }
 
-  function openNextPayPeriod(closingSaturday: string, finalDays: DayRecord[], nextDayIntent: "legacy" | "workTomorrow" = "legacy") {
+  function openNextPayPeriod(closingSaturday: string, finalDays: DayRecord[]) {
     const carryKm = findLastKnownKm(finalDays);
     const nextSaturday = toISODate(addDays(fromISODate(closingSaturday), 7));
     const nextWeek = loadSavedWeekDataOrBlank(nextSaturday);
     const mondayIndex = nextWeek.days.findIndex((d) => d.id === "mon");
-    const sundayIndex = nextWeek.days.findIndex((d) => d.id === "sun");
-    const targetIndex = nextDayIntent === "workTomorrow" && sundayIndex >= 0 ? sundayIndex : mondayIndex;
-    const nextDays = nextWeek.days.map((d, index) => {
-      if (index !== targetIndex) return d;
-      const withIntent = nextDayIntent === "workTomorrow" && isEmptyForRemainingClose(d) ? { ...d, dayType: "work" as DayType } : d;
-      return carryKm && !withIntent.startKm ? { ...withIntent, startKm: carryKm } : withIntent;
-    });
+    const nextDays = nextWeek.days.map((d, index) => index === mondayIndex && carryKm && !d.startKm ? { ...d, startKm: carryKm } : d);
     localStorage.setItem(ACTIVE_WEEK_STORAGE_KEY, nextSaturday);
     setSelectedSaturday(nextSaturday);
     setDays(nextDays);
@@ -2224,12 +2094,12 @@ export default function App() {
     const nextProfileId = resolvePayProfileIdForWeek(payProfiles, nextWeek);
     if (nextProfileId) setActivePayProfileId(nextProfileId);
     setPayslipActualWeek(nextWeek.payslipActualWeek || "");
-    setCurrentIndex(targetIndex >= 0 ? targetIndex : getFirstIncompleteIndex(nextDays));
+    setCurrentIndex(mondayIndex >= 0 ? mondayIndex : getFirstIncompleteIndex(nextDays));
     setSavedWeekIndicators(getSavedWeekIndicators());
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  function endWeek(type: WeekArchiveType, dayTypeOverrides?: Record<string, DayType>, nextDayIntent: "legacy" | "workTomorrow" = "legacy"): "completed" | "updated" | "unchanged" {
+  function endWeek(type: WeekArchiveType, dayTypeOverrides?: Record<string, DayType>): "completed" | "updated" | "unchanged" {
     const closingSaturday = getSaturdayDay(days).dateISO;
     if (isWeekClosed(closingSaturday)) {
       if (!closedWeekHasChanges()) { setActionMessage(t("weekAlreadySaved")); return "unchanged"; }
@@ -2243,7 +2113,7 @@ export default function App() {
     const finalDays = buildPayPeriodCloseDays(type, dayTypeOverrides);
     seedWeeklyRestCandidateFromClosedPayPeriod(closingSaturday, finalDays);
     persistClosedPayPeriod(closingSaturday, finalDays, type);
-    openNextPayPeriod(closingSaturday, finalDays, nextDayIntent);
+    openNextPayPeriod(closingSaturday, finalDays);
 
     setActionMessage(t("weekCompleted"));
     return "completed";
@@ -2255,7 +2125,7 @@ export default function App() {
   }
 
   return <div style={{ ...pageStyle, ...(archiveMode ? { background: "#cbd5e1" } : {}) }}><style>{`html{-webkit-text-size-adjust:100%;touch-action:pan-y;overscroll-behavior:none}body{touch-action:pan-y;overscroll-behavior:none}button{transition:transform .08s ease,filter .08s ease,background .08s ease,opacity .08s ease,box-shadow .08s ease;-webkit-tap-highlight-color:transparent;user-select:none}button:active:not(:disabled){transform:scale(.96);filter:brightness(.92)}button:disabled{opacity:.45;cursor:not-allowed}input,select{transition:border-color .12s ease,box-shadow .12s ease,background .12s ease}input:focus,select:focus{border-color:#94a3b8!important;box-shadow:0 0 0 3px rgba(148,163,184,.22)}`}</style><div style={{ ...shellStyle, position: "relative", ...(archiveMode ? { background: "#e2e8f0", borderColor: "#64748b", boxShadow: "0 0 0 4px rgba(100,116,139,.28)" } : {}) }}>{archiveMode && <div style={{ position: "absolute", inset: "150px 0 auto 0", textAlign: "center", pointerEvents: "none", zIndex: 0, fontSize: 58, fontWeight: 950, letterSpacing: 8, color: "rgba(71,85,105,.13)", transform: "rotate(-18deg)" }}>{t("archiveWatermark")}</div>}<div style={{ position: "relative", zIndex: 1 }}><Header currentDay={currentDay} weekEndingLabel={weekEndingLabel} onWeek={() => setShowWeekView(true)} onSettings={() => setShowSettings(true)} onInstall={installApp} canInstall={Boolean(installPrompt)} />{archiveMode && <div style={{ position: "sticky", top: 8, zIndex: 5, margin: 16, marginTop: 0, padding: 12, borderRadius: 14, background: "#cbd5e1", border: "2px solid #475569", color: "#1f2937", boxShadow: "0 10px 24px rgba(15,23,42,.16)" }}><div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}><div><div style={{ fontSize: 14, fontWeight: 950, letterSpacing: .4 }}>{t("savedHistoricalWeek")}</div><div style={{ fontSize: 12, marginTop: 4 }}>{weekLocked ? t("historicalLocked") : t("editingArchive")}</div></div><div style={{ fontSize: 12, fontWeight: 950, padding: "6px 8px", borderRadius: 999, background: "#64748b", color: "white" }}>ARCHIVE</div></div><div style={{ display: "grid", gridTemplateColumns: weekLocked ? "1fr 1fr" : "1fr", gap: 8, marginTop: 10 }}><button style={{ ...buttonStyle, background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={loadCurrentWeek}>{t("goToCurrentWeek")}</button>{weekLocked && <button style={{ ...buttonStyle, background: "#64748b", color: "white", borderColor: "#64748b" }} onClick={() => setHistoricalEditEnabled(true)}>{t("unlockEditing")}</button>}</div></div>}<div style={{ padding: 16, borderTop: "1px solid #eef2f7" }}><button type="button" style={{ ...buttonStyle, width: "100%", padding: 12, textAlign: "left", background: "#f8fafc", borderColor: "#eef2f7" }} onClick={() => setShowWeekPicker(true)}><div style={{ fontSize: 13, fontWeight: 800, color: "#334155", marginBottom: 6 }}>{t("weekEndingSaturday")}</div><div style={{ fontSize: 18, fontWeight: 900, color: "#0f172a" }}>{formatISODateDisplay(selectedSaturday)}</div></button><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 14 }}><button style={buttonStyle} disabled={currentIndex === orderedIndices[0]} onClick={() => navigateLogical(-1)}>← {t("previous")}</button><button style={buttonStyle} disabled={currentIndex === orderedIndices[orderedIndices.length - 1]} onClick={() => navigateLogical(1)}>{t("next")} →</button></div></div><div style={sectionStyle}><SectionHeading title={t("dayType")} /><div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 8 }}><DayTypeButton label={t("workDay")} variant="work" active={currentDay.dayType === "work"} onClick={() => setCurrentDayType("work")} /><DayTypeButton label={t("holidayDay")} variant="holiday" active={currentDay.dayType === "holiday"} onClick={() => setCurrentDayType("holiday")} /><DayTypeButton label={t("offDay")} variant="off" active={currentDay.dayType === "off"} onClick={() => setCurrentDayType("off")} /></div></div>{currentDay.dayType === "work" && <div style={sectionStyle}><SectionHeading title={t("shift")} right={currentComputed.weekend ? t("weekend") : undefined} /><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, alignItems: "end" }}><TimeRow label={t("start")} value={displayStartValue} placeholder={startFieldPlaceholder} hint={startFieldHint} invalid={startRestViolation} errorHint={t("restNotCompleted")} onChange={(value) => updateTimeValue("start", value)} onBlur={() => normalizeTimeValue("start")} /><TimeRow label={t("finish")} value={currentDay.finish || ""} placeholder={t("finish")} onChange={(value) => updateTimeValue("finish", value)} onBlur={() => normalizeTimeValue("finish")} /></div>{dailySuggestionHelp && <HelperLine text={dailySuggestionHelp} />}{weeklyRestSuggestionHelp && <HelperLine text={weeklyRestSuggestionHelp} />}{weeklyRestPlan?.helper ? <WeeklyRestInlineCard plan={weeklyRestPlan} /> : <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 12 }}><MiniStat label={t("worked")} value={formatMinutes(currentComputed.workedMinutes)} tone={(currentComputed.workedMinutes ?? 0) > 15 * 60 ? "danger" : undefined} /><MiniStat label={t("ot")} value={currentComputed.overtimeMinutes > 0 ? formatMinutes(currentComputed.overtimeMinutes) : (currentComputed.workedMinutes != null ? t("no") : "")} /></div>}{shiftValidationMessage && <div style={{ marginTop: 10, fontSize: 13, fontWeight: 700, color: "#b91c1c" }}>{shiftValidationMessage}</div>}</div>}{(currentDay.dayType === "work" || currentDay.dayType === "off") && <div style={{ ...sectionStyle, background: activeRestColors.bg, paddingTop: 12, paddingBottom: 12 }}><SectionHeading title={t("restFromPreviousDay")} /><RestCard value={displayRestValue} colors={activeRestColors} />{completedWeeklyRestInfo?.reduced && <div style={{ marginTop: 8, padding: "9px 12px", borderRadius: 12, border: `1px solid ${activeRestColors.border}`, background: "rgba(255,255,255,0.72)", display: "grid", gap: 5, color: activeRestColors.text, fontSize: 12, fontWeight: 900 }}><div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}><span>{t("compensationRequired")}</span><span>{formatMinutes(completedWeeklyRestInfo.compensationMinutes)}</span></div>{completedWeeklyRestInfo.compensationDeadlineISO && <div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}><span>{t("compensateBy")}</span><span>{formatAppDate(completedWeeklyRestInfo.compensationDeadlineISO)}</span></div>}{completedWeeklyCompensationStatus && <div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}><span>Status</span><span>{t(completedWeeklyCompensationStatus === "completed" ? "compensationCompleted" : "compensationOutstanding")}</span></div>}</div>}{restContextHelp && <div style={{ marginTop: 6, fontSize: 12, color: activeRestColors.text, fontWeight: 800 }}>{restContextHelp}</div>}{currentIndex === orderedIndices[0] && !previousShiftAnchor && <div style={{ marginTop: 6, fontSize: 11, color: "#64748b" }}>{t("noPreviousDay")}</div>}</div>}{currentDay.dayType !== "off" && <div style={sectionStyle}><SectionHeading title={t("kilometres")} /><div style={{ display: "grid", gridTemplateColumns: currentDay.dayType === "work" ? "1fr 1fr" : "1fr", gap: 10 }}><Field label={t("startKm")}><div style={{ position: "relative" }}><input style={{ ...inputStyle, fontSize: 22, fontWeight: 700, textAlign: "center", color: startKmIsSuggested ? "#94a3b8" : "#0f172a", background: startKmIsSuggested ? "#f8fafc" : "#fff", paddingBottom: startKmIsSuggested ? 24 : 12 }} inputMode="numeric" value={displayStartKm} onChange={(e) => updateKmValue("startKm", e.target.value)} onBlur={() => setSuppressStartKmSuggestion(false)} placeholder="Start" />{startKmIsSuggested && <div style={{ position: "absolute", left: 0, right: 0, bottom: 6, textAlign: "center", fontSize: 10, fontWeight: 800, color: "#64748b", pointerEvents: "none" }}>{formatTemplate(t("fromFinishKm"), { source: startKmSuggestionSource === "last saved day" ? t("lastSavedDay") : t("lastWeek") })}</div>}</div></Field>{currentDay.dayType === "work" && <Field label={t("finishKm")}><input style={{ ...inputStyle, fontSize: 22, fontWeight: 700, textAlign: "center" }} inputMode="numeric" value={currentDay.finishKm || ""} onChange={(e) => updateKmValue("finishKm", e.target.value)} placeholder="Finish" /></Field>}</div>{currentDay.dayType === "work" && <div style={{ marginTop: 10, padding: "9px 12px", borderRadius: 14, border: "1px solid #eef2f7", background: "#f8fafc" }}><div style={{ fontSize: 12, color: "#64748b", fontWeight: 700 }}>{t("kmRun")}</div><div style={{ fontSize: 16, fontWeight: 900, marginTop: 2 }}>{currentComputed.kmRun == null ? "" : currentComputed.kmRun}</div></div>}</div>}{currentDay.dayType === "off" && <CompactWeekContext days={dayOffContext.days} currentIndex={dayOffContext.currentIndex} title={dayOffContext.title} />}{currentDay.dayType === "holiday" && <div style={sectionStyle}><SectionHeading title={t("holidayPay")} right={t("taxed")} /><input style={inputStyle} type="text" inputMode="decimal" value={currentDay.holidayPay || ""} onChange={(e) => updateCurrentDay("holidayPay", e.target.value)} placeholder="0.00" /></div>}{currentDay.dayType === "work" && <div style={sectionStyle}><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}><ToggleRow label={t("nightOut")} variant="success" value={currentDay.nightOut} onChange={(checked) => updateCurrentDay("nightOut", checked)} /><ToggleRow label={t("splitBreak")} variant="warning" right={currentDay.splitBreak ? t("splitRestNotCounted") : undefined} value={currentDay.splitBreak} onChange={(checked) => updateCurrentDay("splitBreak", checked)} /></div></div>}{currentDay.dayType === "work" && <div style={sectionStyle}><SectionHeading title={t("bonuses")} />{!showBonusForm && <button style={{ ...buttonStyle, background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={() => setShowBonusForm(true)}>+ {t("addBonus")}</button>}{showBonusForm && <div style={{ display: "grid", gridTemplateColumns: "1fr 80px 88px", gap: 8 }}><select style={inputStyle} value={draftBonusType} onChange={(e) => setDraftBonusType(sanitizeBonusType(e.target.value))}>{activeBonusTypes.map((type) => <option key={type} value={type}>{type}</option>)}</select><input style={inputStyle} inputMode="numeric" value={draftBonusQty} onChange={(e) => setDraftBonusQty(digitsOnly(e.target.value))} /><button style={{ ...buttonStyle, background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={addBonus}>{t("add")}</button></div>}<div style={{ display: "grid", gap: 8, marginTop: 12 }}>{currentDay.bonuses.map((bonus) => <BonusRow key={bonus.id} bonus={bonus} rate={getBonusRate(settings, bonus.type)} onDelete={() => removeBonus(bonus.id)} onQtyChange={(value) => updateBonusQty(bonus.id, value)} />)}</div></div>}{currentDay.dayType !== "off" && <SummarySection currentComputed={currentComputed} dayType={currentDay.dayType} />}<div style={{ ...sectionStyle, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}><button style={{ ...buttonStyle, background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={saveAndGo}>{t("saveNext")}</button><button style={buttonStyle} onClick={() => setShowWeekView(true)}>{t("weekView")}</button></div>{showWeekPicker && <WeekPickerModal selectedSaturday={selectedSaturday} savedWeekIndicators={savedWeekIndicators} onSelectSaturday={(saturdayISO) => loadWeekBySaturday(saturdayISO, true)} onCurrentWeek={loadCurrentWeek} onClose={() => setShowWeekPicker(false)} />} {showPaySetupV2 && <PaySetupV2Modal settings={settings} setSettings={setSettings} payProfiles={payProfiles} setPayProfiles={setPayProfiles} activePayProfileId={activePayProfileId} setActivePayProfileId={setActivePayProfileId} onClose={() => setShowPaySetupV2(false)} />}
-      {actionMessage && <div style={{ position: "fixed", left: "50%", bottom: 24, transform: "translateX(-50%)", zIndex: 200, padding: "10px 14px", borderRadius: 999, background: "#0f172a", color: "white", fontSize: 13, fontWeight: 900, boxShadow: "0 10px 28px rgba(15,23,42,.28)" }}>{actionMessage}</div>}{showSettings && <ModalErrorBoundary onClose={() => setShowSettings(false)}><SettingsModal settings={sanitizeSettings(settings)} setSettings={setSettings} days={days} setDays={setDays} archive={Array.isArray(archive) ? archive : []} setArchive={setArchive} payslipActualWeek={payslipActualWeek} setPayslipActualWeek={setPayslipActualWeek} setCurrentIndex={setCurrentIndex} setSelectedSaturday={setSelectedSaturday} setHistoricalEditEnabled={setHistoricalEditEnabled} language={language} setLanguage={setLanguage} activePayProfile={payProfiles.find((profile) => profile.id === activePayProfileId) || null} onOpenPaySetupV2={() => { setShowSettings(false); setShowPaySetupV2(true); }} onClose={() => setShowSettings(false)} /></ModalErrorBoundary>}{showWeekView && <WeekViewModal weekEndingLabel={weekEndingLabel} settings={settings} weekTotals={weekTotals} payslipActualWeek={payslipActualWeek} setPayslipActualWeek={setPayslipActualWeek} weekDifference={weekDifference} weekBonusSummary={weekBonusSummary} lastWeeklyRestInfo={lastWeeklyRestInfo} previewWeek={previewWeek} taxedWeek={taxedWeek} setCurrentIndex={setCurrentIndex} close={() => setShowWeekView(false)} endWeek={endWeek} askWorkingTomorrow={weeklyRestDueByTimeline === false} goToCurrentWeek={() => { loadCurrentWeek(); setShowWeekView(false); }} />}</div></div></div>;
+      {actionMessage && <div style={{ position: "fixed", left: "50%", bottom: 24, transform: "translateX(-50%)", zIndex: 200, padding: "10px 14px", borderRadius: 999, background: "#0f172a", color: "white", fontSize: 13, fontWeight: 900, boxShadow: "0 10px 28px rgba(15,23,42,.28)" }}>{actionMessage}</div>}{showSettings && <ModalErrorBoundary onClose={() => setShowSettings(false)}><SettingsModal settings={sanitizeSettings(settings)} setSettings={setSettings} days={days} setDays={setDays} archive={Array.isArray(archive) ? archive : []} setArchive={setArchive} payslipActualWeek={payslipActualWeek} setPayslipActualWeek={setPayslipActualWeek} setCurrentIndex={setCurrentIndex} setSelectedSaturday={setSelectedSaturday} setHistoricalEditEnabled={setHistoricalEditEnabled} language={language} setLanguage={setLanguage} activePayProfile={payProfiles.find((profile) => profile.id === activePayProfileId) || null} onOpenPaySetupV2={() => { setShowSettings(false); setShowPaySetupV2(true); }} onClose={() => setShowSettings(false)} /></ModalErrorBoundary>}{showWeekView && <WeekViewModal weekEndingLabel={weekEndingLabel} settings={settings} weekTotals={weekTotals} payslipActualWeek={payslipActualWeek} setPayslipActualWeek={setPayslipActualWeek} weekDifference={weekDifference} weekBonusSummary={weekBonusSummary} lastWeeklyRestInfo={lastWeeklyRestInfo} previewWeek={previewWeek} taxedWeek={taxedWeek} setCurrentIndex={setCurrentIndex} close={() => setShowWeekView(false)} endWeek={endWeek} goToCurrentWeek={() => { loadCurrentWeek(); setShowWeekView(false); }} />}</div></div></div>;
 }
 
 function Header({ currentDay, weekEndingLabel, onWeek, onSettings, onInstall, canInstall }: { currentDay: DayRecord; weekEndingLabel: string; onWeek: () => void; onSettings: () => void; onInstall: () => void; canInstall: boolean }) { const compactButtonStyle = { ...buttonStyle, padding: "8px 10px", fontSize: 13 }; return <div style={{ padding: "11px 14px 10px" }}><div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10 }}><div style={{ minWidth: 0 }}><div style={{ fontSize: 11, color: "#64748b", fontWeight: 700 }}>{t("appTitle")} · {t("currentDay")}</div><div style={{ fontSize: 25, fontWeight: 900, marginTop: 2, lineHeight: 1.02 }}>{dayNameLabel(currentDay.dayName)}</div><div style={{ fontSize: 20, color: "#0f172a", fontWeight: 900, marginTop: 2, lineHeight: 1.05 }}>{currentDay.dateLabel}</div><div style={{ fontSize: 13, color: "#334155", fontWeight: 800, marginTop: 5, lineHeight: 1.15 }}>{weekEndingLabel}</div></div><div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "flex-end" }}>{canInstall && <button style={compactButtonStyle} onClick={onInstall}>{t("install")}</button>}<button style={compactButtonStyle} onClick={onWeek}>{t("week")}</button><button style={compactButtonStyle} onClick={onSettings}>{t("settings")}</button></div></div></div>; }
@@ -2459,11 +2329,10 @@ function SettingsModal({ settings, setSettings, days, setDays, archive, setArchi
       </div>
 <div style={{ marginBottom: 14, padding: 12, borderRadius: 14, border: "1px solid #dbe3ee", background: "#f8fafc" }}><SectionHeading title={t("paySetupV2")} right="v2" /><div style={{ fontSize: 12, color: "#64748b", lineHeight: 1.35, marginBottom: 10 }}>{t("activePayProfile")}: {activeProfileLabel || "Profile 1"}</div><button style={{ ...buttonStyle, width: "100%", background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={onOpenPaySetupV2}>{t("openPaySetup")}</button></div><SectionHeading title={t("payRates")} />{activePayProfile ? <Field label={t("activePayProfile")}><input style={{ ...inputStyle, marginBottom: 8, fontWeight: 900 }} type="text" value={activeProfileLabel} readOnly /></Field> : <SettingsInput label={t("companyName")} textMode value={settings.companyName || ""} onChange={(v) => setSettings({ ...settings, companyName: v })} />}<SettingsInput label={t("weekdayPayRate")} value={settings.weekdayRate} onChange={(v) => setSettings({ ...settings, weekdayRate: v })} /><SettingsInput label={t("saturdayPayRate")} value={settings.saturdayRate} onChange={(v) => setSettings({ ...settings, saturdayRate: v })} /><SettingsInput label={t("sundayPayRate")} value={settings.sundayRate} onChange={(v) => setSettings({ ...settings, sundayRate: v })} /><div style={{marginTop:8}}><label>{t("pensionMode")}</label><select value={settings.pensionMode} onChange={(e)=>setSettings({...settings,pensionMode:e.target.value})}><option value="none">{t("noPension")}</option><option value="manual">{t("manualPension")}</option></select>{settings.pensionMode==="manual" && <SettingsInput label={t("pensionDeduction")} value={settings.pensionManualAmount} onChange={(v)=>setSettings({...settings,pensionManualAmount:v})} />}</div><SettingsInput label={t("overtimeThreshold")} value={settings.overtimeThresholdHours} onChange={(v) => setSettings({ ...settings, overtimeThresholdHours: v })} /><SettingsInput label={t("overtimePayRate")} value={settings.overtimeRate} onChange={(v) => setSettings({ ...settings, overtimeRate: v })} /><SettingsInput label={t("foodAllowance")} value={settings.foodAllowanceRate} onChange={(v) => setSettings({ ...settings, foodAllowanceRate: v })} /><SettingsInput label={t("nightOutPay")} value={settings.nightOutRate} onChange={(v) => setSettings({ ...settings, nightOutRate: v })} /><SectionHeading title={t("bonusPayRates")} />{BONUS_TYPES.map((bonusType) => <SettingsInput key={bonusType} label={bonusType} value={settings.bonusRates[bonusType]} onChange={(v) => setSettings({ ...settings, bonusRates: { ...settings.bonusRates, [bonusType]: v } })} />)}<SectionHeading title={t("customBonuses")} />{settings.customBonuses.map((customBonus, index) => <div key={customBonus.id} style={{ display: "grid", gridTemplateColumns: "1fr 92px", gap: 8, marginBottom: 8 }}><input style={inputStyle} value={customBonus.name} onChange={(e) => { const customBonuses = settings.customBonuses.map((item, itemIndex) => itemIndex === index ? { ...item, name: e.target.value } : item); setSettings({ ...settings, customBonuses }); }} placeholder={`${t("customBonusName")} ${index + 1}`} /><input style={inputStyle} inputMode="decimal" value={customBonus.rate} onChange={(e) => { const customBonuses = settings.customBonuses.map((item, itemIndex) => itemIndex === index ? { ...item, rate: e.target.value } : item); setSettings({ ...settings, customBonuses }); }} placeholder={t("customBonusRate")} /></div>)}<div style={{ marginTop: 12, padding: 10, borderRadius: 12, background: "#f8fafc", border: "1px solid #e2e8f0", color: "#64748b", fontSize: 12, fontWeight: 800 }}>Driver Pay App {APP_VERSION}</div><button style={{ ...buttonStyle, width: "100%", marginTop: 8, background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={onClose}>{t("done")}</button></ModalCard></Overlay>;
 }
-function WeekViewModal(props: { weekEndingLabel: string; settings: SettingsState; weekTotals: WeekTotals; payslipActualWeek: string; setPayslipActualWeek: (value: string) => void; weekDifference: number; weekBonusSummary: Record<BonusType | "nightOuts", number>; lastWeeklyRestInfo: WeeklyRestInfo | null; previewWeek: ComputedDay[]; taxedWeek: ComputedDay[]; setCurrentIndex: (index: number) => void; close: () => void; endWeek: (type: WeekArchiveType, dayTypeOverrides?: Record<string, DayType>, nextDayIntent?: "legacy" | "workTomorrow") => "completed" | "updated" | "unchanged"; askWorkingTomorrow: boolean; goToCurrentWeek: () => void }) {
+function WeekViewModal(props: { weekEndingLabel: string; settings: SettingsState; weekTotals: WeekTotals; payslipActualWeek: string; setPayslipActualWeek: (value: string) => void; weekDifference: number; weekBonusSummary: Record<BonusType | "nightOuts", number>; lastWeeklyRestInfo: WeeklyRestInfo | null; previewWeek: ComputedDay[]; taxedWeek: ComputedDay[]; setCurrentIndex: (index: number) => void; close: () => void; endWeek: (type: WeekArchiveType, dayTypeOverrides?: Record<string, DayType>) => "completed" | "updated" | "unchanged"; goToCurrentWeek: () => void }) {
   const p = props;
   const [showDetails, setShowDetails] = useState(false);
   const [showCloseConfirm, setShowCloseConfirm] = useState(false);
-  const [showWorkingTomorrowPrompt, setShowWorkingTomorrowPrompt] = useState(false);
   const [fastCloseMode, setFastCloseMode] = useState<"simple" | "choose">("simple");
   const [futureTypes, setFutureTypes] = useState<Record<string, DayType>>(() => Object.fromEntries(DAY_ORDER.map((id) => [id, id === "sat" || id === "sun" ? "off" : "holiday"])) as Record<string, DayType>);
   const differenceStyle = getDifferenceStyle(p.weekDifference);
@@ -2491,7 +2360,7 @@ function WeekViewModal(props: { weekEndingLabel: string; settings: SettingsState
   const bonusCount = p.previewWeek.reduce((sum, day) => sum + day.bonuses.reduce((s, b) => s + b.qty, 0), 0);
   const closeTypeStyle = { ...buttonStyle, fontWeight: 900 };
   const bonusTextForDay = (day: ComputedDay) => day.bonuses.length ? day.bonuses.map((b) => `${b.type} x${b.qty}`).join(", ") : "—";
-  const closeAndExit = (type: WeekArchiveType, overrides?: Record<string, DayType>, nextDayIntent: "legacy" | "workTomorrow" = "legacy") => { const result = p.endWeek(type, overrides, nextDayIntent); setShowCloseConfirm(false); setShowWorkingTomorrowPrompt(false); if (result !== "unchanged") p.close(); };
+  const closeAndExit = (type: WeekArchiveType, overrides?: Record<string, DayType>) => { const result = p.endWeek(type, overrides); setShowCloseConfirm(false); if (result !== "unchanged") p.close(); };
   const usedExtras = [
     ...Object.entries(p.weekBonusSummary).filter(([key, value]) => key !== "nightOuts" && Number(value) > 0).map(([key, value]) => `${key} x${value}`),
     ...(nightOutDays.length ? [`${t("nightOut")} ${nightOutDays.length}`] : []),
@@ -2504,12 +2373,8 @@ function WeekViewModal(props: { weekEndingLabel: string; settings: SettingsState
     return <Overlay onClose={() => setShowCloseConfirm(false)}><ModalCard><ModalTitle>{t("futureWeekClose")}</ModalTitle><div style={{ fontSize: 13, color: "#475569", fontWeight: 700, marginBottom: 12 }}>{p.weekEndingLabel}</div><div style={{ padding: 12, borderRadius: 14, background: "#f8fafc", border: "1px solid #eef2f7", color: "#334155", fontSize: 13, fontWeight: 700 }}>{t("fastCloseHint")}</div><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 12 }}><button style={closeTypeStyle} onClick={() => { setFastCloseMode("simple"); setAll("off"); }}>{t("allOff")}</button><button style={closeTypeStyle} onClick={() => { setFastCloseMode("simple"); setAll("holiday"); }}>{t("allHoliday")}</button></div><button style={{ ...buttonStyle, width: "100%", marginTop: 8, background: fastCloseMode === "choose" ? "#e2e8f0" : "#fff" }} onClick={() => setFastCloseMode(fastCloseMode === "choose" ? "simple" : "choose")}>{t("chooseDays")}</button>{fastCloseMode === "choose" && <div style={{ display: "grid", gap: 6, marginTop: 10 }}>{p.previewWeek.map((day) => <div key={day.id} style={{ display: "grid", gridTemplateColumns: "1fr 90px 90px", gap: 6, alignItems: "center" }}><div style={{ fontSize: 13, fontWeight: 900 }}>{dayNameLabel(day.dayName)}</div><button style={{ ...buttonStyle, padding: "8px 6px", background: futureTypes[day.id] === "off" ? "#dcfce7" : "#fff" }} onClick={() => setFutureTypes({ ...futureTypes, [day.id]: "off" })}>{t("off")}</button><button style={{ ...buttonStyle, padding: "8px 6px", background: futureTypes[day.id] === "holiday" ? "#fef3c7" : "#fff" }} onClick={() => setFutureTypes({ ...futureTypes, [day.id]: "holiday" })}>{t("holiday")}</button></div>)}</div>}<div style={{ display: "grid", gap: 8, marginTop: 12 }}><button style={{ ...buttonStyle, background: "#0f172a", color: "white", borderColor: "#0f172a", fontWeight: 900 }} onClick={() => closeAndExit("off", futureTypes)}>{t("closeFutureWeek")}</button><button style={buttonStyle} onClick={p.goToCurrentWeek}>{t("goToCurrentWeek")}</button><button style={buttonStyle} onClick={() => setShowCloseConfirm(false)}>{t("back")}</button></div></ModalCard></Overlay>;
   }
 
-  if (showWorkingTomorrowPrompt) {
-    return <Overlay onClose={() => setShowWorkingTomorrowPrompt(false)}><ModalCard><ModalTitle>{t("workingTomorrow")}</ModalTitle><div style={{ fontSize: 13, color: "#64748b", fontWeight: 800, marginBottom: 12 }}>{p.weekEndingLabel}</div><div style={{ display: "grid", gap: 8 }}><button style={{ ...buttonStyle, background: "#0f172a", color: "white", borderColor: "#0f172a", fontWeight: 900 }} onClick={() => closeAndExit("worked", undefined, "workTomorrow")}>{t("workingTomorrowYes")}</button><button style={buttonStyle} onClick={() => closeAndExit("worked", undefined, "legacy")}>{t("workingTomorrowNo")}</button><button style={buttonStyle} onClick={() => setShowWorkingTomorrowPrompt(false)}>{t("back")}</button></div></ModalCard></Overlay>;
-  }
-
   if (showCloseConfirm) {
-    return <Overlay onClose={() => setShowCloseConfirm(false)}><ModalCard><ModalTitle>{t("endWeekPreview")}</ModalTitle><div style={{ fontSize: 14, fontWeight: 800, color: "#334155", marginBottom: 12 }}>{p.weekEndingLabel}</div><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}><MiniStat label={t("totalHours")} value={formatMinutes(p.weekTotals.worked)} /><MiniStat label={t("km")} value={String(p.weekTotals.km)} /><MiniStat label={t("estimatedNet")} value={formatMoney(p.weekTotals.net)} /><label style={{ ...inputStyle, padding: 10, display: "grid", gap: 3 }}><div style={{ fontSize: 11, fontWeight: 900, color: "#64748b" }}>{t("payslipNet")}</div><input style={{ border: 0, outline: 0, background: "transparent", fontSize: 20, fontWeight: 900, width: "100%" }} type="text" inputMode="decimal" value={p.payslipActualWeek} onChange={(e) => p.setPayslipActualWeek(e.target.value)} placeholder="0.00" /></label><MiniStat label={t("reducedRests")} value={String(restSummary.reduced)} /><MiniStat label={t("splitRests")} value={String(splitDays.length)} /></div>{usedExtras.length > 0 && <div style={{ marginTop: 12, padding: 12, borderRadius: 14, border: "1px solid #e2e8f0", background: "#f8fafc" }}><div style={{ fontSize: 12, fontWeight: 900, color: "#475569", marginBottom: 8 }}>{t("usedExtras")}</div><div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>{usedExtras.map((item) => <span key={item} style={{ padding: "5px 9px", borderRadius: 999, background: "#e2e8f0", color: "#334155", fontSize: 12, fontWeight: 900 }}>{item}</span>)}</div></div>}<div style={{ ...differenceStyle, borderRadius: 14, padding: 12, marginTop: 12 }}><div style={{ fontSize: 12, marginBottom: 4 }}>{t("difference")}</div><div style={{ fontSize: 22, fontWeight: 900 }}>{hasPayslip ? formatMoney(p.weekDifference) : "—"}</div></div><div style={{ display: "grid", gap: 10, marginTop: 14 }}><button style={{ ...closeTypeStyle, background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={() => p.askWorkingTomorrow ? setShowWorkingTomorrowPrompt(true) : closeAndExit("worked")}>{t("confirmCloseWeek")}</button><div style={{ borderTop: "1px solid #e2e8f0", paddingTop: 10 }}><div style={{ fontSize: 12, color: "#64748b", fontWeight: 800, marginBottom: 6 }}>Mark only empty remaining days:</div><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}><button style={closeTypeStyle} onClick={() => closeAndExit("off")}>{t("remainingOff")}</button><button style={closeTypeStyle} onClick={() => closeAndExit("holiday")}>{t("remainingHoliday")}</button></div></div><button style={buttonStyle} onClick={() => setShowCloseConfirm(false)}>{t("back")}</button></div></ModalCard></Overlay>;
+    return <Overlay onClose={() => setShowCloseConfirm(false)}><ModalCard><ModalTitle>{t("endWeekPreview")}</ModalTitle><div style={{ fontSize: 14, fontWeight: 800, color: "#334155", marginBottom: 12 }}>{p.weekEndingLabel}</div><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}><MiniStat label={t("totalHours")} value={formatMinutes(p.weekTotals.worked)} /><MiniStat label={t("km")} value={String(p.weekTotals.km)} /><MiniStat label={t("estimatedNet")} value={formatMoney(p.weekTotals.net)} /><label style={{ ...inputStyle, padding: 10, display: "grid", gap: 3 }}><div style={{ fontSize: 11, fontWeight: 900, color: "#64748b" }}>{t("payslipNet")}</div><input style={{ border: 0, outline: 0, background: "transparent", fontSize: 20, fontWeight: 900, width: "100%" }} type="text" inputMode="decimal" value={p.payslipActualWeek} onChange={(e) => p.setPayslipActualWeek(e.target.value)} placeholder="0.00" /></label><MiniStat label={t("reducedRests")} value={String(restSummary.reduced)} /><MiniStat label={t("splitRests")} value={String(splitDays.length)} /></div>{usedExtras.length > 0 && <div style={{ marginTop: 12, padding: 12, borderRadius: 14, border: "1px solid #e2e8f0", background: "#f8fafc" }}><div style={{ fontSize: 12, fontWeight: 900, color: "#475569", marginBottom: 8 }}>{t("usedExtras")}</div><div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>{usedExtras.map((item) => <span key={item} style={{ padding: "5px 9px", borderRadius: 999, background: "#e2e8f0", color: "#334155", fontSize: 12, fontWeight: 900 }}>{item}</span>)}</div></div>}<div style={{ ...differenceStyle, borderRadius: 14, padding: 12, marginTop: 12 }}><div style={{ fontSize: 12, marginBottom: 4 }}>{t("difference")}</div><div style={{ fontSize: 22, fontWeight: 900 }}>{hasPayslip ? formatMoney(p.weekDifference) : "—"}</div></div><div style={{ display: "grid", gap: 10, marginTop: 14 }}><button style={{ ...closeTypeStyle, background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={() => closeAndExit("worked")}>{t("confirmCloseWeek")}</button><div style={{ borderTop: "1px solid #e2e8f0", paddingTop: 10 }}><div style={{ fontSize: 12, color: "#64748b", fontWeight: 800, marginBottom: 6 }}>Mark only empty remaining days:</div><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}><button style={closeTypeStyle} onClick={() => closeAndExit("off")}>{t("remainingOff")}</button><button style={closeTypeStyle} onClick={() => closeAndExit("holiday")}>{t("remainingHoliday")}</button></div></div><button style={buttonStyle} onClick={() => setShowCloseConfirm(false)}>{t("back")}</button></div></ModalCard></Overlay>;
   }
 
   return <Overlay onClose={p.close}><ModalCard><div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}><div><ModalTitle>{t("weekPreview")}</ModalTitle><div style={{ fontSize: 14, fontWeight: 800, color: "#334155", marginTop: 4 }}>{p.weekEndingLabel}</div>{p.settings.companyName?.trim() && <div style={{ fontSize: 12, fontWeight: 900, color: "#64748b", marginTop: 4 }}>{p.settings.companyName.trim()}</div>}</div><button style={{ ...buttonStyle, padding: "8px 12px" }} onClick={p.close}>{t("close")}</button></div><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 10 }}><MiniStat label={t("hours")} value={formatMinutes(p.weekTotals.worked)} /><MiniStat label={t("ot")} value={p.weekTotals.overtime > 0 ? formatMinutes(p.weekTotals.overtime) : "—"} /><MiniStat label={t("km")} value={p.weekTotals.km ? String(p.weekTotals.km) : "—"} /><MiniStat label={t("estimatedNet")} value={formatMoney(p.weekTotals.net)} /><MiniStat label={t("bonuses")} value={bonusCount ? `x${bonusCount}` : "—"} /><MiniStat label={t("nightOut")} value={nightOutDays.length ? `x${nightOutDays.length}` : "—"} /></div>{p.lastWeeklyRestInfo && <div style={{ marginTop: 12, padding: "9px 12px", borderRadius: 14, border: "1px solid #e2e8f0", background: "#f8fafc", display: "grid", gap: 5, fontSize: 13, fontWeight: 900 }}><div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}><span>{t("lastWeeklyRest")}</span><span>{formatMinutes(p.lastWeeklyRestInfo.minutes)}{p.lastWeeklyRestInfo.reduced ? ` • ${t("reducedWeeklyRest")}` : ""}</span></div>{p.lastWeeklyRestInfo.reduced && <><div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}><span>{t("compensationRequired")}</span><span>{formatMinutes(p.lastWeeklyRestInfo.compensationMinutes)}</span></div>{p.lastWeeklyRestInfo.compensationDeadlineISO && <div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}><span>{t("compensateBy")}</span><span>{formatAppDate(p.lastWeeklyRestInfo.compensationDeadlineISO)}</span></div>}</>}</div>}<div style={{ marginTop: 12, padding: 12, borderRadius: 14, border: "1px solid #e2e8f0", background: "#f8fafc" }}><div style={{ fontSize: 13, fontWeight: 900, marginBottom: 8 }}>{t("restSnapshot")}</div><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}><MiniStat label="11h" value={String(restSummary.good)} /><MiniStat label="9h" value={String(restSummary.reduced)} /><MiniStat label="SR" value={String(splitDays.length)} /></div>{restSummary.violation > 0 && <div style={{ marginTop: 8, color: "#b91c1c", fontWeight: 900 }}>Rest warnings: {restSummary.violation}</div>}</div><button style={{ ...buttonStyle, width: "100%", marginTop: 12, background: showDetails ? "#e2e8f0" : "#f8fafc" }} onClick={() => setShowDetails((value) => !value)}>{showDetails ? t("hideDailyDetails") : t("detailedView")}</button>{showDetails && <div style={{ marginTop: 12 }}><SectionHeading title={t("days")} right={t("noPoundsHere")} />{p.previewWeek.map((day) => { const originalIndex = p.taxedWeek.findIndex((d) => d.id === day.id); const isWorked = day.dayType === "work" && day.workedMinutes != null; const hasNightOut = Boolean(day.nightOut); return <button key={day.id} onClick={() => { p.setCurrentIndex(originalIndex); p.close(); window.scrollTo({ top: 0, behavior: "smooth" }); }} style={{ ...buttonStyle, display: "grid", gap: 5, textAlign: "left", padding: 12, marginBottom: 8, background: day.splitBreak ? "linear-gradient(135deg,#ecfccb 0%,#fef08a 100%)" : "#fff" }}><div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}><div style={{ fontWeight: 900, fontSize: 16 }}>{dayNameLabel(day.dayName)} · {day.dateLabel}</div><div style={{ display: "flex", gap: 5 }}>{hasNightOut && <span style={{ padding: "2px 8px", borderRadius: 999, background: "#dcfce7", color: "#166534", fontSize: 11, fontWeight: 900 }}>NO</span>}{day.splitBreak && <span style={{ padding: "2px 8px", borderRadius: 999, background: "#fde047", color: "#365314", fontSize: 11, fontWeight: 900 }}>SR</span>}</div></div><div style={{ fontSize: 13, color: "#475569", fontWeight: 700 }}>{day.dayType === "holiday" ? t("holiday") : day.dayType === "off" ? t("off") : `${normalizeTime(day.start) || "—"} → ${normalizeTime(day.finish) || "—"}`}</div><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 10px", fontSize: 12, color: "#0f172a", alignItems: "start" }}><span style={{ whiteSpace: "nowrap" }}>{t("hours")}: <b>{formatMinutes(day.workedMinutes)}</b></span><span style={{ whiteSpace: "nowrap" }}>{t("km")}: <b>{day.kmRun ?? "—"}</b></span><span style={{ whiteSpace: "nowrap" }}>{t("ot")}: <b>{day.overtimeMinutes > 0 ? formatMinutes(day.overtimeMinutes) : "—"}</b></span></div>{isWorked && <div style={{ fontSize: 12, color: "#64748b" }}>{t("bonuses")}: {bonusTextForDay(day)}</div>}</button>; })}</div>}<div style={{ marginTop: 12, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}><button style={buttonStyle} onClick={p.close}>{t("back")}</button><button style={{ ...buttonStyle, background: "#0f172a", color: "white", borderColor: "#0f172a", fontWeight: 900 }} onClick={() => setShowCloseConfirm(true)}>{t("endWeek")}</button></div></ModalCard></Overlay>;

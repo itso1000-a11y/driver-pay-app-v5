@@ -1,3 +1,18 @@
+## v5.2.16 — Weekly Rest Timeline & End Week Intent Boundary
+
+- Base: v5.2.15 Backup/Restore Round-Trip QA Foundation.
+- Promoted the QA-passed cross-pay-period weekly-rest timeline work into a distinct version identity so it is not confused with v5.2.15.
+- Weekly-rest detection now follows the full dated chronology across pay periods, recognises factual mid-week reduced/regular weekly rests, resets cycle counting from the latest factual rest, and falls back conservatively across ambiguous incomplete Work days.
+- After six completed work cycles, the factual timeline may drive the 45h primary Start proposal without requiring End Week; the 24h reduced option remains secondary.
+- Timeline ownership remains stable after Start is entered and blocks the legacy compensation path; the timeline path does not create/complete compensation-ledger obligations in this version.
+- End Week remains the pay-period/archive boundary. When the factual timeline is known and weekly rest is not yet due, the UI asks `Working tomorrow?` instead of assuming weekly rest. `Yes` opens the immediate next calendar day as Work in the current Sat-ending model; `No` preserves the legacy weekly-rest flow.
+- End Week feedback is explicit: `Week completed.`, `Week already saved. No changes.`, and `Changes saved. Week updated.`
+- Added dedicated regression coverage for End Week next-day intent in addition to weekly-rest timeline and backup/restore suites.
+- Custom End Week day remains future Setup work. No new timeline storage key or storage migration is introduced.
+- Versioning rule reaffirmed: every functional/source change receives a new version identity, and release/checkpoint filenames must include a short descriptive purpose rather than ambiguous repeated v5.2.15 labels.
+
+Status: source candidate pending exhaustive local QA and fresh production build.
+
 ## v5.2.15 — Backup/Restore Round-Trip QA Foundation
 
 - Base: v5.2.14 documentation continuity foundation.

@@ -1,16 +1,14 @@
 {
   "name": "driver-pay-app-v5",
   "private": true,
-  "version": "5.2.16",
+  "version": "5.2.15",
   "type": "module",
   "scripts": {
     "dev": "node scripts/sync-version.mjs && vite",
     "build": "node scripts/sync-version.mjs && vite build",
     "preview": "vite preview",
     "test:backup": "node scripts/backup-restore-roundtrip-test.mjs",
-    "test": "npm run test:backup && npm run test:weekly-rest && npm run test:end-week-intent",
-    "test:weekly-rest": "node scripts/weekly-rest-timeline-test.mjs",
-    "test:end-week-intent": "node scripts/end-week-intent-test.mjs"
+    "test": "npm run test:backup"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.1",
