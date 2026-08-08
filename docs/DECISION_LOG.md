@@ -110,3 +110,11 @@ This file records accepted decisions that must be checked before changing behavi
 
 **Status:** LOCKED  
 **Decision:** Package, lockfile, generated UI version, title, manifest, service-worker cache, release documents, output and ZIP filename must report the same release version.
+
+
+## v5.2.21 protected decisions confirmed by QA
+- Date-aware lifecycle remains Active → soft-closed/soft archive → hard archive.
+- Current and immediately previous closed pay weeks remain soft/editable; genuinely older historical weeks use hard archive protection.
+- Qualifying Day Off keeps weekly-rest context visible before factual Start, including the applicable 45h target and valid 24h reduced option.
+- The reduced 24h option remains valid through 44h59m and is removed at 45h. No Saturday/Sunday midnight cutoff is approved.
+- End Week alone does not manufacture weekly-rest due state.

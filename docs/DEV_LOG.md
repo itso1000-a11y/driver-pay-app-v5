@@ -275,3 +275,7 @@ Not changed:
 - Day Off context now shows meaningful completed/off days only.
 - After End Week, Day Off can show the last completed week context instead of an empty new week.
 - No pay/profile/rest-engine changes.
+
+
+## v5.2.21 stable promotion
+No source correction after heavy QA. Documentation only was updated to record the PASS and stable-baseline status. Functional source remains the exact QA-tested v5.2.21 source.

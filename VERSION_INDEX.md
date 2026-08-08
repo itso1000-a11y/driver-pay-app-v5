@@ -1,5 +1,12 @@
 # Version Index
 
+## v5.2.21 — Soft Archive + Weekly Rest Visibility Restoration
+**Base:** v5.2.20 stable road-test source.  
+**Status:** **STABLE SOURCE / DEPLOY BASELINE.** Heavy QA PASS; `npm ci`, full automated tests, `npx tsc --noEmit`, and fresh Vite production build all confirmed. No source corrections were made during QA. Physical-phone road test remains recommended for final touch/layout confirmation.  
+**Scope:** restore protected soft-archive lifecycle and weekly-rest proposal/context visibility only.  
+**Open:** exact calendar-midnight expiry for a 24h reduced proposal is not a locked archived rule and is intentionally not introduced here.
+
+
 ## v5.2.20 — Weekly Rest Start Warnings + UX Boundary
 - Reuses the existing red Start-field violation UI for two weekly-rest-specific reasons: `Weekly rest required` and `Weekly rest not completed`.
 - Keeps all existing daily-rest texts and the Rest Card three-colour system unchanged.

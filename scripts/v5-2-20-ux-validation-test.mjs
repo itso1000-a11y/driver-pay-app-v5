@@ -18,7 +18,7 @@ assert.match(appSource, /const restBeforeColors = getRestCardPalette\(restBefore
 assert.match(appSource, /const activeRestColors = futureDayNoStart \? displayRestColors : \(!displayStartValue \? currentRestPalette : \(weeklyRestPalette \|\| restBeforeColors\)\);/);
 
 // 2) Archived/closed weeks must never enter the Working tomorrow branch.
-assert.match(appSource, /askWorkingTomorrow=\{!archiveMode && weeklyRestDueByTimeline === false\}/);
+assert.match(appSource, /askWorkingTomorrow=\{!weekIsClosed && !archiveMode && weeklyRestDueByTimeline === false\}/);
 assert.match(appSource, /if \(isWeekClosed\(closingSaturday\)\) \{[\s\S]*setActionMessage\(t\("weekAlreadySaved"\)\); return "unchanged";[\s\S]*setActionMessage\(t\("weekUpdated"\)\);[\s\S]*return "updated";/);
 
 // Feedback remains the accepted wording, but is larger and readable longer.
@@ -36,7 +36,8 @@ assert.match(appSource, /color: startKmIsSuggested \? "#94a3b8" : "#0f172a"/);
 // 4) A completed earlier day in the active current week gets archive-like surface
 // styling, but archive lock/banner logic remains tied to true archiveMode only.
 assert.match(appSource, /const pastSavedDayVisual = Boolean\([\s\S]*!archiveMode[\s\S]*isDayComplete\(currentDay\)[\s\S]*currentPos < preferredWorkflowPos[\s\S]*\);/);
-assert.match(appSource, /const archiveLikeVisual = archiveMode \|\| pastSavedDayVisual;/);
+assert.match(appSource, /const archiveLikeVisual = archiveMode \|\| softArchiveMode \|\| pastSavedDayVisual;/);
+assert.match(appSource, /const softArchiveMode = weekIsClosed && !archiveMode;/);
 assert.match(appSource, /const weekLocked = archiveMode && !historicalEditEnabled;/);
 assert.match(appSource, /\{archiveMode && <div style=/);
 assert.match(appSource, /\.\.\.\(archiveLikeVisual \? \{ background: "#cbd5e1" \} : \{\}\)/);

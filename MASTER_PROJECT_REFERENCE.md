@@ -1,6 +1,7 @@
 # Driver Pay App — Master Project Reference
 
-**Current documented release:** v5.2.15  
+**Current documented source checkpoint:** v5.2.21
+**Installed road-test baseline before this checkpoint:** v5.2.20  
 **Purpose of this file:** primary continuity reference for every future development session.
 
 ## 1. Project purpose
@@ -125,7 +126,7 @@ Text-only or local presentation changes must not drift into these areas.
 
 ## 6. Current baseline status
 
-v5.2.13 passed static technical checks after removal of duplicate English translation keys. The user has also used it in real conditions and reports that it behaves well. v5.2.14 is a documentation-foundation release: no functional application source change is intended.
+**v5.2.21 is the current stable source/deploy baseline.** Independent heavy QA passed ZIP integrity, `npm ci`, the full automated regression suite, `npx tsc --noEmit`, and a fresh Vite production build. No source corrections were made during QA. The protected date-aware soft-archive lifecycle and weekly-rest visibility/proposal behaviour restored in v5.2.21 are part of the stable baseline. A physical-phone road test remains appropriate for touch/layout confirmation and the complete Saturday `Day Off → Work` correction workflow, but it is not a source-QA blocker.
 
 ## 7. Current next-work direction
 
@@ -167,3 +168,36 @@ OPEN ITEM carried forward without change:
 
 ## v5.2.20 accepted UX / validation decisions
 See `DECISIONS_SINCE_v5.2.19.md` for the canonical record of decisions captured between ZIP checkpoints. v5.2.20 implements only those listed items; Monday Start after End Week remains open and custom work-week boundaries remain future Setup work.
+
+
+## v5.2.21 — Archive-audited restoration checkpoint
+
+This checkpoint was created only after reviewing the project archive for protected behaviour that had regressed in v5.2.20. The archive is authoritative when an older explicit decision exists and no later explicit decision replaces it.
+
+### Soft archive / hard archive — protected
+
+- Lifecycle: Active week → soft-closed / soft archive → hard/true archive.
+- Soft archive is date-aware. Closing a week does not by itself make it hard archive.
+- The current pay week and immediately previous pay week remain soft/editable when closed. Future/near-current closed Holiday/Day Off periods also remain soft because plans can change.
+- Older genuinely historical weeks use hard archive mode and explicit Unlock/Save Changes protections.
+- A correction to a soft-closed week updates the existing closed/archive record; it must not create a duplicate or move the active-week pointer.
+- Pay-week membership remains Sunday→Saturday in the current model. Rest chronology is independent of that boundary.
+
+### Weekly-rest proposal ownership — protected
+
+- A qualifying weekly-rest state must remain visible before real Start.
+- Work-day Start owns actionable weekly-rest Start proposals.
+- 45h regular weekly-rest proposal is shown when available.
+- 24h reduced weekly-rest proposal is shown while valid; an obsolete reduced option must not remain visible.
+- When the selected day is Day Off and the factual timeline/candidate qualifies for weekly-rest mode, the Rest area explicitly states `Weekly rest in progress` / `Тече седмична почивка` and shows the applicable 45h/24h timing information.
+- End Week alone must not manufacture a weekly-rest state when the factual timeline says weekly rest is not due.
+- After real Start, proposal information gives way to factual Rest Card information and existing compensation logic.
+
+### Open timing detail — DO NOT GUESS
+
+The archive confirms that a valid 24h proposal is shown and an expired one is hidden, but it does not lock a universal Saturday/Sunday midnight expiry rule. v5.2.21 therefore does not add a new midnight rule. The conservative current rule keeps the reduced option available through the reduced-weekly-rest window and removes it once the 45h regular-rest threshold is reached. If a later approved Setup/work-pattern rule needs a calendar cutoff, that must be decided explicitly before code changes.
+
+
+## v5.2.21 — Stable QA approval
+
+Heavy QA PASS confirmed `npm ci`, full `npm test`, TypeScript validation and fresh Vite production build. No blocking defects and no source changes were reported. v5.2.21 is promoted to the current stable source/deploy baseline. See `QA_APPROVAL_v5.2.21.md`.

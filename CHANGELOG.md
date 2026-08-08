@@ -1,5 +1,16 @@
 # Changelog
 
+## v5.2.21 — Soft Archive + Weekly Rest Visibility Restoration
+- **Stable QA promotion:** heavy QA passed `npm ci`, full automated regressions, TypeScript validation and a fresh Vite production build; no source corrections were required. v5.2.21 is the current stable source/deploy baseline.
+- Archive audit restored the protected date-aware lifecycle: a closed current/near-current week is soft-editable instead of immediately becoming hard archive.
+- Current and immediately previous pay week remain soft when closed; older genuinely historical weeks retain hard archive protection.
+- A closed soft week cannot reopen the `Working tomorrow?` prompt; corrections use the existing update/no-duplicate closed-week path.
+- Restores weekly-rest context on qualifying Day Off screens with `Weekly rest in progress` / `Тече седмична почивка`.
+- Restores applicable 45h and valid 24h weekly-rest proposal information without changing Daily Rest, Rest Card colour semantics, compensation, Pay Engine, Save & Next or pay-week boundaries.
+- Keeps the existing factual due gate: End Week does not manufacture a weekly-rest proposal before weekly rest is due.
+- Keeps a valid 24h reduced option through the reduced-rest window and hides it once the 45h regular-rest threshold is reached. No new midnight expiry rule is introduced because the archive does not contain a locked exact-midnight rule.
+- Adds dedicated v5.2.21 regression and heavy-QA handoff coverage.
+
 ## v5.2.20 — Weekly Rest Start Warnings + UX Boundary
 - Reuses the existing red Start-field violation UI for two weekly-rest-specific reasons: `Weekly rest required` and `Weekly rest not completed`.
 - Keeps all existing daily-rest texts and the Rest Card three-colour system unchanged.

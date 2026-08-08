@@ -133,3 +133,10 @@ Expected: Loading/applying Gross Only profile restores Gross Only; loading/apply
 - Day Off context now shows meaningful completed/off days only.
 - After End Week, Day Off can show the last completed week context instead of an empty new week.
 - No pay/profile/rest-engine changes.
+
+
+## v5.2.21 — Heavy QA PASS / stable promotion
+- Independent heavy QA: PASS; no blocking defects.
+- `npm ci`, full `npm test`, `npx tsc --noEmit`, and fresh Vite build: PASS.
+- Source hashes unchanged; QA made no source/text/dependency/version changes.
+- Physical-phone road test remains recommended, not a source blocker.

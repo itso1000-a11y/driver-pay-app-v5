@@ -178,3 +178,7 @@ The app's primary purpose is correct pay checking. The user must immediately kno
 - Day Off context now shows meaningful completed/off days only.
 - After End Week, Day Off can show the last completed week context instead of an empty new week.
 - No pay/profile/rest-engine changes.
+
+
+## 2026-08-08 — v5.2.21 stable baseline
+Archive-audited restoration of soft/hard archive behaviour and weekly-rest visibility passed heavy QA, TypeScript validation and fresh production build. v5.2.21 became the stable source/deploy baseline. Exact calendar-midnight expiry for the 24h reduced proposal remains deliberately undecided; current behaviour removes the reduced alternative at the 45h threshold.

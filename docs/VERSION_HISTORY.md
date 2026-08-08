@@ -1,3 +1,10 @@
+## v5.2.21 — Soft Archive + Weekly Rest Visibility Restoration
+- Restores date-aware soft archive for closed current/near-current pay weeks.
+- Restores weekly-rest context and applicable 45h/24h proposal information on qualifying Day Off screens.
+- Adds `Weekly rest in progress` / `Тече седмична почивка`.
+- Preserves the timeline due gate, compensation logic, Daily Rest, Pay Engine, Save & Next, Rest Card colour system and Sunday→Saturday pay-week boundary.
+- Does not invent an unconfirmed midnight expiry rule for the reduced 24h proposal.
+
 ## v5.2.20 — Weekly Rest Start Warnings + UX Boundary
 - Weekly-specific Start violation reasons reuse the existing red Start-field UI.
 - Archive End Week no longer offers Working tomorrow; existing feedback is more readable.
@@ -109,3 +116,7 @@ BOUNDARY: Text/UI only. No Rest Engine, calculation, Weekly Rest, Split Break, E
 - Day Off context now shows meaningful completed/off days only.
 - After End Week, Day Off can show the last completed week context instead of an empty new week.
 - No pay/profile/rest-engine changes.
+
+
+## v5.2.21 — Stable Soft Archive + Weekly Rest Visibility Restoration
+Restored protected date-aware soft archive and qualifying Day Off weekly-rest visibility/proposals after archive audit. Heavy QA, TypeScript and fresh production build passed with no source corrections. Promoted to current stable source/deploy baseline.

@@ -64,7 +64,7 @@ function applyNextDayIntent(nextDays, carryKm, intent) {
 
 // Source-level ownership/UX guards: prompt only for known-not-due timeline,
 // explicit Yes/No branches, no new compensation integration here.
-assert.match(appSource,/askWorkingTomorrow=\{!archiveMode && weeklyRestDueByTimeline === false\}/);
+assert.match(appSource,/askWorkingTomorrow=\{!weekIsClosed && !archiveMode && weeklyRestDueByTimeline === false\}/);
 assert.match(appSource,/workingTomorrow: "Working tomorrow\?"/);
 assert.match(appSource,/workingTomorrowYes: "Yes, work tomorrow"/);
 assert.match(appSource,/workingTomorrowNo: "No, start weekly rest"/);
