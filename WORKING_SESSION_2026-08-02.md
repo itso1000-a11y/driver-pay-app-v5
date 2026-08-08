@@ -135,3 +135,27 @@ Base: driver-pay-app-v5.2.15-backup-restore-roundtrip-qa(1).zip
 - The accumulated QA-passed weekly-rest timeline + conservative End Week next-day intent change is now formally identified as v5.2.16, not another v5.2.15 checkpoint.
 - Rule restored: every future functional/source change advances the version before handoff; descriptive artifact names accompany version numbers.
 - Added `scripts/end-week-intent-test.mjs` and wired it into `npm test` to cover Yes/No next-day intent behaviour and source guards.
+
+
+## v5.2.17 — first timeline compensation integration
+- Added exact debt creation for a newly factual reduced mid-week weekly rest (24h to <45h).
+- Debt is created only when a later real Start proves the rest duration; no future rest is guessed.
+- Exact owed minutes = 45h minus actual factual rest. Regular 45h+ rest creates no debt.
+- Added equivalent-fact duplicate protection so timeline and legacy paths cannot create the same debt twice.
+- Timeline-driven debt completion is intentionally NOT added in this version; that remains a separate future version/QA step.
+- Rollback: `src/App.tsx.before-v5.2.17-timeline-compensation-create` and `scripts/weekly-rest-timeline-test.mjs.before-v5.2.17-timeline-compensation-create`.
+- Validation: `tsc --noEmit` PASS; `npm test` PASS.
+
+## v5.2.18 checkpoint
+
+Implemented the second compensation integration step: factual timeline-owned rest may complete one pre-existing compensation obligation.
+
+Safety boundaries:
+- no partial repayment;
+- chronology and deadline required;
+- one rest -> at most one obligation;
+- duplicate spending of the same continuous rest is blocked across Start edits;
+- v5.2.17 debt creation remains unchanged;
+- Monday Start proposal after End Week remains OPEN and untouched.
+
+Local source checks: npm test PASS; tsc --noEmit PASS. Fresh Vite production build not available in this environment.

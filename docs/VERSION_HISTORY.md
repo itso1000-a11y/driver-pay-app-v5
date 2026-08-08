@@ -1,3 +1,22 @@
+## v5.2.20 — Weekly Rest Start Warnings + UX Boundary
+- Weekly-specific Start violation reasons reuse the existing red Start-field UI.
+- Archive End Week no longer offers Working tomorrow; existing feedback is more readable.
+- Start km suggestion becomes visually accepted after Finish km entry.
+- Completed earlier active-week days use archive-like visual styling without locking.
+- Rest Card colours/thresholds and existing old texts are unchanged.
+
+## v5.2.17 — Timeline Reduced Weekly Rest Debt Creation
+
+- Base: v5.2.16 Weekly Rest Timeline & End Week Intent Boundary.
+- First compensation-integration step only: when a reduced weekly rest becomes factual because a later real Start proves a continuous 24h-<45h rest, the timeline path creates one exact outstanding compensation obligation.
+- Compensation amount remains `45h - actual reduced weekly rest`; regular 45h+ weekly rest creates no debt.
+- The new timeline obligation uses the same conservative deadline convention as the existing legacy ledger path and records the pay-period Saturday containing the work day before the rest.
+- Duplicate protection now also treats the same factual rest end + same owed amount as the same obligation, preventing timeline/legacy double creation.
+- Scope is deliberately narrow: this version does not add timeline-driven compensation completion, does not change Start/End Week/day state, and does not add storage keys or migrations.
+- Added regression coverage for exact debt creation, no duplicate on repeat evaluation, regular-rest no-debt, and separate obligations for separate reduced weekly rests.
+
+Validation: `tsc --noEmit` PASS; full `npm test` PASS. Fresh Vite production build still requires an environment with the project dependencies available.
+
 ## v5.2.14 — Documentation Continuity Foundation
 
 - Established the permanent AI-readable project reference and release workflow.

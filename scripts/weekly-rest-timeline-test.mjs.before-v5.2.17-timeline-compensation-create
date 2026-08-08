@@ -142,7 +142,7 @@ console.log('Weekly-rest timeline regression: PASS');
 // The UI must ask the user instead of guessing. "Yes" opens the immediate
 // next calendar day (Sunday in the current Sat-ending pay-period model) as Work;
 // "No" preserves the legacy weekly-rest flow.
-assert.match(appSource,/askWorkingTomorrow=\{!archiveMode && weeklyRestDueByTimeline === false\}/);
+assert.match(appSource,/askWorkingTomorrow=\{weeklyRestDueByTimeline === false\}/);
 assert.match(appSource,/workingTomorrow: "Working tomorrow\?"/);
 assert.match(appSource,/workingTomorrowYes: "Yes, work tomorrow"/);
 assert.match(appSource,/workingTomorrowNo: "No, start weekly rest"/);
@@ -151,52 +151,3 @@ assert.match(appSource,/closeAndExit\("worked", undefined, "workTomorrow"\)/);
 assert.match(appSource,/closeAndExit\("worked", undefined, "legacy"\)/);
 assert.match(appSource,/const targetIndex = nextDayIntent === "workTomorrow" && sundayIndex >= 0 \? sundayIndex : mondayIndex;/);
 assert.match(appSource,/nextDayIntent === "workTomorrow" && isEmptyForRemainingClose\(d\) \? \{ \.\.\.d, dayType: "work" as DayType \} : d/);
-
-// Scenario 13: a factual reduced mid-week weekly rest creates exactly one
-// outstanding compensation obligation. Regular weekly rest creates none.
-function addDaysLocal(date, amount) { const out=new Date(date.getFullYear(),date.getMonth(),date.getDate()); out.setDate(out.getDate()+amount); return out; }
-function isoLocal(date) { const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,'0'),dd=String(date.getDate()).padStart(2,'0'); return `${y}-${m}-${dd}`; }
-function isoWeekInfo(date) {
-  const local=new Date(date.getFullYear(),date.getMonth(),date.getDate());
-  const weekday=local.getDay()||7; const monday=addDaysLocal(local,1-weekday); const sunday=addDaysLocal(monday,6);
-  const thursday=addDaysLocal(monday,3); const firstThursday=new Date(thursday.getFullYear(),0,4); const firstWeekday=firstThursday.getDay()||7;
-  const firstWeekMonday=addDaysLocal(firstThursday,1-firstWeekday); const week=Math.floor((monday.getTime()-firstWeekMonday.getTime())/(7*86400000))+1;
-  return {week,sunday};
-}
-function payrollSaturday(dateISO) { const date=new Date(`${dateISO}T00:00:00`); return isoLocal(addDaysLocal(date,(6-date.getDay()+7)%7)); }
-function timelineObligation(rest) {
-  if (!rest?.reduced || rest.minutes<24*60 || rest.minutes>=45*60) return null;
-  const compensationMinutes=Math.max(0,45*60-rest.minutes); if (compensationMinutes<=0) return null;
-  const fixed=isoWeekInfo(new Date(rest.startAbs*60000)); const deadlineISO=isoLocal(addDaysLocal(fixed.sunday,21));
-  const sourceKey=`timeline:${rest.startAbs}:${rest.endAbs}`;
-  return {id:sourceKey,sourceKey,sourceClosingSaturdayISO:payrollSaturday(rest.previousWorkDateISO),sourceStartAbs:rest.endAbs,originalMinutes:compensationMinutes,remainingMinutes:compensationMinutes,deadlineISO,status:'outstanding',completedByStartAbs:null,completedRestMinutes:null};
-}
-function addObligation(ledger, obligation) {
-  if (!obligation) return ledger;
-  if (ledger.some(item=>item.sourceKey===obligation.sourceKey || (item.sourceStartAbs===obligation.sourceStartAbs && item.originalMinutes===obligation.originalMinutes))) return ledger;
-  return [...ledger,obligation];
-}
-const reducedFact={startAbs:dayTimeAbs(d('2026-08-04','tue','',''),'15:00'),endAbs:dayTimeAbs(d('2026-08-06','thu','',''),'02:00'),minutes:35*60,reduced:true,previousWorkDateISO:'2026-08-04',nextWorkDateISO:'2026-08-06'};
-const reducedDebt=timelineObligation(reducedFact);
-assert.ok(reducedDebt);
-assert.equal(reducedDebt.originalMinutes,10*60);
-assert.equal(reducedDebt.remainingMinutes,10*60);
-assert.equal(reducedDebt.status,'outstanding');
-assert.equal(reducedDebt.sourceStartAbs,reducedFact.endAbs);
-assert.equal(reducedDebt.sourceClosingSaturdayISO,'2026-08-08');
-assert.equal(reducedDebt.deadlineISO,'2026-08-30');
-let debtLedger=addObligation([],reducedDebt);
-debtLedger=addObligation(debtLedger,reducedDebt);
-assert.equal(debtLedger.length,1,'same factual reduced rest must not duplicate debt');
-const regularFact={...reducedFact,endAbs:reducedFact.startAbs+45*60,minutes:45*60,reduced:false,nextWorkDateISO:'2026-08-06'};
-assert.equal(timelineObligation(regularFact),null,'regular weekly rest must not create compensation debt');
-const secondReduced={...reducedFact,startAbs:reducedFact.startAbs+7*24*60,endAbs:reducedFact.endAbs+7*24*60,previousWorkDateISO:'2026-08-11',nextWorkDateISO:'2026-08-13'};
-debtLedger=addObligation(debtLedger,timelineObligation(secondReduced));
-assert.equal(debtLedger.length,2,'separate reduced weekly rests must remain separate obligations');
-
-// Source guards for the v5.2.17 narrow integration: factual timeline rest -> create debt only.
-assert.match(appSource,/getRecognizedWeeklyRestEndingAtStart\(days, Array\.isArray\(archive\) \? archive : \[\], enteredStartAbs\)/);
-assert.match(appSource,/buildTimelineWeeklyCompensationObligation\(timelineCompletedWeeklyRest\)/);
-assert.match(appSource,/if \(archiveMode \|\| typeof window === "undefined" \|\| !timelineCompensationObligation\) return;/);
-assert.match(appSource,/writeWeeklyCompensationLedger\(\[\.\.\.ledger, timelineCompensationObligation\]\)/);
-assert.match(appSource,/hasEquivalentWeeklyCompensationObligation\(ledger, timelineCompensationObligation\)/);

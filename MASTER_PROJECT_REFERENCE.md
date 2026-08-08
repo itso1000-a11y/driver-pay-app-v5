@@ -150,3 +150,20 @@ Documentation is not read-only. After every code or behaviour change, update all
 - the relevant module/workflow document
 
 A release is incomplete until the documentation reflects what changed, why it changed, what did not change, and how it was checked.
+
+## v5.2.18 — Timeline compensation repayment boundary
+
+Accepted implementation scope:
+- timeline-owned Start may complete one already-existing compensation obligation;
+- repayment remains indivisible and deadline-bound;
+- one factual continuous rest may complete at most one obligation, even if the ending Start is edited later;
+- earliest deadline / oldest source boundary determines priority;
+- current-rest debt creation and older-debt repayment remain separate operations;
+- the current factual rest cannot immediately complete the debt created at its own Start boundary.
+
+OPEN ITEM carried forward without change:
+- Monday Start-field proposal after End Week. Stable v5.2.15 behaviour is a reference only, not a restoration requirement.
+
+
+## v5.2.20 accepted UX / validation decisions
+See `DECISIONS_SINCE_v5.2.19.md` for the canonical record of decisions captured between ZIP checkpoints. v5.2.20 implements only those listed items; Monday Start after End Week remains open and custom work-week boundaries remain future Setup work.

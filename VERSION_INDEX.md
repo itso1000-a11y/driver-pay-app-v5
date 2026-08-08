@@ -1,3 +1,42 @@
+# Version Index
+
+## v5.2.20 — Weekly Rest Start Warnings + UX Boundary
+- Reuses the existing red Start-field violation UI for two weekly-rest-specific reasons: `Weekly rest required` and `Weekly rest not completed`.
+- Keeps all existing daily-rest texts and the Rest Card three-colour system unchanged.
+- Prevents archived/closed weeks from entering the `Working tomorrow?` End Week branch.
+- Keeps existing End Week feedback wording but makes the toast larger and visible for 4.5 seconds.
+- Treats carried Start km as visually accepted/dark once Finish km is entered, while remaining editable.
+- Gives completed earlier days in the active week archive-like screen styling without archive locking.
+- Adds heavy QA and independent tester-chat handoff documents.
+
+## v5.2.19 — Compensation Repayment Chronology Guard
+
+Purpose: close the v5.2.18 repayment chronology gap without changing any other weekly-rest behaviour.
+
+QA focus: a qualifying rest must begin at or after the debt source boundary; a rest spanning across the debt-creation moment must not repay that debt.
+
+Open item carried forward: Monday Start proposal after End Week. No change in this version.
+
+## v5.2.18 — Timeline Compensation Repayment
+
+Purpose: allow the factual timeline path to complete one already-existing compensation obligation without re-enabling legacy ownership.
+
+QA focus: indivisible repayment boundaries, chronology, deadline, one-obligation-per-rest, ordering, and self-completion prevention.
+
+Open item carried forward: Monday Start proposal after End Week. No change in this version.
+
+## v5.2.17 — Timeline Reduced Weekly Rest Debt Creation
+
+- Base: v5.2.16 Weekly Rest Timeline & End Week Intent Boundary.
+- First compensation-integration step only: when a reduced weekly rest becomes factual because a later real Start proves a continuous 24h-<45h rest, the timeline path creates one exact outstanding compensation obligation.
+- Compensation amount remains `45h - actual reduced weekly rest`; regular 45h+ weekly rest creates no debt.
+- The new timeline obligation uses the same conservative deadline convention as the existing legacy ledger path and records the pay-period Saturday containing the work day before the rest.
+- Duplicate protection now also treats the same factual rest end + same owed amount as the same obligation, preventing timeline/legacy double creation.
+- Scope is deliberately narrow: this version does not add timeline-driven compensation completion, does not change Start/End Week/day state, and does not add storage keys or migrations.
+- Added regression coverage for exact debt creation, no duplicate on repeat evaluation, regular-rest no-debt, and separate obligations for separate reduced weekly rests.
+
+Validation: `tsc --noEmit` PASS; full `npm test` PASS. Fresh Vite production build still requires an environment with the project dependencies available.
+
 ## v5.2.16 — Weekly Rest Timeline & End Week Intent Boundary
 
 - Base: v5.2.15 Backup/Restore Round-Trip QA Foundation.
