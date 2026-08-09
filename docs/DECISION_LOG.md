@@ -118,3 +118,11 @@ This file records accepted decisions that must be checked before changing behavi
 - Qualifying Day Off keeps weekly-rest context visible before factual Start, including the applicable 45h target and valid 24h reduced option.
 - The reduced 24h option remains valid through 44h59m and is removed at 45h. No Saturday/Sunday midnight cutoff is approved.
 - End Week alone does not manufacture weekly-rest due state.
+
+
+## v5.2.22 protected correction
+- Friday End Week candidate may remain addressable on Saturday of the same Sunday→Saturday pay week; factual chronology/due gate still control eligibility.
+- Day Off may display weekly-rest proposal context without writing Start.
+- Day Off → Work does not auto-save a weekly proposal.
+- Current/future soft-closed day is not visually historical solely because End Week was pressed.
+- No new 24h midnight cutoff is approved.

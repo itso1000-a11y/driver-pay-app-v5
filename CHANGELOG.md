@@ -1,5 +1,15 @@
 # Changelog
 
+## v5.2.22 — Same-pay-week Weekly Rest + Current-Day Visual Regression Fix
+- Archive-audited fix after physical-phone road test of v5.2.21.
+- Keeps a stored End Week weekly-rest candidate addressable on Saturday of the same Sunday→Saturday pay week; factual chronology and due-gate logic still decide whether it may drive proposals.
+- Restores applicable weekly-rest 45h/24h pre-Start proposal visibility on same-pay-week Saturday without auto-saving Start.
+- Preserves `Suggested ≠ Saved` and existing Day Off → Work workflow.
+- Prevents today's/future soft-closed day from receiving archive-like shell styling merely because End Week was pressed.
+- Keeps past saved-day visual distinction and true hard-archive locking unchanged.
+- No midnight cutoff rule added for the 24h option.
+- No Pay Engine, compensation formula, Rest Card colour semantics, KM, profile, Save & Next or accepted-text change.
+
 ## v5.2.21 — Soft Archive + Weekly Rest Visibility Restoration
 - **Stable QA promotion:** heavy QA passed `npm ci`, full automated regressions, TypeScript validation and a fresh Vite production build; no source corrections were required. v5.2.21 is the current stable source/deploy baseline.
 - Archive audit restored the protected date-aware lifecycle: a closed current/near-current week is soft-editable instead of immediately becoming hard archive.
@@ -206,3 +216,6 @@ Build status: `npm install --no-package-lock` and `npm run build` completed succ
 - When the weekly-rest legal start is on an earlier day, the Start field stays empty and the helper shows when the weekly rest ended (for example, `Weekly rest ended Sun 14:20`).
 - Incomplete weekly-rest cards now use the compact wording: `Weekly rest` / duration / `Not completed`.
 - No rest-engine or pay-calculation changes.
+
+### v5.2.22 deployment status
+Heavy QA, TypeScript and fresh production build passed. Packaging revision r1 corrected only the internal ZIP root identity and passed integrity/source comparison. The unchanged v5.2.22 source is released for physical-phone road testing before Setup work begins.

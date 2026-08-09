@@ -140,3 +140,12 @@ Expected: Loading/applying Gross Only profile restores Gross Only; loading/apply
 - `npm ci`, full `npm test`, `npx tsc --noEmit`, and fresh Vite build: PASS.
 - Source hashes unchanged; QA made no source/text/dependency/version changes.
 - Physical-phone road test remains recommended, not a source blocker.
+
+## v5.2.22 — Heavy QA + packaging correction
+- Application regressions: PASS.
+- TypeScript: PASS.
+- Fresh production build: PASS.
+- Initial package integrity: FAIL only because root was incorrectly named v5.2.21-STABLE.
+- v5.2.22-r1 packaging correction: PASS.
+- r1 application source: byte-for-byte identical to heavy-tested v5.2.22 source.
+- Remaining step: physical-phone Saturday road test after deployment.

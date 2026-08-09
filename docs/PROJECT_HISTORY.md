@@ -182,3 +182,10 @@ The app's primary purpose is correct pay checking. The user must immediately kno
 
 ## 2026-08-08 — v5.2.21 stable baseline
 Archive-audited restoration of soft/hard archive behaviour and weekly-rest visibility passed heavy QA, TypeScript validation and fresh production build. v5.2.21 became the stable source/deploy baseline. Exact calendar-midnight expiry for the 24h reduced proposal remains deliberately undecided; current behaviour removes the reduced alternative at the 45h threshold.
+
+
+## 2026-08-08 — v5.2.22 prepared
+Real-device v5.2.21 testing found that a Friday-created weekly-rest candidate disappeared on Saturday of the same pay week and that a current soft-closed Saturday looked archived. Archive review showed these were regressions against protected proposal/date-aware UX principles. v5.2.22 applies the narrow correction before Setup work continues.
+
+## 2026-08-09 — v5.2.22 deployed for road test
+The same-pay-week Saturday weekly-rest candidate and current-day soft-close visual regression were corrected in v5.2.22. Heavy QA and build validation passed. A packaging-only r1 fixed the internal root name without changing source. The exact tested source is now deployed for real-device confirmation before Setup development.

@@ -120,3 +120,7 @@ BOUNDARY: Text/UI only. No Rest Engine, calculation, Weekly Rest, Split Break, E
 
 ## v5.2.21 — Stable Soft Archive + Weekly Rest Visibility Restoration
 Restored protected date-aware soft archive and qualifying Day Off weekly-rest visibility/proposals after archive audit. Heavy QA, TypeScript and fresh production build passed with no source corrections. Promoted to current stable source/deploy baseline.
+
+
+## v5.2.22 — Same-pay-week Weekly Rest + Current-Day Visual Fix
+Road-test regression correction after archive audit. Restores same-pay-week Saturday access to a valid Friday End Week candidate and prevents today's/future soft-closed day from looking historical. Source QA candidate pending heavy retest.

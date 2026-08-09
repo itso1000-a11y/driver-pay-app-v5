@@ -1,6 +1,6 @@
 # Driver Pay App — Master Project Reference
 
-**Current documented source checkpoint:** v5.2.21
+**Current documented source checkpoint:** v5.2.22 (QA candidate; v5.2.21 remains last stable baseline until retest)
 **Installed road-test baseline before this checkpoint:** v5.2.20  
 **Purpose of this file:** primary continuity reference for every future development session.
 
@@ -201,3 +201,16 @@ The archive confirms that a valid 24h proposal is shown and an expired one is hi
 ## v5.2.21 — Stable QA approval
 
 Heavy QA PASS confirmed `npm ci`, full `npm test`, TypeScript validation and fresh Vite production build. No blocking defects and no source changes were reported. v5.2.21 is promoted to the current stable source/deploy baseline. See `QA_APPROVAL_v5.2.21.md`.
+
+
+## v5.2.22 — Road-test regression correction
+
+Physical-phone testing of v5.2.21 exposed two issues missed by source QA: a Friday End Week weekly-rest candidate was discarded on Saturday of the same pay week, and today's Saturday received archive-like styling immediately after a soft close. Archive review confirmed that pre-Start weekly-rest proposals remain the responsibility of the Start area, `Suggested ≠ Saved` remains protected, Day Off may show weekly-rest context informationally, and soft archive is date-aware.
+
+v5.2.22 therefore changes only: (1) stored weekly-rest candidate selection from later-pay-week-only to same-or-later pay week, while retaining factual chronology and due-gate checks; (2) soft-closed archive-like styling only for calendar days already in the past. No special midnight expiry for the 24h proposal is approved.
+
+v5.2.21 remains the last stable baseline until v5.2.22 heavy QA, TypeScript/build and real-device Saturday workflow tests pass.
+
+## v5.2.22 — Deployment / physical-phone confirmation
+
+v5.2.22 passed the supplied heavy source QA, TypeScript validation and fresh Vite production build. The packaging-only r1 correction then passed ZIP/root/version integrity and byte-for-byte source comparison. The exact tested source is now approved for deployment so the remaining real-device Friday End Week → current Saturday workflow can be verified. No Setup changes are included in this release.

@@ -794,7 +794,7 @@ function readSavedWeekDays(saturdayISO: string): DayRecord[] | null {
 
 function getWeeklyRestCandidateForSelectedWeek(selectedSaturdayISO: string): WeeklyRestCandidate | null {
   const stored = readWeeklyRestCandidate();
-  if (stored && selectedSaturdayISO > stored.closingSaturdayISO) return stored;
+  if (stored && selectedSaturdayISO >= stored.closingSaturdayISO) return stored;
 
   // Backfill for users who closed the previous week before this version was installed.
   const previousSaturdayISO = toISODate(addDays(fromISODate(selectedSaturdayISO), -7));
@@ -1840,7 +1840,7 @@ export default function App() {
     preferredWorkflowPos >= 0 &&
     currentPos < preferredWorkflowPos
   );
-  const archiveLikeVisual = archiveMode || softArchiveMode || pastSavedDayVisual;
+  const archiveLikeVisual = archiveMode || pastSavedDayVisual || (softArchiveMode && currentDay.dateISO < toISODate(new Date()));
   const shiftValidationMessage = useMemo(() => getShiftValidationMessage(currentDay), [currentDay]);
 
   useEffect(() => { setSuppressStartKmSuggestion(false); }, [currentDay.id]);

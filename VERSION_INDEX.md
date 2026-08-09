@@ -1,3 +1,8 @@
+## v5.2.22 — Same-pay-week Weekly Rest + Current-Day Visual Regression Fix
+**Status:** source QA candidate. Local dependency-free automated regression suite PASS. TypeScript/fresh Vite build require independent environment because local npm mirror cannot provide one transitive package. Physical-phone Saturday workflow test required before install/stable promotion.
+
+Changes: same-pay-week Friday→Saturday candidate continuity; current/future soft-closed day no longer rendered as historical archive; no other functional scope intended.
+
 # Version Index
 
 ## v5.2.21 — Soft Archive + Weekly Rest Visibility Restoration
@@ -187,3 +192,6 @@ QA:
 ### v5.2.8
 - Weekly-rest past-target Start helper clarity.
 - Compact incomplete weekly-rest Rest Card wording.
+
+## v5.2.22 deployment checkpoint
+**Status:** approved for deployment / physical-phone road test. Runtime version remains 5.2.22. Heavy QA, TypeScript, fresh build and corrected packaging integrity all PASS. Remaining confirmation is the real-device Friday End Week → current Saturday workflow.

@@ -279,3 +279,10 @@ Not changed:
 
 ## v5.2.21 stable promotion
 No source correction after heavy QA. Documentation only was updated to record the PASS and stable-baseline status. Functional source remains the exact QA-tested v5.2.21 source.
+
+
+## v5.2.22 — road-test regression fix
+Physical-phone testing found same-pay-week Saturday candidate loss and current-day archive-like styling. Archive was checked before coding. Functional change is intentionally limited to candidate selection equality and date-aware soft-close visual gating.
+
+## v5.2.22 stable road-test deploy
+Documentation-only packaging of the already tested v5.2.22 source. No application source, dependency, storage, Pay Engine, Rest Engine, Archive logic or user-facing application text changed.

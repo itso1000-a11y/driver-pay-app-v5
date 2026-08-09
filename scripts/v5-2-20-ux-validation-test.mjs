@@ -36,7 +36,7 @@ assert.match(appSource, /color: startKmIsSuggested \? "#94a3b8" : "#0f172a"/);
 // 4) A completed earlier day in the active current week gets archive-like surface
 // styling, but archive lock/banner logic remains tied to true archiveMode only.
 assert.match(appSource, /const pastSavedDayVisual = Boolean\([\s\S]*!archiveMode[\s\S]*isDayComplete\(currentDay\)[\s\S]*currentPos < preferredWorkflowPos[\s\S]*\);/);
-assert.match(appSource, /const archiveLikeVisual = archiveMode \|\| softArchiveMode \|\| pastSavedDayVisual;/);
+assert.match(appSource, /const archiveLikeVisual = archiveMode \|\| pastSavedDayVisual \|\| \(softArchiveMode && currentDay\.dateISO < toISODate\(new Date\(\)\)\);/);
 assert.match(appSource, /const softArchiveMode = weekIsClosed && !archiveMode;/);
 assert.match(appSource, /const weekLocked = archiveMode && !historicalEditEnabled;/);
 assert.match(appSource, /\{archiveMode && <div style=/);
