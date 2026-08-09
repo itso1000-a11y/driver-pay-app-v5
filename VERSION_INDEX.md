@@ -1,3 +1,6 @@
+## v5.2.25 — Weekly Rest UI Contract Recovery
+**Status:** source QA candidate. Restores the older simple weekly-rest presentation contract on top of v5.2.24 chronology and adds direct current-week return from soft archive.
+
 ## v5.2.24 — Long Weekly-Rest Context / Candidate Consumption Fix
 **Status:** source QA checkpoint.
 **Base:** v5.2.23-r2 behavioral-QA source after Scenario 3 exposed the 72h cutoff defect.
@@ -205,3 +208,6 @@ QA:
 
 ## v5.2.22 deployment checkpoint
 **Status:** approved for deployment / physical-phone road test. Runtime version remains 5.2.22. Heavy QA, TypeScript, fresh build and corrected packaging integrity all PASS. Remaining confirmation is the real-device Friday End Week → current Saturday workflow.
+
+## v5.2.25 phone deployment checkpoint
+**Status:** Source Heavy QA PASS; approved for physical-phone validation. Runtime version remains 5.2.25. Installed stable approval is pending the phone road test.

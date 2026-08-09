@@ -1,6 +1,7 @@
 # Driver Pay App — Master Project Reference
 
 **Current documented source checkpoint:** v5.2.24 (QA candidate; v5.2.21 remains last fully stable source baseline; v5.2.22 is the deployed road-test branch before this correction chain)
+> **MANDATORY GOVERNANCE:** Before any code or behaviour change, read `PROTECTED_BEHAVIOURS.md` and `NEW_CHAT_HANDOVER.md`. `PROTECTED_BEHAVIOURS.md` is the canonical Master Decision Register. A protected behaviour must not be changed silently; conflicts must be reported to the user before implementation.
 **Installed road-test baseline before this checkpoint:** v5.2.20  
 **Purpose of this file:** primary continuity reference for every future development session.
 
@@ -219,3 +220,6 @@ v5.2.22 passed the supplied heavy source QA, TypeScript validation and fresh Vit
 
 Behavioral QA of v5.2.23-r2 confirmed the End Week architecture for Scenarios 1 and 2 and found one blocking Scenario 3 defect: `getWeeklyRestPlan()` expired context after 72h. v5.2.24 removes arbitrary elapsed-time expiry and consumes the candidate only after a later factual Work Start. This is a focused weekly-rest correction before Setup; no Setup changes are included.
 
+## v5.2.25 — Phone deployment checkpoint
+
+v5.2.25-r2 passed full Heavy QA: complete npm test, TypeScript, fresh production build, WR-001–WR-013, all three End Week behavioral scenarios, and Test/Register/Source alignment. The unchanged runtime source is now packaged for required physical-phone validation. Setup remains deferred until that road test passes.

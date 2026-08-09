@@ -1,3 +1,10 @@
+## v5.2.25 — Weekly Rest UI Contract Recovery
+- Compared v5.2.16 pre-due-gate/stable UI paths against v5.2.24.
+- Weekly Rest card now renders whenever a valid plan exists, including after the 45h endpoint has passed.
+- A stale stored candidate can no longer hide a newer immediate previous-week candidate.
+- Non-current soft archive now has a direct `Go to current week` action.
+- Six-cycle warning, compensation, Pay Engine and archive locking logic are unchanged.
+
 # Changelog
 
 ## v5.2.24 — Long Weekly-Rest Context / Candidate Consumption Fix
@@ -236,3 +243,16 @@ Build status: `npm install --no-package-lock` and `npm run build` completed succ
 
 ### v5.2.22 deployment status
 Heavy QA, TypeScript and fresh production build passed. Packaging revision r1 corrected only the internal ZIP root identity and passed integrity/source comparison. The unchanged v5.2.22 source is released for physical-phone road testing before Setup work begins.
+
+### v5.2.25-r1 documentation/governance revision
+- Added canonical `PROTECTED_BEHAVIOURS.md` / Master Decision Register after audit of v5.2.16→v5.2.25 history.
+- Added `NEW_CHAT_HANDOVER.md` with mandatory read-before-code rule.
+- No runtime application source, tests, dependencies, storage, Rest Engine, Pay Engine, Archive logic or UI text changed by this r1 packaging revision.
+
+### v5.2.25-r2 QA/test alignment
+- Resolved the Heavy-QA contradiction C-001 between WR-009 and the historical v5.2.22 regression assertion.
+- The old test no longer requires unconditional stored-candidate preference; it now verifies the current protected newer-factual-Finish selection while retaining the same-pay-week Saturday rule.
+- Runtime application source is unchanged.
+
+### v5.2.25 phone-road-test deploy
+The Heavy-QA-passed v5.2.25 runtime source is packaged unchanged for physical-phone validation. No Setup work is included.
