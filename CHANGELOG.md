@@ -1,5 +1,22 @@
 # Changelog
 
+## v5.2.24 — Long Weekly-Rest Context / Candidate Consumption Fix
+- Fixes the blocking Scenario 3 defect found by behavioral QA in v5.2.23-r2.
+- Removes the arbitrary 72-hour display cutoff from weekly-rest proposal/context helpers.
+- Keeps an End Week weekly-rest candidate alive for the full uninterrupted rest, including rests longer than 72h, so the passed 45h endpoint can still show `Weekly rest ended [day/time]` before factual Start.
+- Adds factual candidate-consumption detection: the first later real Work Start consumes the old End Week candidate for subsequent days, preventing stale proposal reappearance after work resumes.
+- Preserves the three accepted End Week scenarios, Suggested ≠ Saved, 45h primary/24h secondary proposal semantics, six-cycle mandatory warning, compensation chronology, archive behavior, Pay Engine and Setup scope.
+
+
+## v5.2.23 — End Week / Weekly Rest Intent Separation
+- Restores the archived End Week intent model: pressing End Week starts weekly-rest tracking from the last factual Finish.
+- Separates voluntary End Week proposal visibility from the six-cycle mandatory due/warning gate.
+- Keeps 45h as the primary weekly-rest target and 24h as the reduced secondary option.
+- Preserves Suggested ≠ Saved, factual timeline ownership, compensation chronology and normal daily-rest legality.
+- r2 QA packaging update fixes version-documentation identity and replaces source-pattern-only v5.2.23 coverage with executable behavioral simulation of the three mandatory End Week scenarios using instrumented functions from the actual App.tsx source.
+- No application runtime logic change was made in r2.
+
+
 ## v5.2.22 — Same-pay-week Weekly Rest + Current-Day Visual Regression Fix
 - Archive-audited fix after physical-phone road test of v5.2.21.
 - Keeps a stored End Week weekly-rest candidate addressable on Saturday of the same Sunday→Saturday pay week; factual chronology and due-gate logic still decide whether it may drive proposals.

@@ -1,3 +1,13 @@
+## v5.2.24 — Long Weekly-Rest Context / Candidate Consumption Fix
+**Status:** source QA checkpoint.
+**Base:** v5.2.23-r2 behavioral-QA source after Scenario 3 exposed the 72h cutoff defect.
+**Scope:** remove the arbitrary 72h weekly-rest display expiry and replace it with factual lifecycle ownership: an End Week candidate remains visible while the same continuous rest is still running, and is consumed by the first later real Work Start. Scenario 1/2 behavior, six-cycle mandatory warning, compensation, Pay Engine, archive and Setup are unchanged.
+
+## v5.2.23 — End Week / Weekly Rest Intent Separation
+**Status:** source QA checkpoint, r2 test/documentation correction. Application runtime/source logic remains v5.2.23.
+**Scope:** End Week always seeds an informational weekly-rest candidate from the last factual Finish; six-cycle chronology remains the mandatory warning/due gate only. 45h stays primary, valid 24h remains secondary, and Suggested ≠ Saved remains protected.
+**QA r2:** documentation identity corrected and the v5.2.23 regression now behaviorally executes the three mandatory real-world scenarios against instrumented functions from the actual `src/App.tsx` source.
+
 ## v5.2.22 — Same-pay-week Weekly Rest + Current-Day Visual Regression Fix
 **Status:** source QA candidate. Local dependency-free automated regression suite PASS. TypeScript/fresh Vite build require independent environment because local npm mirror cannot provide one transitive package. Physical-phone Saturday workflow test required before install/stable promotion.
 

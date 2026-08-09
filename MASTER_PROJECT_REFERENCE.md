@@ -1,6 +1,6 @@
 # Driver Pay App — Master Project Reference
 
-**Current documented source checkpoint:** v5.2.22 (QA candidate; v5.2.21 remains last stable baseline until retest)
+**Current documented source checkpoint:** v5.2.24 (QA candidate; v5.2.21 remains last fully stable source baseline; v5.2.22 is the deployed road-test branch before this correction chain)
 **Installed road-test baseline before this checkpoint:** v5.2.20  
 **Purpose of this file:** primary continuity reference for every future development session.
 
@@ -214,3 +214,8 @@ v5.2.21 remains the last stable baseline until v5.2.22 heavy QA, TypeScript/buil
 ## v5.2.22 — Deployment / physical-phone confirmation
 
 v5.2.22 passed the supplied heavy source QA, TypeScript validation and fresh Vite production build. The packaging-only r1 correction then passed ZIP/root/version integrity and byte-for-byte source comparison. The exact tested source is now approved for deployment so the remaining real-device Friday End Week → current Saturday workflow can be verified. No Setup changes are included in this release.
+
+## v5.2.24 — Long weekly-rest context
+
+Behavioral QA of v5.2.23-r2 confirmed the End Week architecture for Scenarios 1 and 2 and found one blocking Scenario 3 defect: `getWeeklyRestPlan()` expired context after 72h. v5.2.24 removes arbitrary elapsed-time expiry and consumes the candidate only after a later factual Work Start. This is a focused weekly-rest correction before Setup; no Setup changes are included.
+
