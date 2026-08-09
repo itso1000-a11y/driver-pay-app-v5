@@ -256,3 +256,15 @@ Heavy QA, TypeScript and fresh production build passed. Packaging revision r1 co
 
 ### v5.2.25 phone-road-test deploy
 The Heavy-QA-passed v5.2.25 runtime source is packaged unchanged for physical-phone validation. No Setup work is included.
+
+## v5.2.26 — weekly-rest road-test corrections
+- Weekday + time restored on 45h/24h proposals.
+- Redundant `Weekly rest in progress` removed.
+- Mandatory weekly-rest <24h Rest Card is red `Weekly rest not completed`.
+- Visible reduced-weekly-rest compensation restored.
+- Six-cycle latest legal weekly-rest START deadline is calculated separately from 24h/45h completion targets.
+- Sunday 24:00 / Monday 00:00 does not reset uninterrupted weekly rest.
+
+### v5.2.26-r1 packaging/version correction
+- Corrected `public/sw.js` cache identity from `driver-pay-v5-2-25` to `driver-pay-v5-2-26`.
+- No runtime logic or behavioral test changed.

@@ -211,3 +211,9 @@ QA:
 
 ## v5.2.25 phone deployment checkpoint
 **Status:** Source Heavy QA PASS; approved for physical-phone validation. Runtime version remains 5.2.25. Installed stable approval is pending the phone road test.
+
+## v5.2.26
+Weekly-rest physical-road-test correction checkpoint; WR-014–WR-018 added.
+
+## v5.2.26-r1
+Artifact revision for service-worker/cache version integrity only. Runtime application version remains v5.2.26.

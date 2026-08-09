@@ -861,3 +861,18 @@ This register is intended to grow slowly and remain readable.
 
 It is not a changelog.  
 It is the project's **behavioral constitution**.
+
+## WR-014 — Six-cycle legal-start deadline is separate from 24h/45h completion targets
+The latest legal START of a new weekly rest is six consecutive 24-hour periods after the end of the previous recognized weekly rest. This deadline is distinct from the later 24h and 45h completion targets of the current continuous rest. Sunday 24:00 / Monday 00:00 does not reset uninterrupted rest.
+
+## WR-015 — Weekly-rest proposals show weekday + time
+Cross-day weekly-rest proposals must show weekday and time, e.g. `Mon 19:00`, never a bare ambiguous `19:00`.
+
+## WR-016 — Mandatory weekly-rest Rest Card owns the <24h state
+When the factual six-cycle weekly-rest path owns the Start decision and factual uninterrupted rest is below 24h, the Rest Card is red and says `Weekly rest not completed`; it must not fall back to `Reduced rest • Left: N`.
+
+## WR-017 — Reduced weekly-rest compensation stays visible
+For factual weekly rest from 24h through 44h59m, the Rest Card is yellow `Reduced weekly rest` and displays compensation owed to 45h.
+
+## WR-018 — Weekly Rest block stays concise
+Show `Weekly Rest` plus the 45h and 24h Start targets with weekday + time. Do not show the redundant `Weekly rest in progress` line.

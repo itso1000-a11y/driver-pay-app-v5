@@ -79,3 +79,6 @@ A future release ZIP without an updated `PROTECTED_BEHAVIOURS.md` is incomplete.
 If a new decision is made in chat:
 - add it to the Register in the same version;
 - do not rely on chat memory alone.
+
+## v5.2.26
+WR-014–WR-018 are protected. Keep legal weekly-rest START deadline, 24h reduced completion and 45h regular completion as separate concepts. Cross-day proposals require weekday + time.
