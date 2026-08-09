@@ -24,7 +24,9 @@ assert.match(appSource, /function isHardArchiveWeek\(saturdayISO: string\): bool
 assert.match(appSource, /const archiveMode = weekIsHistorical && isHardArchiveWeek\(currentWeekSaturdayISO\);/);
 assert.match(appSource, /const softArchiveMode = weekIsClosed && !archiveMode;/);
 assert.match(appSource, /const weekLocked = archiveMode && !historicalEditEnabled;/);
-assert.match(appSource, /askWorkingTomorrow=\{!weekIsClosed && !archiveMode && weeklyRestDueByTimeline === false\}/);
+// v5.2.27: the End Week intent question is independent of the six-cycle warning gate.
+assert.match(appSource, /askWorkingTomorrow=\{!weekIsClosed && !archiveMode\}/);
+assert.doesNotMatch(appSource, /askWorkingTomorrow=\{!weekIsClosed && !archiveMode && weeklyRestDueByTimeline === false\}/);
 
 // Same-pay-week End Week candidate must remain available on later calendar days.
 assert.match(appSource, /const currentDayAfterWeeklyCandidate = Boolean\([\s\S]*getDayStartAbsMinutes\(currentDay\) >= weeklyRestCandidate\.finishAbs[\s\S]*\);/);
@@ -32,9 +34,9 @@ assert.match(appSource, /weeklyRestCandidate &&[\s\S]*currentDayAfterWeeklyCandi
 
 // Off days may surface the weekly-rest candidate without accepting/saving a Start.
 assert.match(appSource, /weeklyRestDisplayActive = Boolean\([\s\S]*currentDay\.dayType === "work" \|\| currentDay\.dayType === "off"/);
-assert.match(appSource, /currentDay\.dayType === "off" && weeklyRestDisplayPlan && <WeeklyRestInlineCard plan=\{weeklyRestDisplayPlan\} showPrimary \/>/);
-assert.match(appSource, /weeklyRestInProgress: "Weekly rest in progress"/);
-assert.match(appSource, /weeklyRestInProgress: "Тече седмична почивка"/);
+assert.match(appSource, /currentDay\.dayType === "off" && weeklyRestDisplayPlan && <WeeklyRestInlineCard plan=\{weeklyRestDisplayPlan\} \/>/);
+assert.match(appSource, /weeklyRest45Start: "45h Start"/);
+assert.match(appSource, /weeklyRest24Start: "24ч старт"/);
 
 // Established proposal responsibilities are preserved.
 assert.match(appSource, /weeklyRest45Option: "45h weekly"/);

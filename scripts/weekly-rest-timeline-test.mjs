@@ -142,7 +142,9 @@ console.log('Weekly-rest timeline regression: PASS');
 // The UI must ask the user instead of guessing. "Yes" opens the immediate
 // next calendar day (Sunday in the current Sat-ending pay-period model) as Work;
 // "No" preserves the legacy weekly-rest flow.
-assert.match(appSource,/askWorkingTomorrow=\{!weekIsClosed && !archiveMode && weeklyRestDueByTimeline === false\}/);
+// v5.2.27: the End Week intent question is independent of the six-cycle warning gate.
+assert.match(appSource,/askWorkingTomorrow=\{!weekIsClosed && !archiveMode\}/);
+assert.doesNotMatch(appSource,/askWorkingTomorrow=\{!weekIsClosed && !archiveMode && weeklyRestDueByTimeline === false\}/);
 assert.match(appSource,/workingTomorrow: "Working tomorrow\?"/);
 assert.match(appSource,/workingTomorrowYes: "Yes, work tomorrow"/);
 assert.match(appSource,/workingTomorrowNo: "No, start weekly rest"/);

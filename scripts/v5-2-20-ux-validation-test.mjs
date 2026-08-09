@@ -11,14 +11,19 @@ assert.match(appSource, /weeklyRestNotCompleted: "Weekly rest not completed"/);
 assert.match(appSource, /weeklyRestStartRequired: "Weekly rest required"/);
 assert.match(appSource, /const seventhWorkCycleStartViolation = Boolean\(startRestViolation && timelineWeeklyRestPathEligible\);/);
 assert.match(appSource, /const weeklyRestIncompleteStartViolation = Boolean\(startRestViolation && !seventhWorkCycleStartViolation && legacyWeeklyRestBaseActive\);/);
-assert.match(appSource, /\? t\("weeklyRestStartRequired"\)[\s\S]*\? t\("weeklyRestNotCompleted"\)[\s\S]*: t\("restNotCompleted"\)/);
+// v5.2.23 intentionally supersedes the old voluntary-candidate warning ownership:
+// End Week may start a candidate before six cycles, but only factual due-state may
+// escalate the Start warning to weekly-rest-required.
+assert.match(appSource, /const startRestViolationText = seventhWorkCycleStartViolation[\s\S]*t\("weeklyRestStartRequired"\)[\s\S]*: t\("restNotCompleted"\)/);
 
 // The established Rest Card three-colour engine/palette stays in place.
 assert.match(appSource, /const restBeforeColors = getRestCardPalette\(restBeforeMinutes, effectiveRestStatus, reducedCount\);/);
 assert.match(appSource, /const activeRestColors = futureDayNoStart \? displayRestColors : \(!displayStartValue \? currentRestPalette : \(weeklyRestPalette \|\| restBeforeColors\)\);/);
 
 // 2) Archived/closed weeks must never enter the Working tomorrow branch.
-assert.match(appSource, /askWorkingTomorrow=\{!weekIsClosed && !archiveMode && weeklyRestDueByTimeline === false\}/);
+// v5.2.27: the End Week intent question is independent of the six-cycle warning gate.
+assert.match(appSource, /askWorkingTomorrow=\{!weekIsClosed && !archiveMode\}/);
+assert.doesNotMatch(appSource, /askWorkingTomorrow=\{!weekIsClosed && !archiveMode && weeklyRestDueByTimeline === false\}/);
 assert.match(appSource, /if \(isWeekClosed\(closingSaturday\)\) \{[\s\S]*setActionMessage\(t\("weekAlreadySaved"\)\); return "unchanged";[\s\S]*setActionMessage\(t\("weekUpdated"\)\);[\s\S]*return "updated";/);
 
 // Feedback remains the accepted wording, but is larger and readable longer.

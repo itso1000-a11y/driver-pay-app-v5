@@ -1,14 +1,14 @@
 {
   "name": "driver-pay-app-v5",
   "private": true,
-  "version": "5.2.26",
+  "version": "5.2.30",
   "type": "module",
   "scripts": {
     "dev": "node scripts/sync-version.mjs && vite",
     "build": "node scripts/sync-version.mjs && vite build",
     "preview": "vite preview",
     "test:backup": "node scripts/backup-restore-roundtrip-test.mjs",
-    "test": "npm run test:backup && npm run test:weekly-rest && npm run test:end-week-intent && npm run test:timeline-compensation && npm run test:timeline-compensation-repayment && npm run test:v5.2.20 && npm run test:v5.2.21 && npm run test:v5.2.22 && npm run test:v5.2.23 && npm run test:v5.2.24 && npm run test:v5.2.26",
+    "test": "npm run test:backup && npm run test:weekly-rest && npm run test:end-week-intent && npm run test:timeline-compensation && npm run test:timeline-compensation-repayment && npm run test:v5.2.20 && npm run test:v5.2.21 && npm run test:v5.2.22 && npm run test:v5.2.23 && npm run test:v5.2.24 && npm run test:v5.2.26 && npm run test:v5.2.27 && npm run test:v5.2.30",
     "test:weekly-rest": "node scripts/weekly-rest-timeline-test.mjs",
     "test:end-week-intent": "node scripts/end-week-intent-test.mjs",
     "test:timeline-compensation": "node scripts/timeline-compensation-create-test.mjs",
@@ -18,7 +18,9 @@
     "test:v5.2.22": "node scripts/v5-2-22-weekly-rest-current-day-regression-test.mjs",
     "test:v5.2.24": "node scripts/v5-2-24-weekly-rest-long-context-regression-test.mjs",
     "test:v5.2.23": "node scripts/v5-2-23-endweek-weekly-rest-regression-test.mjs",
-    "test:v5.2.26": "node scripts/v5-2-25-weekly-rest-ui-contract-test.mjs"
+    "test:v5.2.26": "node scripts/v5-2-25-weekly-rest-ui-contract-test.mjs",
+    "test:v5.2.27": "node scripts/v5-2-27-roadtest-ownership-workflow-regression-test.mjs",
+    "test:v5.2.30": "node scripts/v5-2-30-real-app-browser-regression-test.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.1",
@@ -26,6 +28,5 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "typescript": "^5.5.4"
-  },
-  "devDependencies": {}
+  }
 }
