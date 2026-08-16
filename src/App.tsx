@@ -47,6 +47,7 @@ type DayType = "work" | "holiday" | "off";
 type BeforeInstallPromptEvent = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> };
 type WeekArchiveType = "worked" | "holiday" | "off";
 type CompletionSource = "user" | "emptyWorkdaySave";
+type StartEntrySource = "user" | "acceptedSuggestion";
 type RestStatus = "good" | "reduced" | "split" | "violation" | "unknown";
 
 type BonusEntry = { id: string; type: BonusType; qty: number };
@@ -66,6 +67,7 @@ type DayRecord = {
   nightOut: boolean;
   bonuses: BonusEntry[];
   completionSource?: CompletionSource;
+  startEntrySource?: StartEntrySource;
 };
 
 type SettingsState = {
@@ -372,7 +374,15 @@ function sanitizeDayRecord(raw: unknown, fallback: DayRecord): DayRecord {
     splitBreak: Boolean(r.splitBreak),
     nightOut: Boolean(r.nightOut),
     bonuses: Array.isArray(r.bonuses) ? r.bonuses.map(sanitizeBonusEntry) : [],
-    completionSource: r.completionSource === "emptyWorkdaySave" ? "emptyWorkdaySave" : undefined,
+    completionSource: r.completionSource === "user" || r.completionSource === "emptyWorkdaySave" ? r.completionSource : undefined,
+    // v5.2.32 backward compatibility: legacy records predate startEntrySource.
+    // A stored non-empty Start in those records is factual user data, not a visual
+    // suggestion. Only the explicit acceptedSuggestion provenance may be treated as
+    // a suggestion draft. This prevents a legacy Start equal to the current 9h/11h
+    // proposal from disappearing after load.
+    startEntrySource: r.startEntrySource === "user" || r.startEntrySource === "acceptedSuggestion"
+      ? r.startEntrySource
+      : (typeof r.start === "string" && r.start.trim() ? "user" : undefined),
   };
 }
 
@@ -905,6 +915,59 @@ function buildWeeklyRestTimelineDays(currentDays: DayRecord[], archive: any[]): 
   }
 
   return Array.from(byDate.values()).sort((a, b) => a.dateISO.localeCompare(b.dateISO));
+}
+
+function getReducedDailyRestCountBeforeDay(currentDays: DayRecord[], archive: any[], targetDay: DayRecord): number {
+  // Daily reduced-rest allowance belongs to the factual interval between weekly rests,
+  // not to the Sunday→Saturday pay-week container.
+  const timelineDays = buildWeeklyRestTimelineDays(currentDays, archive);
+  let reducedCount = 0;
+  let previousCompletedWork: DayRecord | null = null;
+  let previousFinishAbs: number | null = null;
+
+  for (const day of timelineDays) {
+    if (day.dateISO >= targetDay.dateISO) break;
+    if (day.dayType !== "work") continue;
+
+    const start = normalizeTime(day.start || "");
+    const finish = normalizeTime(day.finish || "");
+    const startAbs = start ? getDayTimeAbsMinutes(day, start) : null;
+    const finishAbs = finish ? getDayTimeAbsMinutes(day, finish) : null;
+
+    if (previousCompletedWork && previousFinishAbs != null && startAbs != null && startAbs > previousFinishAbs) {
+      const restMinutes = startAbs - previousFinishAbs;
+
+      // Any factual 24h+ gap completed by the later real Start is a weekly rest
+      // for allowance-reset purposes (regular or reduced weekly rest).
+      if (restMinutes >= 24 * 60) {
+        reducedCount = 0;
+      } else {
+        const status = getEffectiveRestStatus(
+          restMinutes,
+          getWorkedMinutes(previousCompletedWork),
+          Boolean(previousCompletedWork.splitBreak),
+          reducedCount
+        );
+        if (status === "reduced") reducedCount += 1;
+        // Once the allowance is exhausted, later reduced attempts remain violations
+        // until a factual weekly rest resets the cycle. Keep the count at >=3.
+      }
+    }
+
+    if (finishAbs != null) {
+      previousCompletedWork = day;
+      previousFinishAbs = finishAbs;
+      continue;
+    }
+
+    // A touched incomplete Work day breaks certainty, matching weekly-rest chronology.
+    if (dayHasEnteredData(day)) {
+      previousCompletedWork = null;
+      previousFinishAbs = null;
+    }
+  }
+
+  return reducedCount;
 }
 
 function getWeeklyRestTimelineSnapshot(currentDays: DayRecord[], archive: any[]): WeeklyRestTimelineSnapshot {
@@ -1850,6 +1913,7 @@ export default function App() {
   const hasWeeklySplitBreak = useMemo(() => days.some((day) => day.splitBreak), [days]);
   const weekEndingLabel = useMemo(() => getWeekEndingLabel(days), [days]);
   const currentWeekSaturdayISO = getSaturdayDay(days).dateISO;
+  const activeWorkflowSaturdayISO = getStartupPayrollSaturdayISO();
   const weekIsHistorical = currentWeekSaturdayISO < getCurrentPayrollSaturdayISO();
   const weekIsClosed = isWeekClosed(currentWeekSaturdayISO);
   const archiveMode = weekIsHistorical && isHardArchiveWeek(currentWeekSaturdayISO);
@@ -1857,14 +1921,23 @@ export default function App() {
   const weekLocked = archiveMode && !historicalEditEnabled;
   const preferredWorkflowIndex = getPreferredOpenDayIndex(days);
   const preferredWorkflowPos = orderedIndices.indexOf(preferredWorkflowIndex);
+  const todayISO = toISODate(new Date());
+  const laterFactualStartExists = days.some((day) =>
+    day.dateISO > currentDay.dateISO &&
+    day.dayType === "work" &&
+    Boolean(normalizeTime(day.start || ""))
+  );
   const pastSavedDayVisual = Boolean(
     !archiveMode &&
     isDayComplete(currentDay) &&
-    currentPos >= 0 &&
-    preferredWorkflowPos >= 0 &&
-    currentPos < preferredWorkflowPos
+    (
+      Boolean(currentDay.completionSource) ||
+      currentDay.dateISO < todayISO ||
+      weekIsClosed ||
+      laterFactualStartExists
+    )
   );
-  const archiveLikeVisual = archiveMode || pastSavedDayVisual || (softArchiveMode && currentDay.dateISO < toISODate(new Date()));
+  const archiveLikeVisual = archiveMode || pastSavedDayVisual || (softArchiveMode && currentDay.dateISO < todayISO);
   const shiftValidationMessage = useMemo(() => getShiftValidationMessage(currentDay), [currentDay]);
 
   useEffect(() => { setSuppressStartKmSuggestion(false); }, [currentDay.id]);
@@ -1937,20 +2010,43 @@ export default function App() {
   }
   function updateCurrentDay<K extends keyof DayRecord>(key: K, value: DayRecord[K]) { if (weekLocked) return; setDays((prev) => prev.map((day, index) => (index === currentIndex ? { ...day, [key]: value } : day))); }
   function updateTimeValue(field: "start" | "finish", rawValue: string) {
-    if (rawValue === "") { updateCurrentDay(field, ""); return; }
+    if (rawValue === "") {
+      if (field === "start") {
+        setDays((prev) => prev.map((day, index) => index === currentIndex ? { ...day, start: "", startEntrySource: undefined } : day));
+      } else {
+        updateCurrentDay(field, "");
+      }
+      return;
+    }
     const formattedValue = formatTimeInput(rawValue);
-    if (field === "finish" && !normalizeTime(currentDay.start || "") && dailyPrimarySuggestedStart) {
-      // Restore the established fast-entry workflow: entering Finish accepts the
-      // current valid DAILY Start proposal as the real Start in the same update.
-      // Weekly-rest proposals remain suggestions and compensation state is irrelevant.
+    if (field === "start") {
+      // A typed Start is factual even when its numeric value exactly matches
+      // the current 9h/11h suggestion. Value equality must never erase provenance.
       setDays((prev) => prev.map((day, index) => index === currentIndex
-        ? { ...day, start: dailyPrimarySuggestedStart, finish: formattedValue }
+        ? { ...day, start: formattedValue, startEntrySource: "user" }
+        : day));
+      return;
+    }
+    if (field === "finish" && !normalizeTime(currentDay.start || "") && dailyPrimarySuggestedStart) {
+      // Entering Finish may accept the current valid DAILY Start proposal as fact.
+      // Keep that acceptance explicit so it can never be confused with an unaccepted draft.
+      setDays((prev) => prev.map((day, index) => index === currentIndex
+        ? { ...day, start: dailyPrimarySuggestedStart, startEntrySource: "acceptedSuggestion", finish: formattedValue }
         : day));
       return;
     }
     updateCurrentDay(field, formattedValue);
   }
-  function normalizeTimeValue(field: "start" | "finish") { updateCurrentDay(field, normalizeTime(currentDay[field] || "")); }
+  function normalizeTimeValue(field: "start" | "finish") {
+    const normalized = normalizeTime(currentDay[field] || "");
+    if (field === "start") {
+      setDays((prev) => prev.map((day, index) => index === currentIndex
+        ? { ...day, start: normalized, startEntrySource: normalized ? (day.startEntrySource || "user") : undefined }
+        : day));
+      return;
+    }
+    updateCurrentDay(field, normalized);
+  }
   function updateKmValue(field: "startKm" | "finishKm", rawValue: string) {
     const value = digitsOnly(rawValue);
     if (field === "startKm") setSuppressStartKmSuggestion(value === "");
@@ -2007,16 +2103,16 @@ export default function App() {
         const autoGeneratedFinishKm = wasNonWorking && Boolean(day.finishKm) && day.finishKm === (day.startKm || previousFinishKm || "");
         // Switching Off/Holiday back to Work must not save any suggested Start as a fact.
         // The field can show a daily suggestion visually; user input or Finish can accept it later.
-        return { ...day, dayType: "work", start: day.start || "", finishKm: autoGeneratedFinishKm ? "" : day.finishKm, completionSource: undefined };
+        return { ...day, dayType: "work", start: day.start || "", finishKm: autoGeneratedFinishKm ? "" : day.finishKm, completionSource: undefined, startEntrySource: day.start ? (day.startEntrySource || "user") : undefined };
       }
       const carryKm = day.startKm || previousFinishKm || "";
-      if (type === "holiday") return { ...day, dayType: "holiday", start: "", finish: "", holidayPay: day.holidayPay, startKm: carryKm, finishKm: carryKm, bonuses: [], nightOut: false, splitBreak: false, completionSource: undefined };
-      return { ...day, dayType: "off", start: "", finish: "", holidayPay: "", startKm: carryKm, finishKm: carryKm, bonuses: [], nightOut: false, splitBreak: false, completionSource: undefined };
+      if (type === "holiday") return { ...day, dayType: "holiday", start: "", finish: "", holidayPay: day.holidayPay, startKm: carryKm, finishKm: carryKm, bonuses: [], nightOut: false, splitBreak: false, completionSource: undefined, startEntrySource: undefined };
+      return { ...day, dayType: "off", start: "", finish: "", holidayPay: "", startKm: carryKm, finishKm: carryKm, bonuses: [], nightOut: false, splitBreak: false, completionSource: undefined, startEntrySource: undefined };
     }));
   }
   function saveAndGo() {
     const day = days[currentIndex];
-    const autoAcceptedDailyDraft = Boolean(day.start && dailyPrimarySuggestedStart && day.start === dailyPrimarySuggestedStart && !day.finish && !dayHasDestructiveWorkData(day));
+    const autoAcceptedDailyDraft = Boolean(day.start && day.startEntrySource === "acceptedSuggestion" && dailyPrimarySuggestedStart && day.start === dailyPrimarySuggestedStart && !day.finish && !dayHasDestructiveWorkData(day));
     const rawStart = autoAcceptedDailyDraft ? "" : day.start;
     // Only a valid daily suggestion may be accepted by entering Finish.
     // Weekly rest helper info is never saved as Start.
@@ -2042,7 +2138,8 @@ export default function App() {
       finish: finalDayType === "work" ? finish : "",
       startKm: effectiveStartKm,
       finishKm: effectiveFinishKm,
-      completionSource: emptyWorkDay ? "emptyWorkdaySave" : undefined,
+      completionSource: emptyWorkDay ? "emptyWorkdaySave" : "user",
+      startEntrySource: finalDayType === "work" && start ? (d.startEntrySource || (start === dailyPrimarySuggestedStart ? "acceptedSuggestion" : "user")) : undefined,
     } : d));
     setShowBonusForm(false);
     if (day.id === "sat") {
@@ -2106,7 +2203,7 @@ export default function App() {
   const dailyRestWindowActive = restBeforeMinutes == null || restBeforeMinutes < 24 * 60;
   const previousWorkedForDailyRest = dailyRestWindowActive ? previousWorked : null;
   const previousSplitBreakForDailyRest = dailyRestWindowActive ? Boolean(previousShiftAnchor?.day.splitBreak || previousDay?.splitBreak) : false;
-  const reducedCount = getWeeklyReducedRestCountBeforeIndex(days, currentIndex);
+  const reducedCount = getReducedDailyRestCountBeforeDay(days, Array.isArray(archive) ? archive : [], currentDay);
   const effectiveRestStatus = getEffectiveRestStatus(restBeforeMinutes, previousWorkedForDailyRest, previousSplitBreakForDailyRest, reducedCount);
   const restBeforeColors = getRestCardPalette(restBeforeMinutes, effectiveRestStatus, reducedCount);
   const futureDayNoStart = !currentDay.start && currentDay.dateISO > toISODate(new Date());
@@ -2216,9 +2313,9 @@ export default function App() {
   const emptySuggestedTimes: SuggestedStarts = { h11: null, h9: null, h9Blocked: false, longPreviousShift: false, splitRestAvailable: false };
   const suggestedTimes = weeklyRestBaseActive ? emptySuggestedTimes : rawSuggestedTimes;
   const dailyPrimarySuggestedStart = getPrimarySuggestedStart(suggestedTimes);
-  const autoAcceptedDailyDraft = Boolean(!weeklyRestBaseActive && currentDay.start && dailyPrimarySuggestedStart && currentDay.start === dailyPrimarySuggestedStart && !currentDay.finish && !dayHasDestructiveWorkData(currentDay));
+  const autoAcceptedDailyDraft = Boolean(!weeklyRestBaseActive && currentDay.start && currentDay.startEntrySource === "acceptedSuggestion" && dailyPrimarySuggestedStart && currentDay.start === dailyPrimarySuggestedStart && !currentDay.finish && !dayHasDestructiveWorkData(currentDay));
   const displayStartValue = autoAcceptedDailyDraft ? "" : (currentDay.start || "");
-  const dailyStartIsManual = Boolean(displayStartValue && dailyPrimarySuggestedStart && displayStartValue !== dailyPrimarySuggestedStart);
+  const dailyStartIsManual = Boolean(displayStartValue && currentDay.startEntrySource === "user");
   const weeklyRestSuggestionHelp = "";
   const dailySuggestionHelp = weeklyRestBaseActive ? "" : (dailyStartIsManual ? "" : getSuggestedStartHelp(suggestedTimes));
   const weeklyRestTargetIsBeforeSelectedDay = Boolean(weeklyRestCandidateActive && weeklyRestTargets && weeklyRestBasePrimaryStart && (weeklyRestForceReduced ? weeklyRestTargets.reducedStart : weeklyRestTargets.fullStart) < getDayStartAbsMinutes(currentDay));
@@ -2374,7 +2471,9 @@ export default function App() {
   }, [archiveMode, timelineWeeklyRestPathEligible, completedWeeklyRestInfo?.sourceKey, completedWeeklyRestInfo?.compensationMinutes, completedWeeklyRestInfo?.compensationDeadlineISO, completedWeeklyRestInfo?.sourceStartAbs, enteredStartAbs, restBeforeMinutes, currentDay.dateISO, weeklyRestCandidate?.closingSaturdayISO]);
   // Weekly compensation is a fact shown with exact parameters below the Rest card,
   // never as a vague helper warning.
-  const restContextHelp = !hasFactualStart ? "" : (weeklyRestBaseActive ? "" : getRestContextHelp(restBeforeMinutes));
+  const restContextHelp = !hasFactualStart
+    ? ""
+    : (weeklyRestBaseActive ? "" : (effectiveRestStatus === "split" ? t("splitRestNotCounted") : getRestContextHelp(restBeforeMinutes)));
   const activeBonusTypes = useMemo(() => getActiveBonusTypes(settings), [settings]);
   const previewWeek = useMemo(() => [...taxedWeek].sort((a, b) => DAY_ORDER.indexOf(a.id) - DAY_ORDER.indexOf(b.id)), [taxedWeek]);
   const weekTotals = taxedWeek.reduce<WeekTotals>((acc, day) => { acc.worked += day.workedMinutes || 0; acc.overtime += day.overtimeMinutes || 0; acc.km += day.kmRun || 0; acc.taxable += day.taxablePay || 0; acc.untaxed += day.untaxedPay || 0; acc.tax += day.tax || 0; acc.ni += day.ni || 0; acc.net += day.net || 0; acc.total += day.total || 0; return acc; }, { ...emptyTotals });
@@ -2490,7 +2589,7 @@ export default function App() {
     return <div style={pageStyle}><div style={{ ...shellStyle, padding: 20 }}><div style={{ fontSize: 28, fontWeight: 900, marginBottom: 8 }}>{t("appTitle")}</div><div style={{ fontSize: 15, color: "#64748b", marginBottom: 16 }}>{t("chooseLanguage")}</div><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}><button style={{ ...buttonStyle, background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={() => setLanguage("en")}>English</button><button style={{ ...buttonStyle, background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={() => setLanguage("bg")}>Български</button></div></div></div>;
   }
 
-  return <div style={{ ...pageStyle, ...(archiveLikeVisual ? { background: "#cbd5e1" } : {}) }}><style>{`html{-webkit-text-size-adjust:100%;touch-action:pan-y;overscroll-behavior:none}body{touch-action:pan-y;overscroll-behavior:none}button{transition:transform .08s ease,filter .08s ease,background .08s ease,opacity .08s ease,box-shadow .08s ease;-webkit-tap-highlight-color:transparent;user-select:none}button:active:not(:disabled){transform:scale(.96);filter:brightness(.92)}button:disabled{opacity:.45;cursor:not-allowed}input,select{transition:border-color .12s ease,box-shadow .12s ease,background .12s ease}input:focus,select:focus{border-color:#94a3b8!important;box-shadow:0 0 0 3px rgba(148,163,184,.22)}`}</style><div style={{ ...shellStyle, position: "relative", ...(archiveLikeVisual ? { background: "#e2e8f0", borderColor: "#64748b", boxShadow: "0 0 0 4px rgba(100,116,139,.28)" } : {}) }}>{archiveMode && <div style={{ position: "absolute", inset: "150px 0 auto 0", textAlign: "center", pointerEvents: "none", zIndex: 0, fontSize: 58, fontWeight: 950, letterSpacing: 8, color: "rgba(71,85,105,.13)", transform: "rotate(-18deg)" }}>{t("archiveWatermark")}</div>}<div style={{ position: "relative", zIndex: 1 }}><Header currentDay={currentDay} weekEndingLabel={weekEndingLabel} onWeek={() => setShowWeekView(true)} onSettings={() => setShowSettings(true)} onInstall={installApp} canInstall={Boolean(installPrompt)} />{archiveMode && <div style={{ position: "sticky", top: 8, zIndex: 5, margin: 16, marginTop: 0, padding: 12, borderRadius: 14, background: "#cbd5e1", border: "2px solid #475569", color: "#1f2937", boxShadow: "0 10px 24px rgba(15,23,42,.16)" }}><div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}><div><div style={{ fontSize: 14, fontWeight: 950, letterSpacing: .4 }}>{t("savedHistoricalWeek")}</div><div style={{ fontSize: 12, marginTop: 4 }}>{weekLocked ? t("historicalLocked") : t("editingArchive")}</div></div><div style={{ fontSize: 12, fontWeight: 950, padding: "6px 8px", borderRadius: 999, background: "#64748b", color: "white" }}>ARCHIVE</div></div><div style={{ display: "grid", gridTemplateColumns: weekLocked ? "1fr 1fr" : "1fr", gap: 8, marginTop: 10 }}><button style={{ ...buttonStyle, background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={loadCurrentWeek}>{t("goToCurrentWeek")}</button>{weekLocked && <button style={{ ...buttonStyle, background: "#64748b", color: "white", borderColor: "#64748b" }} onClick={() => setHistoricalEditEnabled(true)}>{t("unlockEditing")}</button>}</div></div>}{!archiveMode && currentWeekSaturdayISO !== getCurrentPayrollSaturdayISO() && <div style={{ margin: 16, marginTop: 0 }}><button style={{ ...buttonStyle, width: "100%", background: "#0f172a", color: "white", borderColor: "#0f172a", fontWeight: 900 }} onClick={loadCurrentWeek}>{t("goToCurrentWeek")}</button></div>}<div style={{ padding: 16, borderTop: "1px solid #eef2f7" }}><button type="button" style={{ ...buttonStyle, width: "100%", padding: 12, textAlign: "left", background: "#f8fafc", borderColor: "#eef2f7" }} onClick={() => setShowWeekPicker(true)}><div style={{ fontSize: 13, fontWeight: 800, color: "#334155", marginBottom: 6 }}>{t("weekEndingSaturday")}</div><div style={{ fontSize: 18, fontWeight: 900, color: "#0f172a" }}>{formatISODateDisplay(selectedSaturday)}</div></button><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 14 }}><button style={buttonStyle} disabled={currentIndex === orderedIndices[0]} onClick={() => navigateLogical(-1)}>← {t("previous")}</button><button style={buttonStyle} disabled={currentIndex === orderedIndices[orderedIndices.length - 1]} onClick={() => navigateLogical(1)}>{t("next")} →</button></div></div><div style={sectionStyle}><SectionHeading title={t("dayType")} /><div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 8 }}><DayTypeButton label={t("workDay")} variant="work" active={currentDay.dayType === "work"} onClick={() => setCurrentDayType("work")} /><DayTypeButton label={t("holidayDay")} variant="holiday" active={currentDay.dayType === "holiday"} onClick={() => setCurrentDayType("holiday")} /><DayTypeButton label={t("offDay")} variant="off" active={currentDay.dayType === "off"} onClick={() => setCurrentDayType("off")} /></div></div>{currentDay.dayType === "work" && <div style={sectionStyle}><SectionHeading title={t("shift")} right={currentComputed.weekend ? t("weekend") : undefined} /><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, alignItems: "end" }}><TimeRow label={t("start")} value={displayStartValue} placeholder={startFieldPlaceholder} hint={startFieldHint} invalid={startRestViolation} errorHint={startRestViolationText} onChange={(value) => updateTimeValue("start", value)} onBlur={() => normalizeTimeValue("start")} /><TimeRow label={t("finish")} value={currentDay.finish || ""} placeholder={t("finish")} onChange={(value) => updateTimeValue("finish", value)} onBlur={() => normalizeTimeValue("finish")} /></div>{dailySuggestionHelp && <HelperLine text={dailySuggestionHelp} />}{weeklyRestSuggestionHelp && <HelperLine text={weeklyRestSuggestionHelp} />}{weeklyRestPlan ? <><WeeklyRestInlineCard plan={weeklyRestPlan} />{weeklyRestLegalStartDeadlineAbs != null && <div style={{ marginTop: 6, fontSize: 11, fontWeight: 900, color: "#b91c1c" }}>{t("weeklyRestDeadline")}: {formatShortDayTime(weeklyRestLegalStartDeadlineAbs)}</div>}</> : <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 12 }}><MiniStat label={t("worked")} value={formatMinutes(currentComputed.workedMinutes)} tone={(currentComputed.workedMinutes ?? 0) > 15 * 60 ? "danger" : undefined} /><MiniStat label={t("ot")} value={currentComputed.overtimeMinutes > 0 ? formatMinutes(currentComputed.overtimeMinutes) : (currentComputed.workedMinutes != null ? t("no") : "")} /></div>}{shiftValidationMessage && <div style={{ marginTop: 10, fontSize: 13, fontWeight: 700, color: "#b91c1c" }}>{shiftValidationMessage}</div>}</div>}{(currentDay.dayType === "work" || currentDay.dayType === "off") && <div style={{ ...sectionStyle, background: activeRestColors.bg, paddingTop: 12, paddingBottom: 12 }}><SectionHeading title={t("restFromPreviousDay")} /><RestCard value={displayRestValue} colors={activeRestColors} />{currentDay.dayType === "off" && weeklyRestDisplayPlan && <WeeklyRestInlineCard plan={weeklyRestDisplayPlan} />}{visibleReducedWeeklyCompensationMinutes != null && !completedWeeklyRestInfo?.reduced && <div style={{ marginTop: 8, padding: "9px 12px", borderRadius: 12, border: `1px solid ${activeRestColors.border}`, background: "rgba(255,255,255,0.72)", display: "flex", justifyContent: "space-between", gap: 10, color: activeRestColors.text, fontSize: 12, fontWeight: 900 }}><span>{t("compensationRequired")}</span><span>{formatMinutes(visibleReducedWeeklyCompensationMinutes)}</span></div>}{completedWeeklyRestInfo?.reduced && <div style={{ marginTop: 8, padding: "9px 12px", borderRadius: 12, border: `1px solid ${activeRestColors.border}`, background: "rgba(255,255,255,0.72)", display: "grid", gap: 5, color: activeRestColors.text, fontSize: 12, fontWeight: 900 }}><div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}><span>{t("compensationRequired")}</span><span>{formatMinutes(completedWeeklyRestInfo.compensationMinutes)}</span></div>{completedWeeklyRestInfo.compensationDeadlineISO && <div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}><span>{t("compensateBy")}</span><span>{formatAppDate(completedWeeklyRestInfo.compensationDeadlineISO)}</span></div>}{completedWeeklyCompensationStatus && <div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}><span>Status</span><span>{t(completedWeeklyCompensationStatus === "completed" ? "compensationCompleted" : "compensationOutstanding")}</span></div>}</div>}{restContextHelp && <div style={{ marginTop: 6, fontSize: 12, color: activeRestColors.text, fontWeight: 800 }}>{restContextHelp}</div>}{currentIndex === orderedIndices[0] && !previousShiftAnchor && <div style={{ marginTop: 6, fontSize: 11, color: "#64748b" }}>{t("noPreviousDay")}</div>}</div>}{currentDay.dayType !== "off" && <div style={sectionStyle}><SectionHeading title={t("kilometres")} /><div style={{ display: "grid", gridTemplateColumns: currentDay.dayType === "work" ? "1fr 1fr" : "1fr", gap: 10 }}><Field label={t("startKm")}><div style={{ position: "relative" }}><input style={{ ...inputStyle, fontSize: 22, fontWeight: 700, textAlign: "center", color: startKmIsSuggested ? "#94a3b8" : "#0f172a", background: startKmIsSuggested ? "#f8fafc" : "#fff", paddingBottom: startKmIsSuggested ? 24 : 12 }} inputMode="numeric" value={displayStartKm} onChange={(e) => updateKmValue("startKm", e.target.value)} onBlur={() => setSuppressStartKmSuggestion(false)} placeholder="Start" />{startKmIsSuggested && <div style={{ position: "absolute", left: 0, right: 0, bottom: 6, textAlign: "center", fontSize: 10, fontWeight: 800, color: "#64748b", pointerEvents: "none" }}>{formatTemplate(t("fromFinishKm"), { source: startKmSuggestionSource === "last saved day" ? t("lastSavedDay") : t("lastWeek") })}</div>}</div></Field>{currentDay.dayType === "work" && <Field label={t("finishKm")}><input style={{ ...inputStyle, fontSize: 22, fontWeight: 700, textAlign: "center" }} inputMode="numeric" value={currentDay.finishKm || ""} onChange={(e) => updateKmValue("finishKm", e.target.value)} placeholder="Finish" /></Field>}</div>{currentDay.dayType === "work" && <div style={{ marginTop: 10, padding: "9px 12px", borderRadius: 14, border: "1px solid #eef2f7", background: "#f8fafc" }}><div style={{ fontSize: 12, color: "#64748b", fontWeight: 700 }}>{t("kmRun")}</div><div style={{ fontSize: 16, fontWeight: 900, marginTop: 2 }}>{currentComputed.kmRun == null ? "" : currentComputed.kmRun}</div></div>}</div>}{currentDay.dayType === "off" && <CompactWeekContext days={dayOffContext.days} currentIndex={dayOffContext.currentIndex} title={dayOffContext.title} />}{currentDay.dayType === "holiday" && <div style={sectionStyle}><SectionHeading title={t("holidayPay")} right={t("taxed")} /><input style={inputStyle} type="text" inputMode="decimal" value={currentDay.holidayPay || ""} onChange={(e) => updateCurrentDay("holidayPay", e.target.value)} placeholder="0.00" /></div>}{currentDay.dayType === "work" && <div style={sectionStyle}><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}><ToggleRow label={t("nightOut")} variant="success" value={currentDay.nightOut} onChange={(checked) => updateCurrentDay("nightOut", checked)} /><ToggleRow label={t("splitBreak")} variant="warning" right={currentDay.splitBreak ? t("splitRestNotCounted") : undefined} value={currentDay.splitBreak} onChange={(checked) => updateCurrentDay("splitBreak", checked)} /></div></div>}{currentDay.dayType === "work" && <div style={sectionStyle}><SectionHeading title={t("bonuses")} />{!showBonusForm && <button style={{ ...buttonStyle, background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={() => setShowBonusForm(true)}>+ {t("addBonus")}</button>}{showBonusForm && <div style={{ display: "grid", gridTemplateColumns: "1fr 80px 88px", gap: 8 }}><select style={inputStyle} value={draftBonusType} onChange={(e) => setDraftBonusType(sanitizeBonusType(e.target.value))}>{activeBonusTypes.map((type) => <option key={type} value={type}>{type}</option>)}</select><input style={inputStyle} inputMode="numeric" value={draftBonusQty} onChange={(e) => setDraftBonusQty(digitsOnly(e.target.value))} /><button style={{ ...buttonStyle, background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={addBonus}>{t("add")}</button></div>}<div style={{ display: "grid", gap: 8, marginTop: 12 }}>{currentDay.bonuses.map((bonus) => <BonusRow key={bonus.id} bonus={bonus} rate={getBonusRate(settings, bonus.type)} onDelete={() => removeBonus(bonus.id)} onQtyChange={(value) => updateBonusQty(bonus.id, value)} />)}</div></div>}{currentDay.dayType !== "off" && <SummarySection currentComputed={currentComputed} dayType={currentDay.dayType} />}<div style={{ ...sectionStyle, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}><button style={{ ...buttonStyle, background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={saveAndGo}>{t("saveNext")}</button><button style={buttonStyle} onClick={() => setShowWeekView(true)}>{t("weekView")}</button></div>{showWeekPicker && <WeekPickerModal selectedSaturday={selectedSaturday} savedWeekIndicators={savedWeekIndicators} onSelectSaturday={(saturdayISO) => loadWeekBySaturday(saturdayISO, true)} onCurrentWeek={loadCurrentWeek} onClose={() => setShowWeekPicker(false)} />} {showPaySetupV2 && <PaySetupV2Modal settings={settings} setSettings={setSettings} payProfiles={payProfiles} setPayProfiles={setPayProfiles} activePayProfileId={activePayProfileId} setActivePayProfileId={setActivePayProfileId} onClose={() => setShowPaySetupV2(false)} />}
+  return <div style={{ ...pageStyle, ...(archiveLikeVisual ? { background: "#cbd5e1" } : {}) }}><style>{`html{-webkit-text-size-adjust:100%;touch-action:pan-y;overscroll-behavior:none}body{touch-action:pan-y;overscroll-behavior:none}button{transition:transform .08s ease,filter .08s ease,background .08s ease,opacity .08s ease,box-shadow .08s ease;-webkit-tap-highlight-color:transparent;user-select:none}button:active:not(:disabled){transform:scale(.96);filter:brightness(.92)}button:disabled{opacity:.45;cursor:not-allowed}input,select{transition:border-color .12s ease,box-shadow .12s ease,background .12s ease}input:focus,select:focus{border-color:#94a3b8!important;box-shadow:0 0 0 3px rgba(148,163,184,.22)}`}</style><div style={{ ...shellStyle, position: "relative", ...(archiveLikeVisual ? { background: "#e2e8f0", borderColor: "#64748b", boxShadow: "0 0 0 4px rgba(100,116,139,.28)" } : {}) }}>{archiveMode && <div style={{ position: "absolute", inset: "150px 0 auto 0", textAlign: "center", pointerEvents: "none", zIndex: 0, fontSize: 58, fontWeight: 950, letterSpacing: 8, color: "rgba(71,85,105,.13)", transform: "rotate(-18deg)" }}>{t("archiveWatermark")}</div>}<div style={{ position: "relative", zIndex: 1 }}><Header currentDay={currentDay} weekEndingLabel={weekEndingLabel} onWeek={() => setShowWeekView(true)} onSettings={() => setShowSettings(true)} onInstall={installApp} canInstall={Boolean(installPrompt)} />{archiveMode && <div style={{ position: "sticky", top: 8, zIndex: 5, margin: 16, marginTop: 0, padding: 12, borderRadius: 14, background: "#cbd5e1", border: "2px solid #475569", color: "#1f2937", boxShadow: "0 10px 24px rgba(15,23,42,.16)" }}><div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}><div><div style={{ fontSize: 14, fontWeight: 950, letterSpacing: .4 }}>{t("savedHistoricalWeek")}</div><div style={{ fontSize: 12, marginTop: 4 }}>{weekLocked ? t("historicalLocked") : t("editingArchive")}</div></div><div style={{ fontSize: 12, fontWeight: 950, padding: "6px 8px", borderRadius: 999, background: "#64748b", color: "white" }}>ARCHIVE</div></div><div style={{ display: "grid", gridTemplateColumns: weekLocked ? "1fr 1fr" : "1fr", gap: 8, marginTop: 10 }}><button style={{ ...buttonStyle, background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={loadCurrentWeek}>{t("goToCurrentWeek")}</button>{weekLocked && <button style={{ ...buttonStyle, background: "#64748b", color: "white", borderColor: "#64748b" }} onClick={() => setHistoricalEditEnabled(true)}>{t("unlockEditing")}</button>}</div></div>}{!archiveMode && currentWeekSaturdayISO !== activeWorkflowSaturdayISO && <div style={{ margin: 16, marginTop: 0 }}><button style={{ ...buttonStyle, width: "100%", background: "#0f172a", color: "white", borderColor: "#0f172a", fontWeight: 900 }} onClick={loadCurrentWeek}>{t("goToCurrentWeek")}</button></div>}<div style={{ padding: 16, borderTop: "1px solid #eef2f7" }}><button type="button" style={{ ...buttonStyle, width: "100%", padding: 12, textAlign: "left", background: "#f8fafc", borderColor: "#eef2f7" }} onClick={() => setShowWeekPicker(true)}><div style={{ fontSize: 13, fontWeight: 800, color: "#334155", marginBottom: 6 }}>{t("weekEndingSaturday")}</div><div style={{ fontSize: 18, fontWeight: 900, color: "#0f172a" }}>{formatISODateDisplay(selectedSaturday)}</div></button><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 14 }}><button style={buttonStyle} disabled={currentIndex === orderedIndices[0]} onClick={() => navigateLogical(-1)}>← {t("previous")}</button><button style={buttonStyle} disabled={currentIndex === orderedIndices[orderedIndices.length - 1]} onClick={() => navigateLogical(1)}>{t("next")} →</button></div></div><div style={sectionStyle}><SectionHeading title={t("dayType")} /><div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 8 }}><DayTypeButton label={t("workDay")} variant="work" active={currentDay.dayType === "work"} onClick={() => setCurrentDayType("work")} /><DayTypeButton label={t("holidayDay")} variant="holiday" active={currentDay.dayType === "holiday"} onClick={() => setCurrentDayType("holiday")} /><DayTypeButton label={t("offDay")} variant="off" active={currentDay.dayType === "off"} onClick={() => setCurrentDayType("off")} /></div></div>{currentDay.dayType === "work" && <div style={sectionStyle}><SectionHeading title={t("shift")} right={currentComputed.weekend ? t("weekend") : undefined} /><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, alignItems: "end" }}><TimeRow label={t("start")} value={displayStartValue} placeholder={startFieldPlaceholder} hint={startFieldHint} invalid={startRestViolation} errorHint={startRestViolationText} onChange={(value) => updateTimeValue("start", value)} onBlur={() => normalizeTimeValue("start")} /><TimeRow label={t("finish")} value={currentDay.finish || ""} placeholder={t("finish")} onChange={(value) => updateTimeValue("finish", value)} onBlur={() => normalizeTimeValue("finish")} /></div>{dailySuggestionHelp && <HelperLine text={dailySuggestionHelp} />}{weeklyRestSuggestionHelp && <HelperLine text={weeklyRestSuggestionHelp} />}{weeklyRestPlan ? <><WeeklyRestInlineCard plan={weeklyRestPlan} />{weeklyRestLegalStartDeadlineAbs != null && <div style={{ marginTop: 6, fontSize: 11, fontWeight: 900, color: "#b91c1c" }}>{t("weeklyRestDeadline")}: {formatShortDayTime(weeklyRestLegalStartDeadlineAbs)}</div>}</> : <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 12 }}><MiniStat label={t("worked")} value={formatMinutes(currentComputed.workedMinutes)} tone={(currentComputed.workedMinutes ?? 0) > 15 * 60 ? "danger" : undefined} /><MiniStat label={t("ot")} value={currentComputed.overtimeMinutes > 0 ? formatMinutes(currentComputed.overtimeMinutes) : (currentComputed.workedMinutes != null ? t("no") : "")} /></div>}{shiftValidationMessage && <div style={{ marginTop: 10, fontSize: 13, fontWeight: 700, color: "#b91c1c" }}>{shiftValidationMessage}</div>}</div>}{(currentDay.dayType === "work" || currentDay.dayType === "off") && <div style={{ ...sectionStyle, background: activeRestColors.bg, paddingTop: 12, paddingBottom: 12 }}><SectionHeading title={t("restFromPreviousDay")} /><RestCard value={displayRestValue} colors={activeRestColors} />{currentDay.dayType === "off" && weeklyRestDisplayPlan && <WeeklyRestInlineCard plan={weeklyRestDisplayPlan} />}{visibleReducedWeeklyCompensationMinutes != null && !completedWeeklyRestInfo?.reduced && <div style={{ marginTop: 8, padding: "9px 12px", borderRadius: 12, border: `1px solid ${activeRestColors.border}`, background: "rgba(255,255,255,0.72)", display: "flex", justifyContent: "space-between", gap: 10, color: activeRestColors.text, fontSize: 12, fontWeight: 900 }}><span>{t("compensationRequired")}</span><span>{formatMinutes(visibleReducedWeeklyCompensationMinutes)}</span></div>}{completedWeeklyRestInfo?.reduced && <div style={{ marginTop: 8, padding: "9px 12px", borderRadius: 12, border: `1px solid ${activeRestColors.border}`, background: "rgba(255,255,255,0.72)", display: "grid", gap: 5, color: activeRestColors.text, fontSize: 12, fontWeight: 900 }}><div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}><span>{t("compensationRequired")}</span><span>{formatMinutes(completedWeeklyRestInfo.compensationMinutes)}</span></div>{completedWeeklyRestInfo.compensationDeadlineISO && <div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}><span>{t("compensateBy")}</span><span>{formatAppDate(completedWeeklyRestInfo.compensationDeadlineISO)}</span></div>}{completedWeeklyCompensationStatus && <div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}><span>Status</span><span>{t(completedWeeklyCompensationStatus === "completed" ? "compensationCompleted" : "compensationOutstanding")}</span></div>}</div>}{restContextHelp && <div style={{ marginTop: 6, fontSize: 12, color: activeRestColors.text, fontWeight: 800 }}>{restContextHelp}</div>}{currentIndex === orderedIndices[0] && !previousShiftAnchor && <div style={{ marginTop: 6, fontSize: 11, color: "#64748b" }}>{t("noPreviousDay")}</div>}</div>}{currentDay.dayType !== "off" && <div style={sectionStyle}><SectionHeading title={t("kilometres")} /><div style={{ display: "grid", gridTemplateColumns: currentDay.dayType === "work" ? "1fr 1fr" : "1fr", gap: 10 }}><Field label={t("startKm")}><div style={{ position: "relative" }}><input style={{ ...inputStyle, fontSize: 22, fontWeight: 700, textAlign: "center", color: startKmIsSuggested ? "#94a3b8" : "#0f172a", background: startKmIsSuggested ? "#f8fafc" : "#fff", paddingBottom: startKmIsSuggested ? 24 : 12 }} inputMode="numeric" value={displayStartKm} onChange={(e) => updateKmValue("startKm", e.target.value)} onBlur={() => setSuppressStartKmSuggestion(false)} placeholder="Start" />{startKmIsSuggested && <div style={{ position: "absolute", left: 0, right: 0, bottom: 6, textAlign: "center", fontSize: 10, fontWeight: 800, color: "#64748b", pointerEvents: "none" }}>{formatTemplate(t("fromFinishKm"), { source: startKmSuggestionSource === "last saved day" ? t("lastSavedDay") : t("lastWeek") })}</div>}</div></Field>{currentDay.dayType === "work" && <Field label={t("finishKm")}><input style={{ ...inputStyle, fontSize: 22, fontWeight: 700, textAlign: "center" }} inputMode="numeric" value={currentDay.finishKm || ""} onChange={(e) => updateKmValue("finishKm", e.target.value)} placeholder="Finish" /></Field>}</div>{currentDay.dayType === "work" && <div style={{ marginTop: 10, padding: "9px 12px", borderRadius: 14, border: "1px solid #eef2f7", background: "#f8fafc" }}><div style={{ fontSize: 12, color: "#64748b", fontWeight: 700 }}>{t("kmRun")}</div><div style={{ fontSize: 16, fontWeight: 900, marginTop: 2 }}>{currentComputed.kmRun == null ? "" : currentComputed.kmRun}</div></div>}</div>}{currentDay.dayType === "off" && <CompactWeekContext days={dayOffContext.days} currentIndex={dayOffContext.currentIndex} title={dayOffContext.title} />}{currentDay.dayType === "holiday" && <div style={sectionStyle}><SectionHeading title={t("holidayPay")} right={t("taxed")} /><input style={inputStyle} type="text" inputMode="decimal" value={currentDay.holidayPay || ""} onChange={(e) => updateCurrentDay("holidayPay", e.target.value)} placeholder="0.00" /></div>}{currentDay.dayType === "work" && <div style={sectionStyle}><div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}><ToggleRow label={t("nightOut")} variant="success" value={currentDay.nightOut} onChange={(checked) => updateCurrentDay("nightOut", checked)} /><ToggleRow label={t("splitBreak")} variant="warning" right={currentDay.splitBreak ? t("splitRestNotCounted") : undefined} value={currentDay.splitBreak} onChange={(checked) => updateCurrentDay("splitBreak", checked)} /></div></div>}{currentDay.dayType === "work" && <div style={sectionStyle}><SectionHeading title={t("bonuses")} />{!showBonusForm && <button style={{ ...buttonStyle, background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={() => setShowBonusForm(true)}>+ {t("addBonus")}</button>}{showBonusForm && <div style={{ display: "grid", gridTemplateColumns: "1fr 80px 88px", gap: 8 }}><select style={inputStyle} value={draftBonusType} onChange={(e) => setDraftBonusType(sanitizeBonusType(e.target.value))}>{activeBonusTypes.map((type) => <option key={type} value={type}>{type}</option>)}</select><input style={inputStyle} inputMode="numeric" value={draftBonusQty} onChange={(e) => setDraftBonusQty(digitsOnly(e.target.value))} /><button style={{ ...buttonStyle, background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={addBonus}>{t("add")}</button></div>}<div style={{ display: "grid", gap: 8, marginTop: 12 }}>{currentDay.bonuses.map((bonus) => <BonusRow key={bonus.id} bonus={bonus} rate={getBonusRate(settings, bonus.type)} onDelete={() => removeBonus(bonus.id)} onQtyChange={(value) => updateBonusQty(bonus.id, value)} />)}</div></div>}{currentDay.dayType !== "off" && <SummarySection currentComputed={currentComputed} dayType={currentDay.dayType} />}<div style={{ ...sectionStyle, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}><button style={{ ...buttonStyle, background: "#0f172a", color: "white", borderColor: "#0f172a" }} onClick={saveAndGo}>{t("saveNext")}</button><button style={buttonStyle} onClick={() => setShowWeekView(true)}>{t("weekView")}</button></div>{showWeekPicker && <WeekPickerModal selectedSaturday={selectedSaturday} savedWeekIndicators={savedWeekIndicators} onSelectSaturday={(saturdayISO) => loadWeekBySaturday(saturdayISO, true)} onCurrentWeek={loadCurrentWeek} onClose={() => setShowWeekPicker(false)} />} {showPaySetupV2 && <PaySetupV2Modal settings={settings} setSettings={setSettings} payProfiles={payProfiles} setPayProfiles={setPayProfiles} activePayProfileId={activePayProfileId} setActivePayProfileId={setActivePayProfileId} onClose={() => setShowPaySetupV2(false)} />}
       {actionMessage && <div style={{ position: "fixed", left: "50%", bottom: 24, transform: "translateX(-50%)", zIndex: 200, padding: "14px 18px", borderRadius: 16, background: "#0f172a", color: "white", fontSize: 15, fontWeight: 900, lineHeight: 1.25, textAlign: "center", minWidth: 220, boxShadow: "0 12px 32px rgba(15,23,42,.32)" }}>{actionMessage}</div>}{showSettings && <ModalErrorBoundary onClose={() => setShowSettings(false)}><SettingsModal settings={sanitizeSettings(settings)} setSettings={setSettings} days={days} setDays={setDays} archive={Array.isArray(archive) ? archive : []} setArchive={setArchive} payslipActualWeek={payslipActualWeek} setPayslipActualWeek={setPayslipActualWeek} setCurrentIndex={setCurrentIndex} setSelectedSaturday={setSelectedSaturday} setHistoricalEditEnabled={setHistoricalEditEnabled} language={language} setLanguage={setLanguage} activePayProfile={payProfiles.find((profile) => profile.id === activePayProfileId) || null} onOpenPaySetupV2={() => { setShowSettings(false); setShowPaySetupV2(true); }} onClose={() => setShowSettings(false)} /></ModalErrorBoundary>}{showWeekView && <WeekViewModal weekEndingLabel={weekEndingLabel} settings={settings} weekTotals={weekTotals} payslipActualWeek={payslipActualWeek} setPayslipActualWeek={setPayslipActualWeek} weekDifference={weekDifference} weekBonusSummary={weekBonusSummary} lastWeeklyRestInfo={lastWeeklyRestInfo} previewWeek={previewWeek} taxedWeek={taxedWeek} setCurrentIndex={setCurrentIndex} close={() => setShowWeekView(false)} endWeek={endWeek} askWorkingTomorrow={!weekIsClosed && !archiveMode} goToCurrentWeek={() => { loadCurrentWeek(); setShowWeekView(false); }} />}</div></div></div>;
 }
 

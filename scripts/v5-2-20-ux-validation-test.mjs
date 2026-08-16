@@ -38,22 +38,16 @@ assert.match(appSource, /minWidth: 220/);
 assert.match(appSource, /const startKmIsSuggested = Boolean\([\s\S]*!currentDay\.finishKm[\s\S]*!dayHasDestructiveWorkData\(currentDay\)[\s\S]*\);/);
 assert.match(appSource, /color: startKmIsSuggested \? "#94a3b8" : "#0f172a"/);
 
-// 4) A completed earlier day in the active current week gets archive-like surface
-// styling, but archive lock/banner logic remains tied to true archiveMode only.
-assert.match(appSource, /const pastSavedDayVisual = Boolean\([\s\S]*!archiveMode[\s\S]*isDayComplete\(currentDay\)[\s\S]*currentPos < preferredWorkflowPos[\s\S]*\);/);
-assert.match(appSource, /const archiveLikeVisual = archiveMode \|\| pastSavedDayVisual \|\| \(softArchiveMode && currentDay\.dateISO < toISODate\(new Date\(\)\)\);/);
+// 4) v5.2.31 supersedes the old "complete + preferred pointer = grey" rule.
+// A day becomes archive-like only after a real lifecycle event: Save & Next,
+// calendar passage, closed week, or a factual Start on a later day.
+assert.match(appSource, /const laterFactualStartExists = days\.some\([\s\S]*day\.dateISO > currentDay\.dateISO[\s\S]*normalizeTime\(day\.start \|\| ""\)/);
+assert.match(appSource, /const pastSavedDayVisual = Boolean\([\s\S]*isDayComplete\(currentDay\)[\s\S]*Boolean\(currentDay\.completionSource\)[\s\S]*currentDay\.dateISO < todayISO[\s\S]*weekIsClosed[\s\S]*laterFactualStartExists[\s\S]*\);/);
+assert.doesNotMatch(appSource, /currentPos < preferredWorkflowPos[\s\S]*archiveLikeVisual/);
+assert.match(appSource, /const archiveLikeVisual = archiveMode \|\| pastSavedDayVisual \|\| \(softArchiveMode && currentDay\.dateISO < todayISO\);/);
 assert.match(appSource, /const softArchiveMode = weekIsClosed && !archiveMode;/);
 assert.match(appSource, /const weekLocked = archiveMode && !historicalEditEnabled;/);
 assert.match(appSource, /\{archiveMode && <div style=/);
 assert.match(appSource, /\.\.\.\(archiveLikeVisual \? \{ background: "#cbd5e1" \} : \{\}\)/);
-
-// Pure predicate checks for the intended visual boundary.
-function isPastSavedVisual({ archiveMode, complete, currentPos, preferredPos }) {
-  return Boolean(!archiveMode && complete && currentPos >= 0 && preferredPos >= 0 && currentPos < preferredPos);
-}
-assert.equal(isPastSavedVisual({ archiveMode:false, complete:true, currentPos:1, preferredPos:2 }), true);
-assert.equal(isPastSavedVisual({ archiveMode:false, complete:false, currentPos:1, preferredPos:2 }), false);
-assert.equal(isPastSavedVisual({ archiveMode:false, complete:true, currentPos:2, preferredPos:2 }), false);
-assert.equal(isPastSavedVisual({ archiveMode:true, complete:true, currentPos:1, preferredPos:2 }), false);
 
 console.log('v5.2.20 UX / weekly-rest validation regression: PASS');

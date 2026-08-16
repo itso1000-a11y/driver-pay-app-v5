@@ -14,7 +14,9 @@ assert.match(appSource, /\{weeklyRestPlan \? <><WeeklyRestInlineCard plan=\{week
   'Work-day Weekly Rest card must render whenever a plan exists, not only while helper text exists');
 assert.doesNotMatch(appSource, /weeklyRestPlan\?\.helper \? <WeeklyRestInlineCard/,
   'The 45h endpoint must not make the entire Weekly Rest card disappear');
-assert.match(appSource, /!archiveMode && currentWeekSaturdayISO !== getCurrentPayrollSaturdayISO\(\)[\s\S]*onClick=\{loadCurrentWeek\}[\s\S]*goToCurrentWeek/,
+assert.match(appSource, /const activeWorkflowSaturdayISO = getStartupPayrollSaturdayISO\(\)/,
+  'The current-week route must be anchored to the active workflow week');
+assert.match(appSource, /!archiveMode && currentWeekSaturdayISO !== activeWorkflowSaturdayISO[\s\S]*onClick=\{loadCurrentWeek\}[\s\S]*goToCurrentWeek/,
   'A non-current soft archive must expose a direct Go to current week action');
 assert.match(appSource, /previousWeekCandidate\.finishAbs > storedApplicable\.finishAbs/,
   'Candidate selection must prefer a newer immediate previous-week factual anchor over stale stored state');

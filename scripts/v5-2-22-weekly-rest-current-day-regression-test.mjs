@@ -39,10 +39,10 @@ assert.match(appSource, /weeklyRestEnded: "Weekly rest ended"/);
 assert.match(appSource, /weeklyRest45Start: "45h Start"/);
 assert.match(appSource, /weekly45Unavailable: "45h unavailable"/);
 
-// Soft-close must not make TODAY (or a future day) look archived. Archive-like
-// styling is reserved for a true hard archive, a previously saved past day, or a
-// soft-closed day whose calendar date is already in the past.
-assert.match(appSource, /const archiveLikeVisual = archiveMode \|\| pastSavedDayVisual \|\| \(softArchiveMode && currentDay\.dateISO < toISODate\(new Date\(\)\)\);/);
+// v5.2.31: current active day stays live until a real lifecycle event.
+// Soft archive still greys only days whose calendar date is already in the past.
+assert.match(appSource, /const todayISO = toISODate\(new Date\(\)\);/);
+assert.match(appSource, /const archiveLikeVisual = archiveMode \|\| pastSavedDayVisual \|\| \(softArchiveMode && currentDay\.dateISO < todayISO\);/);
 assert.doesNotMatch(appSource, /const archiveLikeVisual = archiveMode \|\| softArchiveMode \|\| pastSavedDayVisual;/);
 
 // Hard archive protection itself remains untouched.

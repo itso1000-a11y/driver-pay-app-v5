@@ -32,7 +32,9 @@ assert.doesNotMatch(saveAndGo, /endWeek\(/);
 assert.match(app, /askWorkingTomorrow=\{!weekIsClosed && !archiveMode\}/);
 assert.doesNotMatch(app, /askWorkingTomorrow=\{!weekIsClosed && !archiveMode && weeklyRestDueByTimeline === false\}/);
 
-// ROAD-007: direct current-week route is visible for any non-current non-hard-archive week.
-assert.match(app, /!archiveMode && currentWeekSaturdayISO !== getCurrentPayrollSaturdayISO\(\)[\s\S]*goToCurrentWeek/);
+// ROAD-007: direct current-week route is visible only when selected week differs
+// from the active application workflow week, not merely from the device calendar week.
+assert.match(app, /const activeWorkflowSaturdayISO = getStartupPayrollSaturdayISO\(\)/);
+assert.match(app, /!archiveMode && currentWeekSaturdayISO !== activeWorkflowSaturdayISO[\s\S]*goToCurrentWeek/);
 
 console.log("v5.2.27 road-test ownership/workflow regression: PASS");
