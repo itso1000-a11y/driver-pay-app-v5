@@ -1,10 +1,18 @@
 # Driver Pay App — verified recent version history
 
-**Current source package:** v5.2.33  
-**History scope:** v5.2.26 → v5.2.33  
-**Evidence used:** the consolidated `MASTER_PROJECT_QA_v5.2.33.md`, the actual source/test files carried by this package, version identity files, and the v5.2.32 package used as the direct base for v5.2.33.
+**Current source package:** v5.2.34  
+**History scope:** v5.2.26 → v5.2.34  
+**Evidence used:** the consolidated `MASTER_PROJECT_QA_v5.2.34.md`, the actual source/test files carried by this package, version identity files, and the v5.2.32 package used as the direct base for v5.2.33.
 
 This document deliberately separates verified runtime changes from QA/packaging-only revisions. It does not invent a promotion status when the carried evidence is incomplete.
+
+## v5.2.34 — Start context placeholder fit
+
+Visual-only runtime patch:
+- long contextual placeholders in the empty Start field use a smaller display size so they fit the fixed two-column Shift layout;
+- factual/user-entered time values keep the existing 24px presentation;
+- no Weekly Rest, Rest Engine, compensation, Split Rest, KM, Pay, archive/navigation, storage, colour-state, or wording logic was intentionally changed.
+
 
 ## v5.2.26 — Weekly Rest road-test corrections
 
