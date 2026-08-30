@@ -802,32 +802,15 @@ function readSavedWeekDays(saturdayISO: string): DayRecord[] | null {
   }
 }
 
-function hasArchivedPayWeekRecord(saturdayISO: string): boolean {
-  // Legacy releases may have an End Week archive record even when the newer
-  // closed-weeks index is missing. An archive record is valid historical evidence
-  // of End Week intent; a normal driverApp_week_* save by itself is not.
-  if (typeof window === "undefined") return false;
-  try {
-    const archiveItems = JSON.parse(localStorage.getItem("archive") || "[]");
-    return Array.isArray(archiveItems) && archiveItems.some((item) =>
-      Array.isArray(item?.days) && getSaturdayDay(item.days).dateISO === saturdayISO
-    );
-  } catch {
-    return false;
-  }
-}
-
 function getWeeklyRestCandidateForSelectedWeek(selectedSaturdayISO: string): WeeklyRestCandidate | null {
   const stored = readWeeklyRestCandidate();
   const storedApplicable = stored && selectedSaturdayISO >= stored.closingSaturdayISO ? stored : null;
 
-  // Backfill is allowed only for a pay week that is factually marked closed.
-  // A normally saved previous week is factual history for chronology, but it is
-  // not an End Week intent trigger and must never manufacture proposal ownership.
-  // For genuinely closed legacy weeks, prefer the newer applicable candidate.
+  // Backfill for users who closed the immediately previous pay week before this
+  // version was installed. A stale older stored candidate must not hide the newer
+  // factual previous-week anchor; prefer whichever applicable candidate is newer.
   const previousSaturdayISO = toISODate(addDays(fromISODate(selectedSaturdayISO), -7));
-  const previousWeekHasEndWeekEvidence = isWeekClosed(previousSaturdayISO) || hasArchivedPayWeekRecord(previousSaturdayISO);
-  const previousWeek = previousWeekHasEndWeekEvidence ? readSavedWeekDays(previousSaturdayISO) : null;
+  const previousWeek = readSavedWeekDays(previousSaturdayISO);
   const anchor = previousWeek ? getLastCompletedWorkShiftInWeek(previousWeek) : null;
   const previousWeekCandidate = anchor
     ? { closingSaturdayISO: previousSaturdayISO, finishAbs: anchor.finishAbs }
@@ -913,45 +896,10 @@ type WeeklyRestTimelineSnapshot = {
   latest: RecognizedWeeklyRest | null;
 };
 
-function readSavedWeeklyRestTimelineDays(throughDateISO: string | null): DayRecord[] {
-  // Normal driverApp_week_* records are factual pay-week history even when the
-  // user did not press End Week. They belong to rest chronology, but not to
-  // Weekly Rest proposal ownership. Read them independently from closed/archive state.
-  if (typeof window === "undefined") return [];
-  const result: DayRecord[] = [];
-  const seenSaturdays = new Set<string>();
-
-  for (let i = 0; i < localStorage.length; i += 1) {
-    const key = localStorage.key(i) || "";
-    if (!key.startsWith("driverApp_week_")) continue;
-    const saturdayISO = key.replace("driverApp_week_", "");
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(saturdayISO) || seenSaturdays.has(saturdayISO)) continue;
-    seenSaturdays.add(saturdayISO);
-
-    try {
-      const parsed = JSON.parse(localStorage.getItem(key) || "{}");
-      const rawDays = Array.isArray(parsed) ? parsed : Array.isArray(parsed?.days) ? parsed.days : [];
-      const weekDays = buildPayrollWeek(saturdayISO).map((day, index) => sanitizeDayRecord(rawDays[index], day));
-      for (const day of weekDays) {
-        if (throughDateISO && day.dateISO > throughDateISO) continue;
-        result.push(day);
-      }
-    } catch {}
-  }
-
-  return result;
-}
-
-function buildWeeklyRestTimelineDays(currentDays: DayRecord[], archive: any[], savedThroughDateISO?: string): DayRecord[] {
-  // Factual cross-pay-period timeline. Source precedence for the same calendar date:
-  // archive baseline -> normal saved week -> current live week. This keeps chronology
-  // continuous across a calendar/pay-week rollover without turning Saved into End Week.
+function buildWeeklyRestTimelineDays(currentDays: DayRecord[], archive: any[]): DayRecord[] {
+  // Read-only cross-pay-period timeline. Current live data wins for the same date,
+  // while archived weeks provide continuity across End Week boundaries.
   const byDate = new Map<string, DayRecord>();
-  const currentUpperBoundISO = currentDays.reduce<string | null>((latest, day) => {
-    if (!day?.dateISO) return latest;
-    return latest == null || day.dateISO > latest ? day.dateISO : latest;
-  }, null);
-  const savedUpperBoundISO = savedThroughDateISO ?? currentUpperBoundISO;
 
   for (const entry of Array.isArray(archive) ? archive : []) {
     if (!entry || !Array.isArray(entry.days)) continue;
@@ -959,11 +907,6 @@ function buildWeeklyRestTimelineDays(currentDays: DayRecord[], archive: any[], s
       if (!rawDay || typeof rawDay.dateISO !== "string") continue;
       byDate.set(rawDay.dateISO, rawDay as DayRecord);
     }
-  }
-
-  for (const day of readSavedWeeklyRestTimelineDays(savedUpperBoundISO)) {
-    if (!day || typeof day.dateISO !== "string") continue;
-    byDate.set(day.dateISO, day);
   }
 
   for (const day of currentDays) {
@@ -1027,8 +970,8 @@ function getReducedDailyRestCountBeforeDay(currentDays: DayRecord[], archive: an
   return reducedCount;
 }
 
-function getWeeklyRestTimelineSnapshot(currentDays: DayRecord[], archive: any[], savedThroughDateISO?: string): WeeklyRestTimelineSnapshot {
-  const timelineDays = buildWeeklyRestTimelineDays(currentDays, archive, savedThroughDateISO);
+function getWeeklyRestTimelineSnapshot(currentDays: DayRecord[], archive: any[]): WeeklyRestTimelineSnapshot {
+  const timelineDays = buildWeeklyRestTimelineDays(currentDays, archive);
   const recognized = detectQualifyingWeeklyRests(timelineDays);
   return { recognized, latest: recognized.length ? recognized[recognized.length - 1] : null };
 }
@@ -1049,11 +992,11 @@ type WeeklyRestCycleSnapshot = {
   lastCompletedFinishAbs: number | null;
 };
 
-function getWeeklyRestCycleSnapshot(currentDays: DayRecord[], archive: any[], savedThroughDateISO?: string): WeeklyRestCycleSnapshot {
+function getWeeklyRestCycleSnapshot(currentDays: DayRecord[], archive: any[]): WeeklyRestCycleSnapshot {
   // Read-only cycle accounting built only from factual, already-recognized weekly rest.
   // It deliberately does not fall back to End Week candidates and does not drive UI/state yet.
-  const timelineDays = buildWeeklyRestTimelineDays(currentDays, archive, savedThroughDateISO);
-  const timeline = getWeeklyRestTimelineSnapshot(currentDays, archive, savedThroughDateISO);
+  const timelineDays = buildWeeklyRestTimelineDays(currentDays, archive);
+  const timeline = getWeeklyRestTimelineSnapshot(currentDays, archive);
   const anchorRest = timeline.latest;
   if (!anchorRest) {
     return { known: false, anchorRest: null, completedWorkCycles: 0, lastCompletedFinishAbs: null };
@@ -1094,15 +1037,12 @@ function getWeeklyRestCycleSnapshotBeforeDate(currentDays: DayRecord[], archive:
   // A weekly-rest Start decision belongs to the boundary before the selected work day.
   // Excluding the selected day keeps that ownership stable after Start is entered, while
   // preserving the conservative unknown fallback for any ambiguous earlier Work day.
-  // Saved-week history is capped at the preceding calendar day so an autosaved copy of
-  // the selected day cannot leak its new Start back into the pre-Start ownership snapshot.
   const priorCurrentDays = currentDays.filter((day) => day?.dateISO && day.dateISO < cutoffDateISO);
   const priorArchive = (Array.isArray(archive) ? archive : []).map((entry: any) => ({
     ...entry,
     days: Array.isArray(entry?.days) ? entry.days.filter((day: any) => day?.dateISO && day.dateISO < cutoffDateISO) : [],
   }));
-  const savedThroughDateISO = toISODate(addDays(fromISODate(cutoffDateISO), -1));
-  return getWeeklyRestCycleSnapshot(priorCurrentDays, priorArchive, savedThroughDateISO);
+  return getWeeklyRestCycleSnapshot(priorCurrentDays, priorArchive);
 }
 
 function hasFactualWorkStartAfterAbsBeforeDate(currentDays: DayRecord[], archive: any[], anchorFinishAbs: number, cutoffDateISO: string): boolean {
