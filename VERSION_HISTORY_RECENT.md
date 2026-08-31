@@ -1,10 +1,20 @@
 # Driver Pay App — verified recent version history
 
-**Current source package:** v5.2.34  
-**History scope:** v5.2.26 → v5.2.34  
+**Current source package:** v5.2.35  
+**History scope:** v5.2.26 → v5.2.35  
 **Evidence used:** the consolidated `MASTER_PROJECT_QA_v5.2.34.md`, the actual source/test files carried by this package, version identity files, and the v5.2.32 package used as the direct base for v5.2.33.
 
 This document deliberately separates verified runtime changes from QA/packaging-only revisions. It does not invent a promotion status when the carried evidence is incomplete.
+
+## v5.2.35 — Mobile UI cleanup / fixed PWA install name
+
+Reason: narrow mobile Start/helper rendering and empty Work-day density needed a presentation-only correction; installed PWA naming needed to stop exposing patch versions.
+
+- narrow-only Start proposal fit and non-overlapping hint layout;
+- narrow-only compaction for empty Day Summary and empty mini-stat presentation, with all sections and order retained;
+- manifest install `name` and `short_name` fixed to `Driver Pay App v5` while runtime identity remains versioned.
+
+**Status:** SOURCE-QA candidate.
 
 ## v5.2.34 — Start context placeholder fit
 

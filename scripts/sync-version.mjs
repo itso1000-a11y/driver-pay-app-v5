@@ -27,8 +27,8 @@ writeIfChanged(indexPath, indexHtml);
 const manifestPath = path.join(root, 'public/manifest.webmanifest');
 if (fs.existsSync(manifestPath)) {
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-  manifest.name = `Driver Pay App ${version}`;
-  manifest.short_name = `Driver Pay ${rawVersion}`;
+  manifest.name = "Driver Pay App v5";
+  manifest.short_name = "Driver Pay App v5";
   manifest.description = `Driver Pay App ${version}`;
   writeIfChanged(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
 }

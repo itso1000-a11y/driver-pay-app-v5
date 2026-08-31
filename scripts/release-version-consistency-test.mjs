@@ -23,8 +23,8 @@ assert.match(versionTs, new RegExp(`APP_DISPLAY_VERSION = "${display.replace(/\.
 
 assert.ok(read('index.html').includes(`<title>Driver Pay App ${v}</title>`), 'index title version mismatch');
 const manifest = JSON.parse(read('public/manifest.webmanifest'));
-assert.equal(manifest.name, `Driver Pay App ${v}`);
-assert.equal(manifest.short_name, `Driver Pay ${version}`);
+assert.equal(manifest.name, "Driver Pay App v5");
+assert.equal(manifest.short_name, "Driver Pay App v5");
 assert.equal(manifest.description, `Driver Pay App ${v}`);
 assert.ok(read('public/sw.js').includes(`const CACHE_NAME = "driver-pay-v${cache}";`), 'service-worker cache version mismatch');
 
