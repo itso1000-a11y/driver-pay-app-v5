@@ -124,7 +124,9 @@ function mk(id, dayName, dateISO, start='', finish='', extra={}) {
   };
 }
 function fixture({ longPrevious=false, oldStart=null }) {
-  const sat=currentPayrollSaturdayISO();
+  // Use an upcoming week: selecting the real current Monday makes its 03:00/05:00
+  // daily-rest proposals stale when this harness runs later that day.
+  const sat=addDaysISO(currentPayrollSaturdayISO(), 7);
   const dates={
     sun:addDaysISO(sat,-6), mon:addDaysISO(sat,-5), tue:addDaysISO(sat,-4), wed:addDaysISO(sat,-3),
     thu:addDaysISO(sat,-2), fri:addDaysISO(sat,-1), sat

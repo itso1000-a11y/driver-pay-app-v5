@@ -48,6 +48,7 @@ type BeforeInstallPromptEvent = Event & { prompt: () => Promise<void>; userChoic
 type WeekArchiveType = "worked" | "holiday" | "off";
 type CompletionSource = "user" | "emptyWorkdaySave";
 type StartEntrySource = "user" | "acceptedSuggestion";
+type StartKmEntrySource = "user" | "suggestedCarry" | "confirmedCarry";
 type RestStatus = "good" | "reduced" | "split" | "violation" | "unknown";
 
 type BonusEntry = { id: string; type: BonusType; qty: number };
@@ -68,6 +69,7 @@ type DayRecord = {
   bonuses: BonusEntry[];
   completionSource?: CompletionSource;
   startEntrySource?: StartEntrySource;
+  startKmEntrySource?: StartKmEntrySource;
 };
 
 type SettingsState = {
@@ -229,10 +231,10 @@ const buttonStyle: React.CSSProperties = { borderRadius: 14, border: "1px solid 
 
 function MobileUiStyles() {
   return <style>{`@media (max-width:480px){
-    .time-row--start.time-row--proposal .time-row__input{font-size:20px!important;letter-spacing:0!important}
-    .time-row--start.time-row--has-hint{display:grid;gap:4px}
-    .time-row--start.time-row--has-hint .time-row__input{padding-bottom:12px!important}
-    .time-row--start.time-row--has-hint .time-row__hint{position:static!important;min-height:12px;line-height:1.2}
+    .time-row--start.time-row--context-proposal .time-row__input{font-size:20px!important;letter-spacing:0!important}
+    .time-row--start.time-row--flow-hint{display:grid;gap:4px}
+    .time-row--start.time-row--flow-hint .time-row__input{padding-bottom:12px!important}
+    .time-row--start.time-row--flow-hint .time-row__hint{position:static!important;min-height:12px;line-height:1.2}
     .day-summary-section--empty{padding-top:12px!important;padding-bottom:12px!important}
     .day-summary-section--empty .summary-row{padding-top:3px!important;padding-bottom:3px!important}
     .mini-stat--empty{padding:8px 10px!important}
@@ -396,6 +398,9 @@ function sanitizeDayRecord(raw: unknown, fallback: DayRecord): DayRecord {
     startEntrySource: r.startEntrySource === "user" || r.startEntrySource === "acceptedSuggestion"
       ? r.startEntrySource
       : (typeof r.start === "string" && r.start.trim() ? "user" : undefined),
+    startKmEntrySource: r.startKmEntrySource === "user" || r.startKmEntrySource === "suggestedCarry" || r.startKmEntrySource === "confirmedCarry"
+      ? r.startKmEntrySource
+      : undefined,
   };
 }
 
@@ -1429,11 +1434,12 @@ function weekHasWorkData(days: DayRecord[]): boolean {
 }
 
 function findLastKnownKm(days: DayRecord[]): string {
+  // Carry-forward is anchored only by the last factual Finish KM. A typed or
+  // suggested Start KM without a Finish must never become the next carry anchor.
   const ordered = getOrderedDayIndices(days);
   for (let i = ordered.length - 1; i >= 0; i -= 1) {
-    const day = days[ordered[i]];
-    if (day.finishKm) return day.finishKm;
-    if (day.startKm) return day.startKm;
+    const finishKm = days[ordered[i]]?.finishKm || "";
+    if (finishKm) return finishKm;
   }
   return "";
 }
@@ -1445,12 +1451,12 @@ function carryKmThroughNonWorkingDays(days: DayRecord[]): DayRecord[] {
     const day = next[index];
     const startKm = day.startKm || lastKm;
     if (day.dayType === "off" || day.dayType === "holiday") {
-      next[index] = { ...day, startKm, finishKm: day.finishKm || startKm };
+      next[index] = { ...day, startKm, finishKm: day.finishKm || startKm, startKmEntrySource: startKm ? (day.startKmEntrySource || "suggestedCarry") : undefined };
     } else if (startKm && !day.startKm) {
-      next[index] = { ...day, startKm };
+      next[index] = { ...day, startKm, startKmEntrySource: "suggestedCarry" };
     }
+    // Only a Finish KM advances the factual carry anchor. Start-only days do not.
     if (next[index].finishKm) lastKm = next[index].finishKm;
-    else if (next[index].startKm) lastKm = next[index].startKm;
   }
   return next;
 }
@@ -1602,16 +1608,34 @@ function loadSavedWeekDataOrBlank(saturdayISO: string): SavedWeekData {
 function getLastFinishKmFromPreviousWeek(saturdayISO: string): string {
   if (typeof window === "undefined") return "";
   try {
-    const previousSaturdayISO = toISODate(addDays(fromISODate(saturdayISO), -7));
-    const saved = localStorage.getItem(getWeekStorageKey(previousSaturdayISO));
-    if (!saved) return "";
-    const parsed = JSON.parse(saved);
-    const rawDays = Array.isArray(parsed) ? parsed : Array.isArray(parsed?.days) ? parsed.days : [];
-    const previousWeek = buildPayrollWeek(previousSaturdayISO).map((day, index) => sanitizeDayRecord(rawDays[index], day));
-    const ordered = getOrderedDayIndices(previousWeek);
-    for (let i = ordered.length - 1; i >= 0; i -= 1) {
-      const finishKm = previousWeek[ordered[i]]?.finishKm || "";
-      if (finishKm) return finishKm;
+    // Search all earlier saved/archive pay weeks, newest first. This preserves the
+    // last factual Finish KM even when one or more paid Work weeks contain no KM.
+    const candidateSaturdays = new Set<string>();
+    for (let i = 0; i < localStorage.length; i += 1) {
+      const key = localStorage.key(i) || "";
+      if (!key.startsWith("driverApp_week_")) continue;
+      const candidate = key.replace("driverApp_week_", "");
+      if (candidate && candidate < saturdayISO) candidateSaturdays.add(candidate);
+    }
+    try {
+      const archiveItems = JSON.parse(localStorage.getItem("archive") || "[]");
+      if (Array.isArray(archiveItems)) {
+        for (const item of archiveItems) {
+          if (!Array.isArray(item?.days) || !item.days.length) continue;
+          const candidate = getSaturdayDay(item.days).dateISO;
+          if (candidate && candidate < saturdayISO) candidateSaturdays.add(candidate);
+        }
+      }
+    } catch { /* saved-week history remains sufficient if archive metadata is malformed */ }
+
+    for (const previousSaturdayISO of [...candidateSaturdays].sort((a, b) => b.localeCompare(a))) {
+      const previousWeek = readSavedWeekDays(previousSaturdayISO);
+      if (!previousWeek) continue;
+      const ordered = getOrderedDayIndices(previousWeek);
+      for (let i = ordered.length - 1; i >= 0; i -= 1) {
+        const finishKm = previousWeek[ordered[i]]?.finishKm || "";
+        if (finishKm) return finishKm;
+      }
     }
   } catch {
     return "";
@@ -1976,12 +2000,21 @@ export default function App() {
   const previousFinishKm = lastFinishKmThisWeek || previousWeekFinishKm;
   const startKmSuggestionSource = lastFinishKmThisWeek ? "last saved day" : previousWeekFinishKm ? "last week" : "";
   const displayStartKm = currentDay.startKm || (suppressStartKmSuggestion ? "" : previousFinishKm);
+  const legacySuggestedStartKm = Boolean(
+    !currentDay.startKmEntrySource &&
+    currentDay.startKm &&
+    previousFinishKm &&
+    currentDay.startKm === previousFinishKm &&
+    !currentDay.finishKm
+  );
   const startKmIsSuggested = Boolean(
     !suppressStartKmSuggestion &&
     previousFinishKm &&
     displayStartKm === previousFinishKm &&
     !currentDay.finishKm &&
-    !dayHasDestructiveWorkData(currentDay)
+    currentDay.startKmEntrySource !== "user" &&
+    currentDay.startKmEntrySource !== "confirmedCarry" &&
+    (currentDay.startKmEntrySource === "suggestedCarry" || !currentDay.startKm || legacySuggestedStartKm)
   );
   const hasWeeklySplitBreak = useMemo(() => days.some((day) => day.splitBreak), [days]);
   const weekEndingLabel = useMemo(() => getWeekEndingLabel(days), [days]);
@@ -2122,8 +2155,39 @@ export default function App() {
   }
   function updateKmValue(field: "startKm" | "finishKm", rawValue: string) {
     const value = digitsOnly(rawValue);
-    if (field === "startKm") setSuppressStartKmSuggestion(value === "");
-    updateCurrentDay(field, value);
+    if (field === "startKm") {
+      setSuppressStartKmSuggestion(value === "");
+      setDays((prev) => prev.map((day, index) => index === currentIndex
+        ? { ...day, startKm: value, startKmEntrySource: value ? "user" : undefined }
+        : day));
+      return;
+    }
+
+    // Finish KM is the action that confirms an untouched carried Start KM. Finish
+    // time, Save & Next, bonuses, Split and other work facts do not confirm KM.
+    setDays((prev) => prev.map((day, index) => {
+      if (index !== currentIndex) return day;
+      if (!value) {
+        return {
+          ...day,
+          finishKm: "",
+          startKmEntrySource: day.startKmEntrySource === "confirmedCarry" ? "suggestedCarry" : day.startKmEntrySource,
+        };
+      }
+      const carriedStart = day.startKm || (!suppressStartKmSuggestion ? previousFinishKm : "");
+      const carryWasSuggested = Boolean(
+        carriedStart &&
+        previousFinishKm &&
+        carriedStart === previousFinishKm &&
+        day.startKmEntrySource !== "user"
+      );
+      return {
+        ...day,
+        startKm: carriedStart || day.startKm,
+        finishKm: value,
+        startKmEntrySource: carryWasSuggested ? "confirmedCarry" : day.startKmEntrySource,
+      };
+    }));
   }
   function removeBonus(id: string) { updateCurrentDay("bonuses", currentDay.bonuses.filter((bonus) => bonus.id !== id)); }
   function updateBonusQty(id: string, rawValue: string) { const qty = Math.max(1, Number(digitsOnly(rawValue) || "1") || 1); updateCurrentDay("bonuses", currentDay.bonuses.map((bonus) => bonus.id === id ? { ...bonus, qty } : bonus)); }
@@ -2176,11 +2240,11 @@ export default function App() {
         const autoGeneratedFinishKm = wasNonWorking && Boolean(day.finishKm) && day.finishKm === (day.startKm || previousFinishKm || "");
         // Switching Off/Holiday back to Work must not save any suggested Start as a fact.
         // The field can show a daily suggestion visually; user input or Finish can accept it later.
-        return { ...day, dayType: "work", start: day.start || "", finishKm: autoGeneratedFinishKm ? "" : day.finishKm, completionSource: undefined, startEntrySource: day.start ? (day.startEntrySource || "user") : undefined };
+        return { ...day, dayType: "work", start: day.start || "", finishKm: autoGeneratedFinishKm ? "" : day.finishKm, completionSource: undefined, startEntrySource: day.start ? (day.startEntrySource || "user") : undefined, startKmEntrySource: autoGeneratedFinishKm && day.startKm ? "suggestedCarry" : day.startKmEntrySource };
       }
       const carryKm = day.startKm || previousFinishKm || "";
-      if (type === "holiday") return { ...day, dayType: "holiday", start: "", finish: "", holidayPay: day.holidayPay, startKm: carryKm, finishKm: carryKm, bonuses: [], nightOut: false, splitBreak: false, completionSource: undefined, startEntrySource: undefined };
-      return { ...day, dayType: "off", start: "", finish: "", holidayPay: "", startKm: carryKm, finishKm: carryKm, bonuses: [], nightOut: false, splitBreak: false, completionSource: undefined, startEntrySource: undefined };
+      if (type === "holiday") return { ...day, dayType: "holiday", start: "", finish: "", holidayPay: day.holidayPay, startKm: carryKm, finishKm: carryKm, bonuses: [], nightOut: false, splitBreak: false, completionSource: undefined, startEntrySource: undefined, startKmEntrySource: carryKm ? (day.startKmEntrySource || "suggestedCarry") : undefined };
+      return { ...day, dayType: "off", start: "", finish: "", holidayPay: "", startKm: carryKm, finishKm: carryKm, bonuses: [], nightOut: false, splitBreak: false, completionSource: undefined, startEntrySource: undefined, startKmEntrySource: carryKm ? (day.startKmEntrySource || "suggestedCarry") : undefined };
     }));
   }
   function saveAndGo() {
@@ -2203,6 +2267,11 @@ export default function App() {
     const finalDayType: DayType = emptyWorkDay ? "off" : day.dayType;
     const effectiveStartKm = day.startKm || previousFinishKm || day.finishKm || "";
     const effectiveFinishKm = finalDayType === "work" ? day.finishKm : (day.finishKm || effectiveStartKm);
+    const effectiveStartKmSource: StartKmEntrySource | undefined = finalDayType === "work"
+      ? (day.finishKm
+        ? (day.startKmEntrySource === "user" ? "user" : (effectiveStartKm ? "confirmedCarry" : undefined))
+        : (day.startKmEntrySource || (effectiveStartKm && previousFinishKm && effectiveStartKm === previousFinishKm ? "suggestedCarry" : undefined)))
+      : (effectiveStartKm ? (day.startKmEntrySource || "suggestedCarry") : undefined);
     const nextIndex = getAdjacentLogicalIndex(days, currentIndex, 1);
     setDays((prev) => prev.map((d, index) => index === currentIndex ? {
       ...d,
@@ -2213,6 +2282,7 @@ export default function App() {
       finishKm: effectiveFinishKm,
       completionSource: emptyWorkDay ? "emptyWorkdaySave" : "user",
       startEntrySource: finalDayType === "work" && start ? (d.startEntrySource || (start === dailyPrimarySuggestedStart ? "acceptedSuggestion" : "user")) : undefined,
+      startKmEntrySource: effectiveStartKmSource,
     } : d));
     setShowBonusForm(false);
     if (day.id === "sat") {
@@ -2620,10 +2690,10 @@ export default function App() {
     const mondayIndex = nextWeek.days.findIndex((d) => d.id === "mon");
     const sundayIndex = nextWeek.days.findIndex((d) => d.id === "sun");
     const targetIndex = nextDayIntent === "workTomorrow" && sundayIndex >= 0 ? sundayIndex : mondayIndex;
-    const nextDays = nextWeek.days.map((d, index) => {
+    const nextDays: DayRecord[] = nextWeek.days.map((d, index) => {
       if (index !== targetIndex) return d;
       const withIntent = nextDayIntent === "workTomorrow" && isEmptyForRemainingClose(d) ? { ...d, dayType: "work" as DayType } : d;
-      return carryKm && !withIntent.startKm ? { ...withIntent, startKm: carryKm } : withIntent;
+      return carryKm && !withIntent.startKm ? { ...withIntent, startKm: carryKm, startKmEntrySource: "suggestedCarry" } : withIntent;
     });
     localStorage.setItem(ACTIVE_WEEK_STORAGE_KEY, nextSaturday);
     setSelectedSaturday(nextSaturday);
@@ -2673,12 +2743,16 @@ function TimeRow({ label, value, onChange, onBlur, placeholder = "Start", hint =
   const visibleHint = invalid && value ? errorHint : (!value ? hint : "");
   const isStart = label === t("start");
   const hasProposal = isStart && !value && placeholder !== t("start");
-  // Presentation only: keep long contextual Start placeholders inside the fixed two-column field.
-  // Factual/user-entered time values keep the existing 24px size.
+  const hasContextProposal = Boolean(hasProposal && placeholder.includes(" "));
+  const inlineDailyHint = Boolean(!invalid && (visibleHint === t("from11hRest") || visibleHint === t("from9hRest")));
+  const flowHint = Boolean(visibleHint && !inlineDailyHint);
+  // Ordinary HH:MM Start proposals keep the same 24px emphasis as factual time.
+  // Only longer weekday/time context (for example "Sun 13:35") uses the compact
+  // narrow-screen presentation. Daily 11h/9h provenance stays inside the field.
   const placeholderFontSize = placeholder.length > 22 ? 14 : placeholder.length > 14 ? 18 : 24;
   const displayFontSize = value ? 24 : placeholderFontSize;
   const displayLetterSpacing = !value && placeholder.length > 14 ? 0 : 1;
-  return <Field label={label}>{isStart && <MobileUiStyles />}<div className={`time-row${isStart ? " time-row--start" : ""}${hasProposal ? " time-row--proposal" : ""}${visibleHint ? " time-row--has-hint" : ""}`} style={{ position: "relative" }}><input className="time-row__input" style={{ ...inputStyle, height: 58, fontSize: displayFontSize, fontWeight: 900, textAlign: "center", letterSpacing: displayLetterSpacing, paddingLeft: 8, paddingRight: 8, paddingBottom: visibleHint ? 22 : 12, ...(invalid ? { borderColor: "#b91c1c", boxShadow: "0 0 0 3px rgba(185,28,28,.16)", color: "#b91c1c" } : {}) }} inputMode="numeric" value={value} onChange={(e) => onChange(e.target.value)} onBlur={onBlur} placeholder={placeholder} />{visibleHint && <div className="time-row__hint" style={{ position: "absolute", left: 0, right: 0, bottom: 6, textAlign: "center", fontSize: 10, fontWeight: 900, color: invalid ? "#b91c1c" : "#64748b", pointerEvents: "none" }}>{visibleHint}</div>}</div></Field>;
+  return <Field label={label}>{isStart && <MobileUiStyles />}<div className={`time-row${isStart ? " time-row--start" : ""}${hasProposal ? " time-row--proposal" : ""}${hasContextProposal ? " time-row--context-proposal" : ""}${inlineDailyHint ? " time-row--inline-hint" : ""}${flowHint ? " time-row--flow-hint" : ""}`} style={{ position: "relative" }}><input className="time-row__input" style={{ ...inputStyle, height: 58, fontSize: displayFontSize, fontWeight: 900, textAlign: "center", letterSpacing: displayLetterSpacing, paddingLeft: 8, paddingRight: 8, paddingBottom: visibleHint ? 22 : 12, ...(invalid ? { borderColor: "#b91c1c", boxShadow: "0 0 0 3px rgba(185,28,28,.16)", color: "#b91c1c" } : {}) }} inputMode="numeric" value={value} onChange={(e) => onChange(e.target.value)} onBlur={onBlur} placeholder={placeholder} />{visibleHint && <div className="time-row__hint" style={{ position: "absolute", left: 0, right: 0, bottom: 6, textAlign: "center", fontSize: 10, fontWeight: 900, color: invalid ? "#b91c1c" : "#64748b", pointerEvents: "none" }}>{visibleHint}</div>}</div></Field>;
 }
 function HelperLine({ text }: { text: string }) { return <div style={{ marginTop: 10, fontSize: 14, fontWeight: 900, color: text.includes("unavailable") || text.includes("недостъпна") || text.includes("limit") ? "#b45309" : "#166534", lineHeight: 1.25 }}>{text}</div>; }
 function MiniStat({ label, value, tone }: { label: string; value: React.ReactNode; tone?: "danger" }) { const danger = tone === "danger"; const isEmpty = value === ""; return <div className={`mini-stat${isEmpty ? " mini-stat--empty" : ""}`} style={{ padding: 12, borderRadius: 14, border: danger ? "1px solid #fecaca" : "1px solid #eef2f7", background: danger ? "#fef2f2" : "#f8fafc", color: danger ? "#991b1b" : undefined }}><div style={{ fontSize: 12, color: danger ? "#b91c1c" : "#64748b", fontWeight: 700 }}>{label}</div><div style={{ fontSize: 17, fontWeight: 900, marginTop: 3 }}>{value}</div></div>; }

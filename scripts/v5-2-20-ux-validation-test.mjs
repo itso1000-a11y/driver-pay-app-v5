@@ -35,8 +35,14 @@ assert.match(appSource, /setTimeout\(\(\) => setActionMessage\(""\), 4500\)/);
 assert.match(appSource, /fontSize: 15/);
 assert.match(appSource, /minWidth: 220/);
 
-// 3) Start km is only a grey suggestion while Finish km is empty.
-assert.match(appSource, /const startKmIsSuggested = Boolean\([\s\S]*!currentDay\.finishKm[\s\S]*!dayHasDestructiveWorkData\(currentDay\)[\s\S]*\);/);
+// 3) v5.2.36 supersedes the old coupling between KM provenance and unrelated
+// destructive work data. An untouched carried Start KM remains suggested until
+// Finish KM confirms it; Finish time/bonus/Split/Night out do not confirm distance.
+const startKmSuggestedBlock = appSource.match(/const startKmIsSuggested = Boolean\([\s\S]*?\n  \);/);
+assert.ok(startKmSuggestedBlock, "startKmIsSuggested block missing");
+assert.match(startKmSuggestedBlock[0], /!currentDay\.finishKm/);
+assert.doesNotMatch(startKmSuggestedBlock[0], /dayHasDestructiveWorkData/);
+assert.match(startKmSuggestedBlock[0], /startKmEntrySource !== "user"/);
 assert.match(appSource, /color: startKmIsSuggested \? "#94a3b8" : "#0f172a"/);
 
 // 4) v5.2.31 supersedes the old "complete + preferred pointer = grey" rule.

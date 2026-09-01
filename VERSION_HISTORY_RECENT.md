@@ -1,10 +1,34 @@
 # Driver Pay App — verified recent version history
 
-**Current source package:** v5.2.35  
-**History scope:** v5.2.26 → v5.2.35  
-**Evidence used:** the consolidated `MASTER_PROJECT_QA_v5.2.34.md`, the actual source/test files carried by this package, version identity files, and the v5.2.32 package used as the direct base for v5.2.33.
+**Current source package:** v5.2.36  
+**History scope:** v5.2.26 → v5.2.36  
+**Evidence used:** the consolidated `MASTER_PROJECT_QA_v5.2.36.md`, the actual source/test files carried by this package, version identity files, and the preserved earlier source packages used as direct historical bases.
 
 This document deliberately separates verified runtime changes from QA/packaging-only revisions. It does not invent a promotion status when the carried evidence is incomplete.
+
+## v5.2.36 — Start helper restore / KM provenance correction
+
+Reason: phone review of v5.2.35 showed that ordinary daily Start proposals had been over-compacted and that carried Start KM provenance was incorrectly tied to unrelated work/time completion.
+
+- normal daily HH:MM Start proposals remain 24px; only longer weekday/time context uses the compact narrow-screen fit;
+- `from 11h rest` / `from 9h rest` are restored inside the Start field; existing 9h alternative / 11h-unavailable / limit helper wording remains below;
+- long `Weekly rest ended ...` context keeps separate mobile flow space;
+- Start KM gains explicit user/suggested/confirmed provenance;
+- Start/Finish time, Save & Next, End Week, bonuses, Night out and Split do not confirm an untouched carried Start KM;
+- Finish KM confirms the carried Start KM for the KM run and becomes the next carry anchor;
+- only the last factual Finish KM propagates across no-KM Work days and pay-week boundaries;
+- no KM entry is required for a valid paid Work day;
+- the old v5.2.20 source-contract assertion that coupled KM suggestion status to general destructive work data is intentionally updated to the new explicit Finish-KM/provenance rule.
+
+**Status:** SOURCE-QA candidate. Targeted real-App QA has since passed for Start presentation and KM-01 through KM-09, including the corrected deterministic Chromium provenance harness. It remains not stable/QA ACCEPTED pending phone road test and the separate rendered `Weekly rest ended ...` fixture/acceptance decision.
+
+### v5.2.36-r1 — final Source-QA packaging
+
+QA/documentation and test-harness packaging only; runtime remains v5.2.36.
+
+- Corrected `scripts/v5-2-32-start-provenance-real-app-test.mjs` so its existing Sunday-finish fixture selects the following pay week, avoiding stale Monday 05:00/03:00 expectations when run later on the real current Monday.
+- Assertions were not weakened; `test:browser:v5.2.32-start` subsequently passed all four real-App assertions.
+- Final targeted evidence records Start presentation and KM-01 through KM-09 as PASS. `Weekly rest ended ...` remains BLOCKED pending a dedicated deterministic real-App fixture.
 
 ## v5.2.35 — Mobile UI cleanup / fixed PWA install name
 
