@@ -1,10 +1,22 @@
 # Driver Pay App — verified recent version history
 
-**Current source package:** v5.2.38-r1 QA package (runtime remains v5.2.38)  
-**History scope:** v5.2.26 → v5.2.38  
-**Evidence used:** the consolidated `MASTER_PROJECT_QA_v5.2.38.md`, the actual source/test files carried by this package, version identity files, and the preserved earlier source packages used as direct historical bases.
+**Current source package:** v5.2.39 SOURCE-QA  
+**History scope:** v5.2.26 → v5.2.39  
+**Evidence used:** the consolidated `MASTER_PROJECT_QA_v5.2.39.md`, the actual source/test files carried by this package, version identity files, and the preserved earlier source packages used as direct historical bases.
 
 This document deliberately separates verified runtime changes from QA/packaging-only revisions. It does not invent a promotion status when the carried evidence is incomplete.
+
+## v5.2.39 — Weekly-rest-ended card ownership fix
+
+Reason: v5.2.38 correctly removed the long `Weekly rest ended ...` flow helper from only the Start column to keep Start/Finish aligned, but the Weekly Rest card still ignored the already-computed `primaryHelp` and continued to show an obsolete `45h Start: ...` line after the endpoint had passed.
+
+- before endpoint: `45h Start: [day/time]` is unchanged;
+- after endpoint and before factual Start: Weekly Rest card now shows `Weekly rest ended [day/time]`;
+- no long ended helper is restored under Start;
+- no weekly-rest calculation or other application behavior is changed;
+- no tests were run for this narrow change by explicit user request.
+
+**Status:** SOURCE-QA; phone verification required.
 
 ## v5.2.38 — Mobile Start-row stability / bonus-row fit
 

@@ -1,7 +1,7 @@
 {
   "name": "Driver Pay App v5",
   "short_name": "Driver Pay App v5",
-  "description": "Driver Pay App v5.2.38",
+  "description": "Driver Pay App v5.2.39",
   "start_url": "/?app=driver-pay-v5-clean",
   "scope": "/",
   "display": "standalone",

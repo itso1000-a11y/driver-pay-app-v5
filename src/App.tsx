@@ -2827,9 +2827,10 @@ function RestCard({ value, colors }: { value: string; colors: { bg: string; bord
 
 function WeeklyRestInlineCard({ plan }: { plan: { primaryValue: string; primaryHelp: string; helper: string } }) {
   const secondary = plan.helper.includes(":") ? plan.helper.split(":").slice(1).join(":").trim() : plan.helper;
+  const primaryEnded = plan.primaryHelp === t("weeklyRestEnded");
   return <div style={{ marginTop: 12, padding: "9px 12px", minHeight: 42, borderRadius: 14, border: "1px solid #eef2f7", background: "#f8fafc", display: "grid", gap: 3 }}>
     <div style={{ fontSize: 12, color: "#334155", fontWeight: 900 }}>{t("weeklyRestCard")}</div>
-    {plan.primaryValue && <div style={{ fontSize: 11, lineHeight: 1.15, color: "#166534", fontWeight: 850 }}>{t("weeklyRest45Start")}: {plan.primaryValue}</div>}
+    {plan.primaryValue && <div style={{ fontSize: 11, lineHeight: 1.15, color: "#166534", fontWeight: 850 }}>{primaryEnded ? `${plan.primaryHelp} ${plan.primaryValue}` : `${t("weeklyRest45Start")}: ${plan.primaryValue}`}</div>}
     {secondary && <div style={{ fontSize: 11, lineHeight: 1.15, color: secondary.includes("unavailable") || secondary.includes("невъзможна") ? "#b45309" : "#166534", fontWeight: 850 }}>{t("weeklyRest24Start")}: {secondary}</div>}
   </div>;
 }
