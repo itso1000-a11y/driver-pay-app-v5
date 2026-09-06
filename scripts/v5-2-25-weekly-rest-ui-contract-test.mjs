@@ -64,24 +64,40 @@ function dayByName(days, name) {
 function setWork(day, start, finish) { day.dayType = 'work'; day.start = start; day.finish = finish; }
 function setOff(day) { day.dayType = 'off'; day.start = ''; day.finish = ''; }
 
-// 1. Stale stored candidate must not hide the immediate previous pay-week anchor.
+// 1. v5.2.33 ownership correction: a normally saved previous week is factual
+// chronology, but without End Week/archive evidence it must NOT manufacture
+// Weekly Rest proposal ownership. A genuine older stored candidate remains valid.
+// Once the immediate previous week is factually closed, its newer anchor may win.
 localStorage.clear();
 {
   const selectedSaturday = '2030-08-17';
   const previousSaturday = '2030-08-10';
+  const storedSaturday = '2030-08-03';
   const previousDays = app.buildPayrollWeek(previousSaturday);
   setWork(dayByName(previousDays, 'Friday'), '08:00', '18:00');
   setOff(dayByName(previousDays, 'Saturday'));
   const freshFinish = app.getDayTimeAbsMinutes(dayByName(previousDays, 'Friday'), '18:00');
+  const storedFinish = freshFinish - 7 * 24 * 60;
   localStorage.setItem(`driverApp_week_${previousSaturday}`, JSON.stringify({ days: previousDays }));
   localStorage.setItem('driverPayV4_weeklyRestCandidate', JSON.stringify({
-    closingSaturdayISO: '2030-08-03',
-    finishAbs: freshFinish - 7 * 24 * 60,
+    closingSaturdayISO: storedSaturday,
+    finishAbs: storedFinish,
   }));
-  const resolved = app.getWeeklyRestCandidateForSelectedWeek(selectedSaturday);
-  assert.ok(resolved, 'A current weekend candidate must be resolved');
-  assert.equal(resolved.closingSaturdayISO, previousSaturday, 'Immediate previous pay-week candidate must win over stale older storage');
-  assert.equal(resolved.finishAbs, freshFinish, 'Resolved candidate must use the newer Friday Finish');
+
+  const openWeekResolved = app.getWeeklyRestCandidateForSelectedWeek(selectedSaturday);
+  assert.ok(openWeekResolved, 'A genuine stored candidate must remain applicable');
+  assert.equal(openWeekResolved.closingSaturdayISO, storedSaturday,
+    'Normally saved previous week must not manufacture proposal ownership without End Week evidence');
+  assert.equal(openWeekResolved.finishAbs, storedFinish,
+    'Open/saved previous week must not replace the genuine stored candidate');
+
+  localStorage.setItem('driverPayV4_closedWeeks', JSON.stringify([previousSaturday]));
+  const closedWeekResolved = app.getWeeklyRestCandidateForSelectedWeek(selectedSaturday);
+  assert.ok(closedWeekResolved, 'Closed previous week must provide a backfill candidate');
+  assert.equal(closedWeekResolved.closingSaturdayISO, previousSaturday,
+    'With End Week evidence, the newer immediate previous pay-week candidate must win');
+  assert.equal(closedWeekResolved.finishAbs, freshFinish,
+    'Closed previous-week candidate must use the newer Friday Finish');
 }
 
 // 2. A valid weekly-rest plan remains a plan before and after the 45h endpoint.

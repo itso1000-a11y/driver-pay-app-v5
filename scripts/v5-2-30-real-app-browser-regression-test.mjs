@@ -8,6 +8,25 @@ const HOST='127.0.0.1', PORT=41739, DEBUG=9339;
 const base=`http://${HOST}:${PORT}`;
 const sleep=(ms)=>new Promise(r=>setTimeout(r,ms));
 
+function isoUTC(date){
+  return `${date.getUTCFullYear()}-${String(date.getUTCMonth()+1).padStart(2,'0')}-${String(date.getUTCDate()).padStart(2,'0')}`;
+}
+function addDaysISO(iso, days){
+  const date=new Date(`${iso}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate()+days);
+  return isoUTC(date);
+}
+function currentPayrollSaturdayISO(){
+  const now=new Date();
+  const date=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate()));
+  const delta=(6-date.getUTCDay()+7)%7;
+  date.setUTCDate(date.getUTCDate()+delta);
+  return isoUTC(date);
+}
+const fixtureSaturdayISO=currentPayrollSaturdayISO();
+const fixtureSundayISO=addDaysISO(fixtureSaturdayISO,-6);
+
+
 async function waitHttp(url, tries=120){
   for(let i=0;i<tries;i++){
     try{ const r=await fetch(url); if(r.ok)return; }catch{}
@@ -165,43 +184,57 @@ async function setLocalStorageItems(items){
   }
 }
 
+async function selectDetailedDay(dayName,dateISO){
+  await clickText('Week');
+  await clickText('Detailed view');
+  await clickContains(`${dayName} · ${dateISO}`);
+  await sleep(150);
+}
+
 async function setupStorage(start){
   const mk=(id,dayName,dateISO,startValue='',finish='',dayType='work')=>({
     id,dayName,dateLabel:dateISO,dateISO,start:startValue,finish,startKm:'',finishKm:'',
     holidayPay:'',dayType,splitBreak:false,nightOut:false,bonuses:[]
   });
 
-  const older=[mk('fri','Friday','2026-07-31','06:00','09:00')];
+  // Date-stable fixture: anchor the old Sunday-after-Saturday scenario to the
+  // payroll week containing the browser's real current UTC date. The browser is
+  // also forced to UTC below, so the fixture and app agree even months later.
+  const older=[mk('fri','Friday',addDaysISO(fixtureSaturdayISO,-15),'06:00','09:00')];
   const prev=[
-    mk('mon','Monday','2026-08-03','06:00','18:00'),
-    mk('tue','Tuesday','2026-08-04','06:00','18:00'),
-    mk('wed','Wednesday','2026-08-05','06:00','18:00'),
-    mk('thu','Thursday','2026-08-06','06:00','18:00'),
-    mk('fri','Friday','2026-08-07','06:00','18:00'),
-    mk('sat','Saturday','2026-08-08','07:00','22:00'),
-    mk('sun','Sunday','2026-08-02','','','off')
+    mk('mon','Monday',addDaysISO(fixtureSaturdayISO,-12),'06:00','18:00'),
+    mk('tue','Tuesday',addDaysISO(fixtureSaturdayISO,-11),'06:00','18:00'),
+    mk('wed','Wednesday',addDaysISO(fixtureSaturdayISO,-10),'06:00','18:00'),
+    mk('thu','Thursday',addDaysISO(fixtureSaturdayISO,-9),'06:00','18:00'),
+    mk('fri','Friday',addDaysISO(fixtureSaturdayISO,-8),'06:00','18:00'),
+    mk('sat','Saturday',addDaysISO(fixtureSaturdayISO,-7),'07:00','22:00'),
+    mk('sun','Sunday',addDaysISO(fixtureSaturdayISO,-13),'','','off')
   ];
   const cur=[
-    mk('mon','Monday','2026-08-10','',''),
-    mk('tue','Tuesday','2026-08-11','',''),
-    mk('wed','Wednesday','2026-08-12','',''),
-    mk('thu','Thursday','2026-08-13','',''),
-    mk('fri','Friday','2026-08-14','',''),
-    mk('sat','Saturday','2026-08-15','',''),
-    mk('sun','Sunday','2026-08-09',start,'','work')
+    mk('mon','Monday',addDaysISO(fixtureSaturdayISO,-5),'',''),
+    mk('tue','Tuesday',addDaysISO(fixtureSaturdayISO,-4),'',''),
+    mk('wed','Wednesday',addDaysISO(fixtureSaturdayISO,-3),'',''),
+    mk('thu','Thursday',addDaysISO(fixtureSaturdayISO,-2),'',''),
+    mk('fri','Friday',addDaysISO(fixtureSaturdayISO,-1),'',''),
+    mk('sat','Saturday',fixtureSaturdayISO,'',''),
+    mk('sun','Sunday',fixtureSundayISO,start,'','work')
   ];
 
   const items={
     driverPayV4_language:'en',
     archive:JSON.stringify([{days:older},{days:prev}]),
-    driverPayV4_activeSaturday:'2026-08-15',
+    driverPayV4_activeSaturday:fixtureSaturdayISO,
     driverPayV4_closedWeeks:'[]',
-    'driverApp_week_2026-08-15':JSON.stringify({days:cur,settings:{},payslipActualWeek:''})
+    [`driverApp_week_${fixtureSaturdayISO}`]:JSON.stringify({days:cur,settings:{},payslipActualWeek:''})
   };
 
   await setLocalStorageItems(items);
   await reloadAndWait();
   await waitForBodyContains('Driver Pay');
+
+  // Never rely on the actual weekday when the test runs. Explicitly select the
+  // fixture Sunday so 15h / 21h / 24h ownership remains deterministic.
+  await selectDetailedDay('Sunday',fixtureSundayISO);
 }
 
 try{
@@ -256,30 +289,32 @@ try{
   // Reset fixture for the real Saturday Save & Next / End Week flow.
   await setupStorage('');
   {
+    const mk=(id,dayName,dateISO,start='',finish='',dayType='work')=>({
+      id,dayName,dateLabel:dateISO,dateISO,start,finish,startKm:'',finishKm:'',holidayPay:'',
+      dayType,splitBreak:false,nightOut:false,bonuses:[]
+    });
     const satFixture={
       days:[
-        {id:'mon',dayName:'Monday',dateLabel:'2026-08-10',dateISO:'2026-08-10',start:'',finish:'',startKm:'',finishKm:'',holidayPay:'',dayType:'work',splitBreak:false,nightOut:false,bonuses:[]},
-        {id:'tue',dayName:'Tuesday',dateLabel:'2026-08-11',dateISO:'2026-08-11',start:'',finish:'',startKm:'',finishKm:'',holidayPay:'',dayType:'work',splitBreak:false,nightOut:false,bonuses:[]},
-        {id:'wed',dayName:'Wednesday',dateLabel:'2026-08-12',dateISO:'2026-08-12',start:'',finish:'',startKm:'',finishKm:'',holidayPay:'',dayType:'work',splitBreak:false,nightOut:false,bonuses:[]},
-        {id:'thu',dayName:'Thursday',dateLabel:'2026-08-13',dateISO:'2026-08-13',start:'',finish:'',startKm:'',finishKm:'',holidayPay:'',dayType:'work',splitBreak:false,nightOut:false,bonuses:[]},
-        {id:'fri',dayName:'Friday',dateLabel:'2026-08-14',dateISO:'2026-08-14',start:'',finish:'',startKm:'',finishKm:'',holidayPay:'',dayType:'work',splitBreak:false,nightOut:false,bonuses:[]},
-        {id:'sat',dayName:'Saturday',dateLabel:'2026-08-15',dateISO:'2026-08-15',start:'07:00',finish:'20:00',startKm:'',finishKm:'',holidayPay:'',dayType:'work',splitBreak:false,nightOut:false,bonuses:[]},
-        {id:'sun',dayName:'Sunday',dateLabel:'2026-08-09',dateISO:'2026-08-09',start:'',finish:'',startKm:'',finishKm:'',holidayPay:'',dayType:'off',splitBreak:false,nightOut:false,bonuses:[]}
+        mk('mon','Monday',addDaysISO(fixtureSaturdayISO,-5)),
+        mk('tue','Tuesday',addDaysISO(fixtureSaturdayISO,-4)),
+        mk('wed','Wednesday',addDaysISO(fixtureSaturdayISO,-3)),
+        mk('thu','Thursday',addDaysISO(fixtureSaturdayISO,-2)),
+        mk('fri','Friday',addDaysISO(fixtureSaturdayISO,-1)),
+        mk('sat','Saturday',fixtureSaturdayISO,'07:00','20:00'),
+        mk('sun','Sunday',fixtureSundayISO,'','','off')
       ],
       settings:{},
       payslipActualWeek:''
     };
     await cdp('DOMStorage.setDOMStorageItem',{
       storageId:{securityOrigin:base,isLocalStorage:true},
-      key:'driverApp_week_2026-08-15',
+      key:`driverApp_week_${fixtureSaturdayISO}`,
       value:JSON.stringify(satFixture)
     });
   }
   await reloadAndWait();
 
-  await clickText('Week');
-  await clickText('Detailed view');
-  await clickContains('Saturday · 2026-08-15');
+  await selectDetailedDay('Saturday',fixtureSaturdayISO);
   await clickText('Save & Next');
 
   let txt=await bodyText();

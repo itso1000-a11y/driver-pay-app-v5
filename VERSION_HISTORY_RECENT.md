@@ -1,10 +1,55 @@
 # Driver Pay App — verified recent version history
 
-**Current source package:** v5.2.36  
-**History scope:** v5.2.26 → v5.2.36  
-**Evidence used:** the consolidated `MASTER_PROJECT_QA_v5.2.36.md`, the actual source/test files carried by this package, version identity files, and the preserved earlier source packages used as direct historical bases.
+**Current source package:** v5.2.38-r1 QA package (runtime remains v5.2.38)  
+**History scope:** v5.2.26 → v5.2.38  
+**Evidence used:** the consolidated `MASTER_PROJECT_QA_v5.2.38.md`, the actual source/test files carried by this package, version identity files, and the preserved earlier source packages used as direct historical bases.
 
 This document deliberately separates verified runtime changes from QA/packaging-only revisions. It does not invent a promotion status when the carried evidence is incomplete.
+
+## v5.2.38 — Mobile Start-row stability / bonus-row fit
+
+Reason: real phone use showed that an already-completed Weekly Rest context could add a duplicate flow hint only under Start and visually misalign Start/Finish, while the bonus quantity field left too little room for the bonus selector.
+
+- completed/behind 45h target no longer injects duplicate `Weekly rest ended ...` text inside only the Start column;
+- Start/Finish remain aligned in that scenario;
+- daily 11h/9h inline Start provenance is unchanged;
+- bonus draft row changes from `1fr 80px 88px` to `minmax(0,1fr) 56px 88px`;
+- selector receives smaller 14px text/narrower padding and keeps the Add button width unchanged;
+- bonus calculation/storage semantics are unchanged;
+- v5.2.37 Week Preview chronology and compensation guard fixes are carried unchanged.
+
+**Status:** SOURCE-QA candidate. Source regressions and isolated TypeScript check pass; fresh Vite/real-App browser acceptance is not claimed in this container because npm dependencies could not be fully installed.
+
+### v5.2.38-r1 — QA harness / historical contract correction
+
+QA-only revision; runtime and production source remain v5.2.38.
+
+Independent Windows QA of the original v5.2.38 package confirmed clean install, TypeScript, production build, current regressions and the dynamic Start-provenance real-App suite. Two QA blockers remained:
+- the v5.2.30 real-App acceptance harness still used static August 2026 fixture dates, so once the real calendar moved into September the app correctly selected a different workflow day and the 15h/21h/24h fixture became unreachable;
+- the historical v5.2.26 contract runner still expected a normally saved previous week to manufacture Weekly Rest proposal ownership, which conflicts with the intentional v5.2.33 End Week/archive-evidence rule.
+
+Corrections in r1:
+- `scripts/v5-2-30-real-app-browser-regression-test.mjs` now derives the fixture from the real current payroll week, uses UTC consistently with the browser test, and explicitly selects the fixture Sunday/Saturday instead of relying on the real weekday; the 15h/21h/24h and Saturday/End Week assertions are unchanged;
+- `scripts/v5-2-25-weekly-rest-ui-contract-test.mjs` now tests both sides of the current ownership contract: an open normally-saved previous week must not replace a genuine stored candidate, while the same newer previous-week anchor may win once closed/archive End Week evidence exists; the production rule is not weakened.
+
+**Status:** QA-only correction prepared. Corrected real-App and v5.2.26 runners require independent rerun before phone promotion.
+
+## v5.2.37 — Week Preview factual rest chronology / compensation rest-reuse guard
+
+Reason: backlog inspection against the current v5.2.36 source confirmed that Week Preview still used an adjacent-day clock-only mini Rest Engine, while the legacy compensation effect still duplicated repayment logic without the newer one-rest/one-debt guard.
+
+- Week Preview Rest Snapshot now uses the factual date-aware merged chronology (`archive -> saved week -> current live`) instead of `previous calendar day + clock time` subtraction;
+- exact cross-date 24h no longer collapses to 0h;
+- Off/Holiday gaps preserve the last factual Finish anchor;
+- reduced-rest display totals are separated from the live reduced-rest allowance counter;
+- factual 24h+ Weekly Rest resets the reduced-rest cycle for later Preview classification;
+- exact 23h59 remains non-reset;
+- Split Rest remains separate and does not consume an ordinary reduced-rest allowance;
+- previous-pay-week Finish may classify the current Sunday Start in Preview through the existing saved chronology;
+- legacy compensation repayment now reuses the guarded earliest-eligible helper, preventing the same continuous rest from repaying a second debt after Start editing;
+- no Pay, Start/KM provenance, End Week, archive/navigation, Weekly Rest ownership/layout or bonus-row UI change is included.
+
+**Status:** SOURCE-QA candidate. Dependency-free/current-source regressions and isolated TypeScript check pass. Fresh Vite build and real-App Chromium are not claimed in this container because dependency installation is incomplete.
 
 ## v5.2.36 — Start helper restore / KM provenance correction
 

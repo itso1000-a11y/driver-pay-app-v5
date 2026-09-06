@@ -131,7 +131,13 @@ assert.match(appSource, /!timelineWeeklyRestPathEligible \|\| enteredStartAbs ==
 assert.match(appSource, /completeEarliestEligibleWeeklyCompensation\(ledger, enteredStartAbs, timelineRepaymentRestMinutes, currentDay\.dateISO\)/);
 assert.match(appSource, /if \(!result\.completedId\) return;/);
 assert.match(appSource, /writeWeeklyCompensationLedger\(result\.ledger\)/);
-// Legacy path must remain isolated under timeline ownership.
+// Legacy path must remain isolated under timeline ownership, but when it owns
+// repayment it must reuse the same one-rest/one-debt guard.
 assert.match(appSource, /if \(timelineWeeklyRestPathEligible\) return;\s*let ledger = readWeeklyCompensationLedger\(\);/);
+const legacyEffectStart = appSource.indexOf('if (timelineWeeklyRestPathEligible) return;');
+const legacyEffectEnd = appSource.indexOf('// Weekly compensation is a fact shown', legacyEffectStart);
+const legacyEffectSource = appSource.slice(legacyEffectStart, legacyEffectEnd);
+assert.match(legacyEffectSource, /completeEarliestEligibleWeeklyCompensation\(ledger, enteredStartAbs, restBeforeMinutes, currentDay\.dateISO\)/);
+assert.doesNotMatch(legacyEffectSource, /const eligible = ledger/);
 
 console.log('Timeline compensation repayment regression: PASS');
