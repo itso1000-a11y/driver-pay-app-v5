@@ -657,7 +657,11 @@ function getSuggestedStartTimesForDay(anchor: PreviousShiftAnchor | null, curren
 
 function getPrimarySuggestedStart(suggested: SuggestedStarts): string {
   if (suggested.h11 != null) return absMinutesToLocalTime(suggested.h11);
-  if (suggested.h9 != null && !suggested.h9Blocked) return absMinutesToLocalTime(suggested.h9);
+  // A 9h value may become the primary Start proposal only when 11h is genuinely
+  // unavailable because the previous duty exceeded 13h. If the 11h boundary merely
+  // fell on the previous calendar day, keep Start neutral; the historical 9h helper
+  // may remain visible, but it must never be promoted into a false reduced-rest Start.
+  if (suggested.longPreviousShift && suggested.h9 != null && !suggested.h9Blocked) return absMinutesToLocalTime(suggested.h9);
   return "";
 }
 

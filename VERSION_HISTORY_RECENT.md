@@ -1,10 +1,23 @@
 # Driver Pay App — verified recent version history
 
-**Current source package:** v5.2.39 SOURCE-QA  
-**History scope:** v5.2.26 → v5.2.39  
-**Evidence used:** the consolidated `MASTER_PROJECT_QA_v5.2.39.md`, the actual source/test files carried by this package, version identity files, and the preserved earlier source packages used as direct historical bases.
+**Current source package:** v5.2.40 SOURCE-QA  
+**History scope:** v5.2.26 → v5.2.40  
+**Evidence used:** the consolidated `MASTER_PROJECT_QA_v5.2.40.md`, the actual source/test files carried by this package, version identity files, and the preserved earlier source packages used as direct historical bases.
 
 This document deliberately separates verified runtime changes from QA/packaging-only revisions. It does not invent a promotion status when the carried evidence is incomplete.
+
+## v5.2.40 — Daily Start primary 11h/9h ownership fix
+
+Reason: phone review showed a false primary reduced-rest suggestion when the regular 11h boundary was already on the previous calendar day. The retained historical 9h helper was being promoted into the main Start field, producing duplicate `21:30 from 9h rest` / `9h option: 21:30` even though 11h was not genuinely unavailable.
+
+- 11h remains the normal primary Daily Start proposal when valid for the selected day;
+- 9h becomes primary only when 11h is genuinely unavailable because the previous duty exceeded 13h;
+- a previous-calendar-day 11h boundary no longer causes the retained 9h helper to become a false primary Start proposal;
+- historical cross-day 9h helper visibility is preserved;
+- no Rest Engine thresholds, Weekly Rest, compensation, KM, Pay, navigation/archive, storage or other UI behavior is changed.
+
+**Status:** SOURCE-QA; narrow source sanity checked, phone verification required.
+
 
 ## v5.2.39 — Weekly-rest-ended card ownership fix
 
