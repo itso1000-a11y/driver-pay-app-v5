@@ -647,10 +647,11 @@ function getSuggestedStartTimesForDay(anchor: PreviousShiftAnchor | null, curren
   const base = getSuggestedStartTimes(anchor.finishAbs, reducedCount, previousWorkedMinutes, previousSplitBreak);
   return {
     ...base,
-    // 11h remains the main start-field suggestion only when it belongs to the current day.
-    // 9h is a helper/boundary, not a main start value. Keep it visible even if it fell
-    // on the previous calendar day, because the driver may enter the actual Start later.
-    h11: base.h11 != null && isSameLocalDayAbs(base.h11, current) ? base.h11 : null,
+    // Keep both daily-rest boundaries available across the calendar-day boundary while
+    // the existing <24h daily-suggestion window is active. 11h remains the normal primary
+    // proposal; 9h remains the alternative helper unless 11h is genuinely unavailable
+    // because the previous duty exceeded 13h.
+    h11: base.h11,
     h9: base.h9,
   };
 }

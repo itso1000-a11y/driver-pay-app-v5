@@ -1,10 +1,23 @@
 # Driver Pay App — verified recent version history
 
-**Current source package:** v5.2.40 SOURCE-QA  
-**History scope:** v5.2.26 → v5.2.40  
-**Evidence used:** the consolidated `MASTER_PROJECT_QA_v5.2.40.md`, the actual source/test files carried by this package, version identity files, and the preserved earlier source packages used as direct historical bases.
+**Current source package:** v5.2.41 SOURCE-QA  
+**History scope:** v5.2.26 → v5.2.41  
+**Evidence used:** the consolidated `MASTER_PROJECT_QA_v5.2.41.md`, the actual source/test files carried by this package, version identity files, and the preserved earlier source packages used as direct historical bases.
 
 This document deliberately separates verified runtime changes from QA/packaging-only revisions. It does not invent a promotion status when the carried evidence is incomplete.
+
+## v5.2.41 — Cross-day 11h Daily Start proposal restore
+
+Reason: phone verification of v5.2.40 showed that once the regular 11h boundary fell on the previous calendar day, the main Start field became empty while the retained 9h helper remained visible. The protected Daily Start UX requires 11h to remain the normal primary proposal within the existing <24h daily-suggestion window.
+
+- retain the 11h boundary across the calendar-day boundary while the existing <24h daily-suggestion window is active;
+- show it as the primary Start proposal with `from 11h rest`;
+- keep 9h as the secondary helper when allowed;
+- preserve the >13h rule where 11h is genuinely unavailable and 9h may become primary;
+- preserve the existing 24h cutoff and all Rest/Weekly Rest/Split/KM/Pay/archive semantics.
+
+**Status:** SOURCE-QA; narrow source inspection only, phone verification required.
+
 
 ## v5.2.40 — Daily Start primary 11h/9h ownership fix
 
