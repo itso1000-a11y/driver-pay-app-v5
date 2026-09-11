@@ -1675,6 +1675,45 @@ function loadSavedWeekDataOrBlank(saturdayISO: string): SavedWeekData {
   }
 }
 
+function hasPersistedPayWeekRecord(saturdayISO: string): boolean {
+  // A real saved/archive record owns its own pay context. A missing target week does
+  // not: End Week must carry the current Settings + active Pay Profile forward.
+  if (typeof window === "undefined") return false;
+  if (localStorage.getItem(getWeekStorageKey(saturdayISO)) !== null) return true;
+  try {
+    const archiveItems = JSON.parse(localStorage.getItem("archive") || "[]");
+    return Array.isArray(archiveItems) && archiveItems.some((item) =>
+      Array.isArray(item?.days) && getSaturdayDay(item.days).dateISO === saturdayISO
+    );
+  } catch {
+    return false;
+  }
+}
+
+function getNextPayPeriodContext(
+  saturdayISO: string,
+  currentSettings: SettingsState,
+  currentActivePayProfileId: string,
+  profiles: PayProfileV2[],
+): { week: SavedWeekData; settings: SettingsState; activePayProfileId: string; inheritedCurrentPayContext: boolean } {
+  const targetWeekWasPersisted = hasPersistedPayWeekRecord(saturdayISO);
+  const week = loadSavedWeekDataOrBlank(saturdayISO);
+  if (!targetWeekWasPersisted) {
+    return {
+      week,
+      settings: sanitizeSettings(currentSettings),
+      activePayProfileId: currentActivePayProfileId || "",
+      inheritedCurrentPayContext: true,
+    };
+  }
+  return {
+    week,
+    settings: sanitizeSettings(week.settings),
+    activePayProfileId: resolvePayProfileIdForWeek(profiles, week),
+    inheritedCurrentPayContext: false,
+  };
+}
+
 function getLastFinishKmFromPreviousWeek(saturdayISO: string): string {
   if (typeof window === "undefined") return "";
   try {
@@ -2758,7 +2797,8 @@ export default function App() {
   function openNextPayPeriod(closingSaturday: string, finalDays: DayRecord[], nextDayIntent: "legacy" | "workTomorrow" = "legacy") {
     const carryKm = findLastKnownKm(finalDays);
     const nextSaturday = toISODate(addDays(fromISODate(closingSaturday), 7));
-    const nextWeek = loadSavedWeekDataOrBlank(nextSaturday);
+    const nextContext = getNextPayPeriodContext(nextSaturday, settings, activePayProfileId, payProfiles);
+    const nextWeek = nextContext.week;
     const mondayIndex = nextWeek.days.findIndex((d) => d.id === "mon");
     const sundayIndex = nextWeek.days.findIndex((d) => d.id === "sun");
     const targetIndex = nextDayIntent === "workTomorrow" && sundayIndex >= 0 ? sundayIndex : mondayIndex;
@@ -2770,9 +2810,8 @@ export default function App() {
     localStorage.setItem(ACTIVE_WEEK_STORAGE_KEY, nextSaturday);
     setSelectedSaturday(nextSaturday);
     setDays(nextDays);
-    setSettings(nextWeek.settings);
-    const nextProfileId = resolvePayProfileIdForWeek(payProfiles, nextWeek);
-    if (nextProfileId) setActivePayProfileId(nextProfileId);
+    setSettings(nextContext.settings);
+    if (nextContext.activePayProfileId) setActivePayProfileId(nextContext.activePayProfileId);
     setPayslipActualWeek(nextWeek.payslipActualWeek || "");
     setCurrentIndex(targetIndex >= 0 ? targetIndex : getFirstIncompleteIndex(nextDays));
     setSavedWeekIndicators(getSavedWeekIndicators());

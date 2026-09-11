@@ -1,10 +1,22 @@
 # Driver Pay App — verified recent version history
 
-**Current source package:** v5.2.41 SOURCE-QA  
-**History scope:** v5.2.26 → v5.2.41  
-**Evidence used:** the consolidated `MASTER_PROJECT_QA_v5.2.41.md`, the actual source/test files carried by this package, version identity files, and the preserved earlier source packages used as direct historical bases.
+**Current source package:** v5.2.42 SOURCE-QA  
+**History scope:** v5.2.26 → v5.2.42  
+**Evidence used:** the consolidated `MASTER_PROJECT_QA_v5.2.42.md`, the actual source/test files carried by this package, version identity files, and the preserved earlier source packages used as direct historical bases.
 
 This document deliberately separates verified runtime changes from QA/packaging-only revisions. It does not invent a promotion status when the carried evidence is incomplete.
+
+## v5.2.42 — End Week pay-context carry-forward fix
+
+Reason: a real Saturday End Week reproduction on v5.2.41 showed an unchanged Gross Only profile switching to the exact factory PAYE/rate defaults when the newly opened next pay week had no saved record. The active-profile label could remain unchanged, producing a misleading split between displayed profile identity and calculation Settings.
+
+- a genuinely new next pay week inherits the current Settings and active Pay Profile id;
+- Gross Only/PAYE mode and all rates/allowances therefore carry forward unless the user deliberately changes them;
+- an already persisted target week keeps its own saved pay context and is not overwritten;
+- the underlying bad branch existed historically (confirmed in v5.1.11 and v5.2.36–v5.2.41) and is state-dependent on the target week being absent, so it is classified as a latent defect rather than a proven direct regression from the September Start/Rest/UI patches;
+- no Pay formula, Rest Engine, Weekly Rest, compensation, KM, archive, colour or general layout changes.
+
+**Status:** SOURCE-QA; focused regression prepared; physical End Week verification required.
 
 ## v5.2.41 — Cross-day 11h Daily Start proposal restore
 
