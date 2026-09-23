@@ -52,8 +52,6 @@ if ("serviceWorker" in navigator) {
     button.onclick = () => {
       if (registration.waiting) {
         registration.waiting.postMessage({ type: "SKIP_WAITING" });
-      } else {
-        window.location.reload();
       }
     };
 
