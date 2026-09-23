@@ -1,19 +1,14 @@
 {
   "name": "driver-pay-app-v5",
   "private": true,
-  "version": "5.3.6",
+  "version": "5.2.42",
   "type": "module",
   "scripts": {
     "dev": "node scripts/sync-version.mjs && vite",
     "build": "node scripts/sync-version.mjs && vite build",
     "preview": "vite preview",
     "test:backup": "node scripts/backup-restore-roundtrip-test.mjs",
-    "test": "npm run test:rest-engine-time && npm run test:rest-engine-phase2-3 && npm run test:rest-engine-phase4 && npm run test:rest-engine-phase5 && npm run test:rest-engine-phase6-7 && npm run test:rest-engine-phase8 && npm run test:phone-regression && npm run test:phone-production-path && npm run test:backup && npm run test:weekly-rest && npm run test:end-week-intent && npm run test:timeline-compensation && npm run test:timeline-compensation-repayment && npm run test:v5.2.20 && npm run test:v5.2.21 && npm run test:v5.2.22 && npm run test:v5.2.23 && npm run test:v5.2.24 && npm run test:v5.2.26 && npm run test:v5.2.27 && npm run test:v5.2.31 && npm run test:v5.2.32 && npm run test:v5.2.33 && npm run test:v5.2.36 && npm run test:v5.2.37 && npm run test:v5.2.38 && npm run test:v5.2.42 && npm run test:release-version",
-    "test:rest-engine-time": "node --experimental-strip-types scripts/rest-engine-time-foundation-test.ts",
-    "test:rest-engine-phase2-3": "node --experimental-strip-types scripts/rest-engine-phase2-3-test.ts",
-    "test:rest-engine-phase4": "node --experimental-strip-types scripts/rest-engine-phase4-test.ts",
-    "test:rest-engine-phase5": "node --experimental-strip-types scripts/rest-engine-phase5-test.ts",
-    "test:rest-engine-phase6-7": "node --experimental-strip-types scripts/rest-engine-phase6-7-test.ts",
+    "test": "npm run test:backup && npm run test:weekly-rest && npm run test:end-week-intent && npm run test:timeline-compensation && npm run test:timeline-compensation-repayment && npm run test:v5.2.20 && npm run test:v5.2.21 && npm run test:v5.2.22 && npm run test:v5.2.23 && npm run test:v5.2.24 && npm run test:v5.2.26 && npm run test:v5.2.27 && npm run test:v5.2.31 && npm run test:v5.2.32 && npm run test:v5.2.33 && npm run test:v5.2.36 && npm run test:v5.2.37 && npm run test:v5.2.38 && npm run test:v5.2.42 && npm run test:release-version",
     "test:weekly-rest": "node scripts/weekly-rest-timeline-test.mjs",
     "test:end-week-intent": "node scripts/end-week-intent-test.mjs",
     "test:timeline-compensation": "node scripts/timeline-compensation-create-test.mjs",
@@ -33,17 +28,13 @@
     "test:v5.2.36": "node scripts/v5-2-36-start-helper-km-provenance-regression-test.mjs",
     "test:v5.2.37": "node scripts/v5-2-37-week-preview-rest-chronology-regression-test.mjs",
     "test:v5.2.38": "node scripts/v5-2-38-mobile-layout-bonus-regression-test.mjs",
-    "test:v5.2.42": "node scripts/v5-2-42-end-week-pay-context-regression-test.mjs",
-    "test:rest-engine-phase8": "node --experimental-strip-types scripts/rest-engine-phase8-test.ts",
-    "test:phone-regression": "node --experimental-strip-types scripts/phone-regression-test.ts",
-    "test:phone-production-path": "node --experimental-strip-types scripts/phone-production-path-test.ts"
+    "test:v5.2.42": "node scripts/v5-2-42-end-week-pay-context-regression-test.mjs"
   },
   "dependencies": {
-    "@js-temporal/polyfill": "0.5.1",
     "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "typescript": "^5.5.4",
-    "vite": "^5.4.2"
+    "typescript": "^5.5.4"
   }
 }
