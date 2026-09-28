@@ -6753,3 +6753,65 @@ Mandatory acceptance before phone road test:
 5. protected v5.2.30 real-App Chromium regression remains PASS.
 
 **Status:** SOURCE-QA candidate. Not promoted to stable/phone road test until the real-App tests above pass.
+
+## v5.3.7 Phase 1 — Archive checkpoint / lossless frontier governance
+
+**Status:** CURRENT ACCEPTED FOUNDATION — runtime cutover is not authorised in this entry.
+
+### ARCH-003 — Current and immediately previous closed pay weeks
+
+**Status:** SUPERSEDED IN PART
+
+The historical/current rule remains evidence for ordinary correction workflow. Its former use as the sole condition for Rest Engine computational history is superseded by ARCH-003R and ARCH-007 through ARCH-009.
+
+### ARCH-003R — Pay-period editability
+
+**Status:** CURRENT ACCEPTED
+
+Active period and immediately previous configured pay period remain ordinarily editable under the normal correction lifecycle. This editability policy is independent from Rest Engine computational activity.
+
+Older periods are not ordinarily editable once outside the correction window, but historical facts remain retained and may be changed only through the established explicit Unlock / hard-archive correction path.
+
+### ARCH-007 — Computational finalization
+
+**Status:** CURRENT ACCEPTED
+
+A period may be excluded from normal full Rest Engine branch expansion only when all forward legal dependencies are finalized or represented losslessly by a versioned checkpoint frontier.
+
+### ARCH-008 — Hard archive
+
+**Status:** CURRENT ACCEPTED
+
+Hard archive means factual retention, reviewability and ordinary edit lock. It does not mean deletion.
+
+A period becomes eligible for hard archive when it is outside the normal correction lifecycle and every forward legal dependency is either finalized or represented losslessly by the versioned checkpoint frontier. Hard-archive status does not require a separate manual archive action.
+
+Editing hard-archived factual history requires explicit Unlock. Hard UI lock and computational finalization are independent lifecycle dimensions.
+
+### ARCH-009 — Hard archive edit
+
+**Status:** CURRENT ACCEPTED
+
+Explicit Unlock changes only selected factual data. Derived Rest Engine state and downstream checkpoints are invalidated and recomputed forward. Later factual records are never silently rewritten.
+
+### COMP-005 — Compensation attachment / source identity
+
+**Status:** CURRENT ACCEPTED
+
+A source Reduced Weekly Rest remains Reduced after repayment. Compensation is a separate, en-bloc obligation attached to qualifying continuous rest of at least 9 hours. A factual continuous RestInterval is classified by its actual uninterrupted duration; compensation minutes are not subtracted before Daily Rest classification.
+
+### COMP-006 — International exception boundary
+
+**Status:** CURRENT ACCEPTED
+
+The current general Daily-or-Weekly Rest attachment semantics do not claim support for the international two-consecutive-reduced derogation. Future support requires dedicated applicability facts and rules.
+
+### COMP-007 — Overdue finality
+
+**Status:** CURRENT ACCEPTED
+
+An obligation that misses its legal deadline remains a historical OVERDUE outcome. A later rest does not retroactively make it timely PAID. Only correction of underlying factual history may change the derived outcome through recomputation.
+
+### Rationale
+
+The prior archive lifecycle connected hard/archive treatment mainly to pay-period age. Real production history showed that re-expanding finalized Weekly Rest alternatives creates exponential allocation growth and can prevent first render. The lifecycle therefore separates factual retention, ordinary editability, active legal computation and hard locking. Historical facts remain preserved; only unresolved future-relevant legal state is carried forward losslessly.

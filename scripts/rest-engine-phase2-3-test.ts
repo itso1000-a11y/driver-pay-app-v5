@@ -245,13 +245,17 @@ function patterns(durationHours: number) {
 
 test("T13", "exactly 24h creates reduced option", () => assert.deepEqual(patterns(24).map((item) => item.pattern), ["SINGLE_REDUCED"]));
 test("T14", "23h59m59s creates no Weekly Rest option", () => assert.equal(generateWeeklyRestComponentOptions([syntheticRest("short", crossWeekStart, 24 * HOUR - 1000)]).options.length, 0));
-test("T15", "44h59m remains reduced and uses its actual duration", () => {
+test("T15", "44h59m reduced candidate retains full factual duration while retaining bounded package capability metadata", () => {
   const duration = 45 * HOUR - 60_000;
   const item = generateWeeklyRestComponentOptions([syntheticRest("r44", crossWeekStart, duration)]).options[0];
   assert.equal(item.pattern, "SINGLE_REDUCED");
   assert.equal(item.components[0].actualDurationMilliseconds, duration);
-  assert.equal(item.totalMinimumDurationMilliseconds, duration);
-  assert.equal(item.placementDomain?.unallocatedCapacityMilliseconds, 0);
+  assert.equal(item.components[0].minimumDurationMilliseconds, 24 * HOUR);
+  assert.equal(item.components[0].maximumDurationMilliseconds, duration);
+  assert.equal(item.components[0].startOffsetMinimumMilliseconds, 0);
+  assert.equal(item.components[0].startOffsetMaximumMilliseconds, 0);
+  assert.equal(item.totalMinimumDurationMilliseconds, 24 * HOUR);
+  assert.equal(item.placementDomain?.unallocatedCapacityMilliseconds, duration - 24 * HOUR);
 });
 test("T16", "exactly 45h creates regular option", () => assert.deepEqual(patterns(45).map((item) => item.pattern), ["SINGLE_REGULAR"]));
 

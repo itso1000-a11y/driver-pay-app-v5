@@ -242,6 +242,13 @@ export type WeeklyRestComponent = {
   provenance: FactTimeProvenance;
   reviewStatus: ReviewStatus;
   reviewReasons: string[];
+  /** Derived Phase 3 capability retained only for finite Phase 5 package refinement. */
+  packageBounds?: {
+    minimumDurationMilliseconds: number;
+    maximumDurationMilliseconds: number;
+    startOffsetMinimumMilliseconds: number;
+    startOffsetMaximumMilliseconds: number;
+  };
 };
 
 export type FixedWeekAssignment = {
@@ -322,6 +329,8 @@ export type AllocationBranch = {
   legalState: AllocationBranchLegalState;
   invalidReasons: string[];
   sourceOptionIds: string[];
+  continuationLineageId?: string;
+  packageContinuations?: readonly unknown[];
 };
 
 export type PriorQualifyingWeeklyRest = {

@@ -173,8 +173,8 @@ export function generateWeeklyRestComponentOptions(
       options.push(option(
         interval,
         "SINGLE_REDUCED",
-        [constraint("REDUCED_LENGTH", duration, duration, duration)],
-        duration,
+        [constraint("REDUCED_LENGTH", REDUCED_WEEKLY_REST_MINIMUM_MILLISECONDS, Math.min(REDUCED_WEEKLY_REST_MAXIMUM_MILLISECONDS, duration), duration, 0, 0)],
+        REDUCED_WEEKLY_REST_MINIMUM_MILLISECONDS,
         duration,
         false,
         false,

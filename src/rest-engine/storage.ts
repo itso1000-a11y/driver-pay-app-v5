@@ -6,6 +6,7 @@ export const REST_ENGINE_STORAGE_KEYS = {
   current: "driverPayApp:restEngine:v1:migration:current",
   marker: "driverPayApp:restEngine:v1:migration:complete",
   derivedCache: "driverPayApp:restEngine:v1:derived-cache",
+  incrementalCheckpointV2: "driverPayApp:restEngine:v1:incremental-checkpoint-v2",
 } as const;
 
 export type KeyValueStorage = {
@@ -89,6 +90,7 @@ export function recoverInterruptedMigration(storage: KeyValueStorage): RestEngin
 
 export function invalidateStoredDerivedCache(storage: KeyValueStorage): void {
   storage.removeItem(REST_ENGINE_STORAGE_KEYS.derivedCache);
+  storage.removeItem(REST_ENGINE_STORAGE_KEYS.incrementalCheckpointV2);
 }
 
 /** Returns the untouched pre-migration snapshot for audit or rollback view. */
@@ -102,3 +104,6 @@ export function readLegacyRollbackSnapshot(storage: KeyValueStorage): LegacyStor
     return null;
   }
 }
+
+
+

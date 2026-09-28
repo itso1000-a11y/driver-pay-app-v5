@@ -19,6 +19,7 @@ import {
   type WeeklyRestComponent,
 } from "./types.ts";
 import { compensationDeadlineForWeek, fixedLegalWeekForInstant } from "./time.ts";
+import { boundedContinuationFingerprint, successorContinuationLineage } from "./allocation-frontier.ts";
 
 const HOUR_MILLISECONDS = 60 * 60 * 1000;
 const ORDINARY_BASE_MILLISECONDS = 9 * HOUR_MILLISECONDS;
@@ -92,6 +93,16 @@ function requireSafeInstant(value: number, label: string): void {
 
 function createObligations(branch: AllocationBranch, diagnostics: Phase5Diagnostic[]): CompensationObligation[] {
   const assignments = new Map(branch.fixedWeekAssignments.map((item) => [item.componentId, item]));
+  // A package-derived W is a persisted allocation refinement.  Its debt source
+  // must be stable when the same W is later evaluated on a successor branch.
+  const packageSourceIdentity = new Map<string, string>();
+  for (const value of branch.packageContinuations ?? []) {
+    if (!value || typeof value !== "object") continue;
+    const item = value as { packageContinuationId?: unknown; weeklyComponent?: { componentId?: unknown } };
+    if (typeof item.packageContinuationId === "string" && typeof item.weeklyComponent?.componentId === "string") {
+      packageSourceIdentity.set(item.weeklyComponent.componentId, item.packageContinuationId);
+    }
+  }
   const obligations: CompensationObligation[] = [];
   for (const component of branch.components
     .filter((item) => item.role === "COUNTED" && item.classification === "REDUCED")
@@ -108,7 +119,10 @@ function createObligations(branch: AllocationBranch, diagnostics: Phase5Diagnost
       throw new RangeError(`Fixed-week assignment identity does not match its London boundary: ${assignment.assignmentId}.`);
     }
     const deadline = compensationDeadlineForWeek(sourceWeek);
-    const identity = JSON.stringify([branch.branchId, component.componentId, assignment.assignmentId, required, deadline.epochMilliseconds]);
+    const identity = JSON.stringify([
+      packageSourceIdentity.get(component.componentId) ?? branch.branchId,
+      component.componentId, assignment.assignmentId, required, deadline.epochMilliseconds,
+    ]);
     obligations.push({
       obligationId: `compensation-obligation:${stableHash(identity)}`,
       branchId: branch.branchId,
@@ -133,6 +147,140 @@ function createObligations(branch: AllocationBranch, diagnostics: Phase5Diagnost
     || left.sourceComponentId.localeCompare(right.sourceComponentId)
     || left.obligationId.localeCompare(right.obligationId)
   );
+}
+
+/**
+ * Produces finite, branch-correlated refinements for a continuous factual rest
+ * that is already represented by a valid allocation lineage. The original
+ * branch is always retained. A refinement only reserves one complete older
+ * compensation obligation C and gives the same interval's counted Weekly Rest
+ * component its actual remaining duration W = R - C. It neither validates nor
+ * eliminates a Phase 4 allocation branch.
+ */
+function compensationPackageBranches(
+  restIntervals: readonly RestInterval[],
+  branch: AllocationBranch,
+): AllocationBranch[] {
+  const intervals = new Map(restIntervals.map((interval) => [interval.restIntervalId, interval]));
+  const obligations = createObligations(branch, []);
+  const refinements: AllocationBranch[] = [branch];
+  const seen = new Set<string>();
+
+  for (const component of branch.components) {
+    if (component.role !== "COUNTED" || component.reviewStatus !== "CLEAR") continue;
+    // Package refinements require an explicit Phase 3 capability, never a
+    // hand-constructed or legacy fixed-duration component.
+    const bounds = component.packageBounds;
+    if (!bounds) continue;
+    const interval = intervals.get(component.restIntervalId);
+    const start = interval?.startEpochMilliseconds;
+    const end = interval?.endEpochMilliseconds;
+    if (!interval || interval.state !== "CLOSED" || start == null || end == null || end <= start) continue;
+    const factualDuration = end - start;
+
+    for (const debt of obligations) {
+      // A source rest can never repay its own debt; preserve the existing rule.
+      if (debt.sourceRestIntervalId === interval.restIntervalId) continue;
+      if (debt.reviewStatus !== "CLEAR" || debt.createdAtEpochMilliseconds > start) continue;
+      const weeklyDuration = factualDuration - debt.requiredCompensationMilliseconds;
+      // A package descendant allocates W = R - C. W is classified from its
+      // actual duration, so an originating regular capability may legally
+      // refine to a counted Reduced component when W remains at least 24h.
+      // The original capability still supplies the placement and upper bound.
+      if (weeklyDuration < 24 * HOUR_MILLISECONDS || weeklyDuration > bounds.maximumDurationMilliseconds) continue;
+      if (0 < bounds.startOffsetMinimumMilliseconds || 0 > bounds.startOffsetMaximumMilliseconds) continue;
+      const classification: WeeklyRestComponent["classification"] = weeklyDuration >= REGULAR_WEEKLY_REST_MILLISECONDS ? "REGULAR" : "REDUCED";
+      const packageComponentId = `package-weekly-rest-component:${stableHash(JSON.stringify([
+        branch.continuationLineageId ?? branch.branchFingerprint, component.sourceOptionId, debt.sourceComponentId, interval.restIntervalId, weeklyDuration,
+      ]))}`;
+      const replacement: WeeklyRestComponent = {
+        ...component,
+        componentId: packageComponentId,
+        startEpochMilliseconds: start,
+        endEpochMilliseconds: start + weeklyDuration,
+        startOffsetMilliseconds: 0,
+        endOffsetMilliseconds: weeklyDuration,
+        durationMilliseconds: weeklyDuration,
+        classification,
+      };
+      const others = branch.components.filter((item) => item.componentId !== component.componentId);
+      if (others.some((item) => item.restIntervalId === interval.restIntervalId
+        && item.startEpochMilliseconds < replacement.endEpochMilliseconds
+        && replacement.startEpochMilliseconds < item.endEpochMilliseconds)) continue;
+      const assignments = branch.fixedWeekAssignments.map((item) => item.componentId !== component.componentId
+        ? item
+        : { ...item, componentId: packageComponentId, assignmentId: `package-fixed-week-assignment:${stableHash(`${item.assignmentId}:${packageComponentId}`)}` });
+      const packageIdentity = [branch.continuationLineageId ?? branch.branchFingerprint, debt.sourceComponentId, debt.sourceFixedWeekId, debt.requiredCompensationMilliseconds, interval.restIntervalId, replacement.sourceOptionId, replacement.startEpochMilliseconds, replacement.endEpochMilliseconds, weeklyDuration, assignments.find((item) => item.componentId === replacement.componentId)?.fixedWeekId ?? null];
+      const packageContinuationId = `package-continuation:${stableHash(JSON.stringify(packageIdentity))}`;
+      const packageId = `package:${packageContinuationId}`;
+      const parentContinuationLineageId = branch.continuationLineageId ?? branch.branchFingerprint;
+      const continuationLineageId = successorContinuationLineage(parentContinuationLineageId, {
+        kind: "PACKAGE_REFINEMENT", packageContinuationId, componentId: replacement.componentId,
+        restIntervalId: interval.restIntervalId,
+        fixedWeekId: assignments.find((item) => item.componentId === replacement.componentId)?.fixedWeekId ?? null,
+        // Parent component/assignment decisions are already represented by
+        // parentContinuationLineageId. Include only the independently
+        // materialized continuation state that can still distinguish two
+        // package descendants without serializing historical branch payloads.
+        parentTwoWeekEvaluations: branch.twoWeekEvaluations.map((item) => ({
+          firstWeekId: item.firstWeekId, secondWeekId: item.secondWeekId,
+          status: item.status, countedRoles: item.countedRoles,
+        })),
+        parentRollingCycleResets: branch.rollingCycleResets.map((item) => ({
+          previousComponentId: item.previousComponentId, previousRestIntervalId: item.previousRestIntervalId,
+          previousQualifyingEndEpochMilliseconds: item.previousQualifyingEndEpochMilliseconds,
+          nextComponentId: item.nextComponentId, nextRestIntervalId: item.nextRestIntervalId,
+          nextQualifyingStartEpochMilliseconds: item.nextQualifyingStartEpochMilliseconds,
+          dueEpochMilliseconds: item.dueEpochMilliseconds, status: item.status,
+        })),
+      });
+      const packageContinuation = { packageContinuationId, continuationLineageId, oldObligationId: debt.obligationId, factualRestIntervalId: interval.restIntervalId, weeklyComponent: replacement, fixedWeekAssignment: assignments.find((item) => item.componentId === replacement.componentId) ?? null };
+      if (seen.has(packageId)) continue;
+      seen.add(packageId);
+      refinements.push({
+        ...branch,
+        continuationLineageId,
+        packageContinuations: [...(branch.packageContinuations ?? []), packageContinuation],
+        // A package child has a new current state, but must never inherit the
+        // parent branch's serialized history into its identity.
+        branchFingerprint: boundedContinuationFingerprint({
+          components: [...others, replacement].map((item) => ({
+            componentId: item.componentId, restIntervalId: item.restIntervalId,
+            sourceOptionId: item.sourceOptionId, startEpochMilliseconds: item.startEpochMilliseconds,
+            endEpochMilliseconds: item.endEpochMilliseconds, durationMilliseconds: item.durationMilliseconds,
+            classification: item.classification, role: item.role,
+          })),
+          assignments: assignments.map((item) => ({
+            assignmentId: item.assignmentId, componentId: item.componentId,
+            fixedWeekId: item.fixedWeekId, assignmentRole: item.assignmentRole,
+          })),
+          sourceOptionIds: branch.sourceOptionIds,
+          continuationLineageId,
+          packageContinuationIds: [...(branch.packageContinuations ?? []), packageContinuation]
+            .map((item: any) => item.packageContinuationId),
+          reviewStatus: branch.reviewStatus,
+          reviewReasons: branch.reviewReasons,
+          twoWeek: branch.twoWeekEvaluations.map((item) => ({
+            firstWeekId: item.firstWeekId, secondWeekId: item.secondWeekId,
+            status: item.status, countedRoles: item.countedRoles, reviewReasons: item.reviewReasons,
+          })),
+          rolling: branch.rollingCycleResets.map((item) => ({
+            previousComponentId: item.previousComponentId,
+            previousRestIntervalId: item.previousRestIntervalId,
+            previousQualifyingEndEpochMilliseconds: item.previousQualifyingEndEpochMilliseconds,
+            nextComponentId: item.nextComponentId, nextRestIntervalId: item.nextRestIntervalId,
+            nextQualifyingStartEpochMilliseconds: item.nextQualifyingStartEpochMilliseconds,
+            dueEpochMilliseconds: item.dueEpochMilliseconds, exactElapsedMilliseconds: item.exactElapsedMilliseconds,
+            status: item.status, reviewReasons: item.reviewReasons,
+          })),
+        }, "allocation-branch"),
+        components: [...others, replacement].sort((left, right) => left.startEpochMilliseconds - right.startEpochMilliseconds || left.componentId.localeCompare(right.componentId)),
+        fixedWeekAssignments: assignments,
+        additionalComponents: branch.additionalComponents.filter((item) => item.componentId !== component.componentId),
+      });
+    }
+  }
+  return refinements;
 }
 
 function accruedEnd(interval: RestInterval, asOf: number): number | null {
@@ -1066,15 +1214,19 @@ export function evaluateCompensation(
 ): EvaluateCompensationResult {
   requireSafeInstant(context.asOfEpochMilliseconds, "asOf");
   const evaluations: BranchCompensationEvaluation[] = [];
-  for (const branch of [...phase4AllocationBranches].sort((left, right) => left.branchId.localeCompare(right.branchId))) {
-    const alternatives = (["BASE_THEN_BLOCK", "BLOCK_THEN_BASE"] as const)
-      .map((layout) => evaluateBranchMode(restIntervals, branch, context, layout));
-    const maximumBlocks = Math.max(...alternatives.map((item) => item.blocks.length));
-    const meaningful = alternatives.filter((item, index) =>
-      maximumBlocks === 0 ? index === 0 : item.blocks.length > 0
-    );
+  for (const allocationBranch of [...phase4AllocationBranches].sort((left, right) => left.branchId.localeCompare(right.branchId))) {
+    // Keep the no-compensation allocation representation and every finite
+    // debt-correlated package refinement side-by-side. Nothing here selects
+    // between legal allocation lineages.
+    const branchAlternatives = compensationPackageBranches(restIntervals, allocationBranch);
     const canonical = new Map<string, BranchCompensationEvaluation>();
-    for (const item of meaningful) if (!canonical.has(item.evaluationFingerprint)) canonical.set(item.evaluationFingerprint, item);
+    for (const branch of branchAlternatives) {
+      const layouts = (["BASE_THEN_BLOCK", "BLOCK_THEN_BASE"] as const)
+        .map((layout) => evaluateBranchMode(restIntervals, branch, context, layout));
+      const maximumBlocks = Math.max(...layouts.map((item) => item.blocks.length));
+      const meaningful = layouts.filter((item, index) => maximumBlocks === 0 ? index === 0 : item.blocks.length > 0);
+      for (const item of meaningful) if (!canonical.has(item.evaluationFingerprint)) canonical.set(item.evaluationFingerprint, item);
+    }
     evaluations.push(...canonical.values());
   }
   const groups = new Map<string, BranchCompensationEvaluation[]>();
@@ -1099,4 +1251,8 @@ export function evaluateCompensation(
     branchEvaluations: evaluations.sort((left, right) => left.branchId.localeCompare(right.branchId) || left.evaluationId.localeCompare(right.evaluationId)),
     convergences: convergences.sort((left, right) => left.convergenceId.localeCompare(right.convergenceId)),
   };
+}
+
+export function packageContinuationBranches(restIntervals: readonly RestInterval[], branch: AllocationBranch): AllocationBranch[] {
+  return compensationPackageBranches(restIntervals, branch).filter((candidate) => (candidate.packageContinuations?.length ?? 0) > (branch.packageContinuations?.length ?? 0));
 }

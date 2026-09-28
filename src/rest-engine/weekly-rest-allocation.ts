@@ -19,16 +19,22 @@ import {
   type WeeklyRestComponentOption,
 } from "./types.ts";
 import { addElapsedHours, fixedLegalWeekForInstant, resolveLondonWallTime } from "./time.ts";
+import { generateWeeklyRestComponentOptions } from "./weekly-rest-candidates.ts";
+import { allocationFrontierAlternative, boundedContinuationFingerprint, continuationLineageForCurrentState, rebasePackageContinuations, successorContinuationLineage } from "./allocation-frontier.ts";
 
 const WEEKLY_REST_CYCLE_HOURS = 144;
 
-type MaterializedChoice = {
+export type MaterializedChoice = {
   choiceId: string;
   components: WeeklyRestComponent[];
   assignments: FixedWeekAssignment[];
   sourceOptionIds: string[];
   reviewStatus: ReviewStatus;
   reviewReasons: string[];
+  /** Identifies the live frontier lineage supplying this choice, when seeded. */
+  continuationContextId?: string;
+  continuationLineageId?: string;
+  packageContinuations?: unknown[];
 };
 
 function stableHash(value: string): string {
@@ -124,6 +130,12 @@ function component(
     provenance: interval.provenance,
     reviewStatus,
     reviewReasons,
+    packageBounds: {
+      minimumDurationMilliseconds: constraint.minimumDurationMilliseconds,
+      maximumDurationMilliseconds: constraint.maximumDurationMilliseconds,
+      startOffsetMinimumMilliseconds: Math.max(option.placementDomain?.startOffsetMinimumMilliseconds ?? 0, constraint.startOffsetMinimumMilliseconds),
+      startOffsetMaximumMilliseconds: Math.min(option.placementDomain?.startOffsetMaximumMilliseconds ?? 0, constraint.startOffsetMaximumMilliseconds),
+    },
   };
 }
 
@@ -220,6 +232,9 @@ function choiceFingerprint(choice: MaterializedChoice): string {
     sourceOptionIds: choice.sourceOptionIds,
     reviewStatus: choice.reviewStatus,
     reviewReasons: choice.reviewReasons,
+    ...(choice.continuationContextId == null ? {} : { continuationContextId: choice.continuationContextId }),
+    ...(choice.continuationLineageId == null ? {} : { continuationLineageId: choice.continuationLineageId }),
+    packageContinuations: choice.packageContinuations ?? [],
   });
 }
 
@@ -297,53 +312,53 @@ function redundantCountedComponentIds(assignments: FixedWeekAssignment[]): strin
   return unique([...byWeek.values()].filter((values) => values.length > 1).flat());
 }
 
-function combineChoices(groups: MaterializedChoice[][], eliminated: Phase4Issue[]): MaterializedChoice[] {
-  let combinations: MaterializedChoice[] = [{
-    choiceId: "choice:empty",
-    components: [],
-    assignments: [],
-    sourceOptionIds: [],
-    reviewStatus: "CLEAR",
-    reviewReasons: [],
-  }];
-  for (const group of groups) {
-    const next = new Map<string, MaterializedChoice>();
-    for (const current of combinations) {
-      for (const addition of group) {
-        const components = [...current.components, ...addition.components];
-        if (containsCountedOverlap(components)) {
-          eliminated.push(stableIssue(
-            "OVERLAPPING_WEEKLY_REST_MINIMUM",
-            components.filter((item) => item.role === "COUNTED").map((item) => item.componentId),
-            "A proposed branch was eliminated because counted Weekly Rest minimum ranges overlap.",
-          ));
-          continue;
-        }
-        const assignments = [...current.assignments, ...addition.assignments]
-          .sort((left, right) => left.fixedWeekId.localeCompare(right.fixedWeekId) || left.componentId.localeCompare(right.componentId));
-        const redundant = redundantCountedComponentIds(assignments);
-        if (redundant.length) {
-          eliminated.push(stableIssue(
-            "REDUNDANT_COUNTED_COMPONENT",
-            redundant,
-            "A proposed branch was eliminated because one fixed week contained more than one counted Weekly Rest component.",
-          ));
-          continue;
-        }
-        const combined: MaterializedChoice = {
-          choiceId: `${current.choiceId}+${addition.choiceId}`,
-          components: components.sort((left, right) => left.startEpochMilliseconds - right.startEpochMilliseconds || left.componentId.localeCompare(right.componentId)),
-          assignments,
-          sourceOptionIds: unique([...current.sourceOptionIds, ...addition.sourceOptionIds]),
-          reviewStatus: current.reviewStatus === "REVIEW_REQUIRED" || addition.reviewStatus === "REVIEW_REQUIRED" ? "REVIEW_REQUIRED" : "CLEAR",
-          reviewReasons: unique([...current.reviewReasons, ...addition.reviewReasons]),
-        };
-        const fingerprint = choiceFingerprint(combined);
-        if (!next.has(fingerprint)) next.set(fingerprint, combined);
-      }
+export function allocationChoiceGenesis(): MaterializedChoice {
+  return { choiceId: "choice:empty", components: [], assignments: [], sourceOptionIds: [], reviewStatus: "CLEAR", reviewReasons: [] };
+}
+
+/** Extends existing correlated legal choices with one bounded choice group. */
+export function extendAllocationChoices(seeds: readonly MaterializedChoice[], group: readonly MaterializedChoice[], eliminated: Phase4Issue[] = []): MaterializedChoice[] {
+  const next = new Map<string, MaterializedChoice>();
+  for (const current of seeds) for (const addition of group) {
+    const components = [...current.components, ...addition.components];
+    if (containsCountedOverlap(components)) {
+      eliminated.push(stableIssue("OVERLAPPING_WEEKLY_REST_MINIMUM", components.filter((item) => item.role === "COUNTED").map((item) => item.componentId), "A proposed branch was eliminated because counted Weekly Rest minimum ranges overlap."));
+      continue;
     }
-    combinations = [...next.values()];
+    const assignments = [...current.assignments, ...addition.assignments].sort((left, right) => left.fixedWeekId.localeCompare(right.fixedWeekId) || left.componentId.localeCompare(right.componentId));
+    const redundant = redundantCountedComponentIds(assignments);
+    if (redundant.length) {
+      eliminated.push(stableIssue("REDUNDANT_COUNTED_COMPONENT", redundant, "A proposed branch was eliminated because one fixed week contained more than one counted Weekly Rest component."));
+      continue;
+    }
+    const decision = {
+      kind: "ALLOCATION_ADDITION",
+      components: addition.components.map((item) => ({
+        componentId: item.componentId, restIntervalId: item.restIntervalId,
+        sourceOptionId: item.sourceOptionId, startEpochMilliseconds: item.startEpochMilliseconds,
+        endEpochMilliseconds: item.endEpochMilliseconds, durationMilliseconds: item.durationMilliseconds,
+        classification: item.classification, role: item.role,
+      })),
+      assignments: addition.assignments.map((item) => ({
+        componentId: item.componentId, fixedWeekId: item.fixedWeekId, assignmentRole: item.assignmentRole,
+      })),
+      sourceOptionIds: addition.sourceOptionIds,
+    };
+    const hasStructuralAddition = decision.components.length > 0 || decision.assignments.length > 0 || decision.sourceOptionIds.length > 0;
+    const parentLineage = current.continuationLineageId ?? "allocation-lineage:genesis";
+    const continuationLineageId = hasStructuralAddition
+      ? successorContinuationLineage(parentLineage, decision)
+      : parentLineage;
+    const combined: MaterializedChoice = { choiceId: `${current.choiceId}+${addition.choiceId}`, components: components.sort((left, right) => left.startEpochMilliseconds - right.startEpochMilliseconds || left.componentId.localeCompare(right.componentId)), assignments, sourceOptionIds: unique([...current.sourceOptionIds, ...addition.sourceOptionIds]), reviewStatus: current.reviewStatus === "REVIEW_REQUIRED" || addition.reviewStatus === "REVIEW_REQUIRED" ? "REVIEW_REQUIRED" : "CLEAR", reviewReasons: unique([...current.reviewReasons, ...addition.reviewReasons]), continuationContextId: current.continuationContextId, continuationLineageId, packageContinuations: rebasePackageContinuations(current.packageContinuations ?? [], continuationLineageId) };
+    const fingerprint = choiceFingerprint(combined);
+    if (!next.has(fingerprint)) next.set(fingerprint, combined);
   }
+  return [...next.values()];
+}
+
+function combineChoices(groups: MaterializedChoice[][], eliminated: Phase4Issue[]): MaterializedChoice[] {
+  let combinations: MaterializedChoice[] = [allocationChoiceGenesis()];
+  for (const group of groups) combinations = extendAllocationChoices(combinations, group, eliminated);
   return combinations;
 }
 
@@ -599,77 +614,221 @@ function legalState(twoWeek: TwoWeekEvaluation[], rolling: RollingCycleReset[]):
 }
 
 function branchFingerprint(choice: MaterializedChoice, twoWeek: TwoWeekEvaluation[], rolling: RollingCycleReset[]): string {
-  return JSON.stringify({
-    choice: JSON.parse(choiceFingerprint(choice)),
-    twoWeek: twoWeek.map((item) => [item.evaluationId, item.status, item.countedRoles]),
-    rolling: rolling.map((item) => [item.previousComponentId, item.nextComponentId, item.dueEpochMilliseconds, item.status]),
-  });
+  // This is an identity of the current materialized state, never a textual
+  // history of predecessor branches.  A successor may have new state, but its
+  // fingerprint must remain fixed-size across checkpoint generations.
+  return boundedContinuationFingerprint({
+    components: choice.components.map((item) => ({
+      componentId: item.componentId, restIntervalId: item.restIntervalId,
+      sourceOptionId: item.sourceOptionId, startEpochMilliseconds: item.startEpochMilliseconds,
+      endEpochMilliseconds: item.endEpochMilliseconds, durationMilliseconds: item.durationMilliseconds,
+      classification: item.classification, role: item.role,
+    })),
+    assignments: choice.assignments.map((item) => ({
+      assignmentId: item.assignmentId, componentId: item.componentId,
+      fixedWeekId: item.fixedWeekId, assignmentRole: item.assignmentRole,
+    })),
+    sourceOptionIds: choice.sourceOptionIds,
+    continuationLineageId: choice.continuationLineageId,
+    packageContinuations: choice.packageContinuations,
+    reviewStatus: choice.reviewStatus,
+    reviewReasons: choice.reviewReasons,
+    twoWeek: twoWeek.map((item) => ({
+      firstWeekId: item.firstWeekId, secondWeekId: item.secondWeekId,
+      status: item.status, countedRoles: item.countedRoles, reviewReasons: item.reviewReasons,
+    })),
+    rolling: rolling.map((item) => ({
+      previousComponentId: item.previousComponentId,
+      previousRestIntervalId: item.previousRestIntervalId,
+      previousQualifyingEndEpochMilliseconds: item.previousQualifyingEndEpochMilliseconds,
+      nextComponentId: item.nextComponentId, nextRestIntervalId: item.nextRestIntervalId,
+      nextQualifyingStartEpochMilliseconds: item.nextQualifyingStartEpochMilliseconds,
+      dueEpochMilliseconds: item.dueEpochMilliseconds, exactElapsedMilliseconds: item.exactElapsedMilliseconds,
+      status: item.status, reviewReasons: item.reviewReasons,
+    })),
+  }, "allocation-branch");
 }
 
-export function solveWeeklyRestAllocations(
-  intervals: readonly RestInterval[],
-  options: readonly WeeklyRestComponentOption[],
-  context: WeeklyRestAllocationContext,
-): SolveWeeklyRestAllocationsResult {
+export type PreparedAllocationChoiceGroups = {
+  weeks: FixedLegalWeek[];
+  intervalMap: ReadonlyMap<string, RestInterval>;
+  choiceGroups: MaterializedChoice[][];
+  issues: Phase4Issue[];
+  eliminated: Phase4Issue[];
+};
+
+/** Shared factual preparation used by one-shot and segmented allocation paths. */
+export function prepareAllocationChoiceGroups(intervals: readonly RestInterval[], options: readonly WeeklyRestComponentOption[], context: WeeklyRestAllocationContext): PreparedAllocationChoiceGroups {
   const weeks = evaluationWeeks(context);
   const intervalMap = new Map(intervals.map((interval) => [interval.restIntervalId, interval]));
   const issues: Phase4Issue[] = [];
   const eliminated: Phase4Issue[] = [];
   const uniqueOptions = new Map<string, WeeklyRestComponentOption>();
   for (const option of [...options].sort((left, right) => left.optionId.localeCompare(right.optionId))) {
-    const key = JSON.stringify(option);
-    if (!uniqueOptions.has(key)) uniqueOptions.set(key, option);
+    const optionKey = JSON.stringify(option);
+    if (!uniqueOptions.has(optionKey)) uniqueOptions.set(optionKey, option);
   }
   const grouped = new Map<string, WeeklyRestComponentOption[]>();
   for (const option of uniqueOptions.values()) {
-    if (!intervalMap.has(option.restIntervalId)) {
-      issues.push(stableIssue("MISSING_SOURCE_INTERVAL", [option.optionId, option.restIntervalId], "A Phase 3 option references a missing RestInterval."));
-      continue;
-    }
-    const group = grouped.get(option.restIntervalId) ?? [];
-    group.push(option);
-    grouped.set(option.restIntervalId, group);
+    if (!intervalMap.has(option.restIntervalId)) { issues.push(stableIssue("MISSING_SOURCE_INTERVAL", [option.optionId, option.restIntervalId], "A Phase 3 option references a missing RestInterval.")); continue; }
+    grouped.set(option.restIntervalId, [...(grouped.get(option.restIntervalId) ?? []), option]);
   }
-  const choiceGroups = [...grouped.entries()]
-    .sort(([left], [right]) => left.localeCompare(right))
-    .map(([restIntervalId, group]) => choicesForRest(intervalMap.get(restIntervalId) as RestInterval, group, weeks, issues));
-  const combinations = combineChoices(choiceGroups, eliminated);
+  return { weeks, intervalMap, choiceGroups: [...grouped.entries()].sort(([left], [right]) => left.localeCompare(right)).map(([restIntervalId, group]) => choicesForRest(intervalMap.get(restIntervalId) as RestInterval, group, weeks, issues)), issues, eliminated };
+}
+
+export type AllocationSolverContinuationContext = {
+  /** Canonical frontier alternative identity; kept per alternative so legal lineages never merge. */
+  alternativeId: string;
+  /** Only the preceding fixed week is needed to evaluate the first suffix two-week pair. */
+  trailingFixedWeek: FixedLegalWeek | null;
+  /** Last qualifying rest before the suffix, including its independent REVIEW evidence. */
+  rollingAnchor: WeeklyRestAllocationContext["priorQualifyingWeeklyRest"];
+  /** Exact retained edge when a factual RestInterval crosses the split; no synthetic interval is permitted. */
+  factualBoundaryRestInterval: RestInterval | null;
+  reviewStatus: ReviewStatus;
+  reviewReasons: readonly string[];
+};
+
+export type AllocationMaterializationMode =
+  | { kind: "GENESIS" }
+  | { kind: "SEEDED"; continuationContexts: ReadonlyMap<string, AllocationSolverContinuationContext> };
+
+function continuationFor(choice: MaterializedChoice, mode: AllocationMaterializationMode): AllocationSolverContinuationContext | null {
+  if (mode.kind !== "SEEDED" || !choice.continuationContextId) return null;
+  return mode.continuationContexts.get(choice.continuationContextId) ?? null;
+}
+
+/** Shared materialization retains the existing two-week, rolling and legal-state semantics. */
+export function materializeAllocationBranches(choices: readonly MaterializedChoice[], prepared: PreparedAllocationChoiceGroups, context: WeeklyRestAllocationContext, mode: AllocationMaterializationMode = { kind: "GENESIS" }): SolveWeeklyRestAllocationsResult {
   const branches = new Map<string, AllocationBranch>();
-  for (const choice of combinations) {
+  for (const choice of choices) {
+    const continuation = continuationFor(choice, mode);
+    const evaluationWeeksForChoice = continuation?.trailingFixedWeek && continuation.trailingFixedWeek.weekId !== prepared.weeks[0]?.weekId
+      ? [continuation.trailingFixedWeek, ...prepared.weeks]
+      : prepared.weeks;
     const twoWeek: TwoWeekEvaluation[] = [];
-    for (let index = 1; index < weeks.length; index += 1) {
-      twoWeek.push(twoWeekStatus(weeks[index - 1], weeks[index], choice, context));
-    }
-    const qualifyingRests = rollingQualifyingRests(choice, intervalMap);
-    const rolling = rollingCycles(qualifyingRests, choice, context);
+    for (let index = 1; index < evaluationWeeksForChoice.length; index += 1) twoWeek.push(twoWeekStatus(evaluationWeeksForChoice[index - 1], evaluationWeeksForChoice[index], choice, context));
+    // Historical components remain in the frontier for correlation, but only suffix intervals are rematerialized for rolling checks.
+    const rollingChoice = continuation ? { ...choice, components: choice.components.filter((item) => prepared.intervalMap.has(item.restIntervalId)) } : choice;
+    const qualifyingRests = rollingQualifyingRests(rollingChoice, prepared.intervalMap);
+    const continuationContext: WeeklyRestAllocationContext = continuation ? {
+      ...context,
+      priorQualifyingWeeklyRest: continuation.rollingAnchor ?? context.priorQualifyingWeeklyRest,
+    } : context;
+    const rolling = rollingCycles(qualifyingRests, rollingChoice, continuationContext);
     const state = legalState(twoWeek, rolling);
-    const fingerprint = branchFingerprint(choice, twoWeek, rolling);
-    const evaluationReviewReasons = unique([
-      ...twoWeek.flatMap((item) => item.reviewReasons),
-      ...rolling.flatMap((item) => item.reviewReasons),
-    ]);
-    const evaluationRequiresReview = twoWeek.some((item) => item.status === "REVIEW" || item.status === "INSUFFICIENT_HISTORY")
-      || rolling.some((item) => item.status === "REVIEW" || item.status === "INSUFFICIENT_HISTORY");
-    const branch: AllocationBranch = {
-      branchId: `allocation-branch:${stableHash(fingerprint)}`,
-      branchFingerprint: fingerprint,
-      components: choice.components,
-      fixedWeekAssignments: choice.assignments,
-      additionalComponents: choice.components.filter((item) => item.role === "ADDITIONAL"),
-      rollingQualifyingRests: qualifyingRests,
-      rollingCycleResets: rolling,
-      twoWeekEvaluations: twoWeek,
-      reviewStatus: choice.reviewStatus === "REVIEW_REQUIRED" || evaluationRequiresReview ? "REVIEW_REQUIRED" : "CLEAR",
-      reviewReasons: unique([...choice.reviewReasons, ...evaluationReviewReasons]),
-      legalState: state.state,
-      invalidReasons: state.invalidReasons,
-      sourceOptionIds: choice.sourceOptionIds,
-    };
+    const evaluationReviewReasons = unique([...twoWeek.flatMap((item) => item.reviewReasons), ...rolling.flatMap((item) => item.reviewReasons)]);
+    const evaluationRequiresReview = twoWeek.some((item) => item.status === "REVIEW" || item.status === "INSUFFICIENT_HISTORY") || rolling.some((item) => item.status === "REVIEW" || item.status === "INSUFFICIENT_HISTORY");
+    const reviewStatus = choice.reviewStatus === "REVIEW_REQUIRED" || evaluationRequiresReview ? "REVIEW_REQUIRED" : "CLEAR";
+    const reviewReasons = unique([...choice.reviewReasons, ...evaluationReviewReasons]);
+    const provisional: AllocationBranch = { branchId: "allocation-branch:pending", branchFingerprint: "allocation-branch:pending", components: choice.components, fixedWeekAssignments: choice.assignments, additionalComponents: choice.components.filter((item) => item.role === "ADDITIONAL"), rollingQualifyingRests: qualifyingRests, rollingCycleResets: rolling, twoWeekEvaluations: twoWeek, reviewStatus, reviewReasons, legalState: state.state, invalidReasons: state.invalidReasons, sourceOptionIds: choice.sourceOptionIds, continuationLineageId: choice.continuationLineageId, packageContinuations: choice.packageContinuations };
+    const projected = allocationFrontierAlternative(provisional);
+    const continuationLineageId = continuationLineageForCurrentState(choice.continuationLineageId ?? "allocation-lineage:genesis", projected);
+    const fingerprint = branchFingerprint({ ...choice, continuationLineageId }, twoWeek, rolling);
+    const branch: AllocationBranch = { ...provisional, branchId: `allocation-branch:${stableHash(fingerprint)}`, branchFingerprint: fingerprint, continuationLineageId, packageContinuations: rebasePackageContinuations(choice.packageContinuations ?? [], continuationLineageId) };
     if (!branches.has(fingerprint)) branches.set(fingerprint, branch);
   }
+  return { branches: [...branches.values()].sort((left, right) => left.branchId.localeCompare(right.branchId)), eliminatedBranchesOrDiagnostics: [...new Map(prepared.eliminated.map((item) => [item.issueId, item])).values()].sort((left, right) => left.issueId.localeCompare(right.issueId)), issues: [...new Map(prepared.issues.map((item) => [item.issueId, item])).values()].sort((left, right) => left.issueId.localeCompare(right.issueId)) };
+}
+
+/** Real segmented allocation path: the same prepared factual groups are extended from genesis sequentially. */
+export function solveSegmentedWeeklyRestAllocations(intervals: readonly RestInterval[], options: readonly WeeklyRestComponentOption[], context: WeeklyRestAllocationContext): SolveWeeklyRestAllocationsResult {
+  const prepared = prepareAllocationChoiceGroups(intervals, options, context);
+  let seeds: MaterializedChoice[] = [allocationChoiceGenesis()];
+  for (const group of prepared.choiceGroups) seeds = extendAllocationChoices(seeds, group, prepared.eliminated);
+  return materializeAllocationBranches(seeds, prepared, context);
+}
+
+/** One-shot orchestration retained as the differential-test oracle. */
+export function solveOneShotWeeklyRestAllocations(intervals: readonly RestInterval[], options: readonly WeeklyRestComponentOption[], context: WeeklyRestAllocationContext): SolveWeeklyRestAllocationsResult {
+  const prepared = prepareAllocationChoiceGroups(intervals, options, context);
+  const choices = combineChoices(prepared.choiceGroups, prepared.eliminated);
+  return materializeAllocationBranches(choices, prepared, context);
+}
+
+export function solveWeeklyRestAllocations(intervals: readonly RestInterval[], options: readonly WeeklyRestComponentOption[], context: WeeklyRestAllocationContext): SolveWeeklyRestAllocationsResult {
+  return solveOneShotWeeklyRestAllocations(intervals, options, context);
+}
+
+export type SeededAllocationDiagnostics = {
+  genesisEntered: false;
+  historicalChoiceGroupsReplayed: 0;
+  historicalFixedWeeksReconstructed: 0;
+  historicalRollingCyclesRecomputed: 0;
+  suffixChoiceGroupsProcessed: number;
+  startingFrontierAlternatives: number;
+  endingFrontierAlternatives: number;
+  finalizedHistoricalItemsRecreatedLive: 0;
+};
+
+export function frontierToMaterializedChoice(alternative: import("./allocation-frontier.ts").AllocationFrontierAlternative, continuationContextId: string = alternative.alternativeId): MaterializedChoice {
   return {
-    branches: [...branches.values()].sort((left, right) => left.branchId.localeCompare(right.branchId)),
-    eliminatedBranchesOrDiagnostics: [...new Map(eliminated.map((item) => [item.issueId, item])).values()].sort((left, right) => left.issueId.localeCompare(right.issueId)),
-    issues: [...new Map(issues.map((item) => [item.issueId, item])).values()].sort((left, right) => left.issueId.localeCompare(right.issueId)),
+    choiceId: `seed:${alternative.alternativeId}`,
+    continuationContextId,
+    continuationLineageId: alternative.continuationLineageId,
+    packageContinuations: [...alternative.packageContinuations],
+    components: [...alternative.countedComponents, ...alternative.additionalComponents],
+    assignments: [...alternative.assignments],
+    sourceOptionIds: [...alternative.sourceOptionIds],
+    reviewStatus: alternative.reviewStatus,
+    reviewReasons: [...alternative.reviewReasons],
   };
+}
+
+export function allocationSolverContinuationContext(
+  alternative: import("./allocation-frontier.ts").AllocationFrontierAlternative,
+  boundaryRestInterval: RestInterval | null = null,
+): AllocationSolverContinuationContext {
+  const latestAssignment = [...alternative.assignments].sort((left, right) => right.weekStartEpochMilliseconds - left.weekStartEpochMilliseconds || right.fixedWeekId.localeCompare(left.fixedWeekId))[0] ?? null;
+  const trailingFixedWeek = latestAssignment ? fixedLegalWeekForInstant(latestAssignment.weekStartEpochMilliseconds) : null;
+  return {
+    alternativeId: alternative.alternativeId,
+    trailingFixedWeek,
+    rollingAnchor: alternative.rollingAnchor == null || alternative.rollingAnchor.endEpochMilliseconds == null ? undefined : {
+      componentId: alternative.rollingAnchor.componentId,
+      restIntervalId: alternative.rollingAnchor.restIntervalId ?? undefined,
+      endEpochMilliseconds: alternative.rollingAnchor.endEpochMilliseconds,
+      reviewStatus: alternative.reviewStatus,
+      reviewReasons: [...alternative.reviewReasons],
+    },
+    factualBoundaryRestInterval: boundaryRestInterval,
+    reviewStatus: alternative.reviewStatus,
+    reviewReasons: [...alternative.reviewReasons],
+  };
+}
+
+/** Real seeded entry point: only supplied suffix groups are extended; finalized history stays represented by frontier contexts. */
+export function solveSegmentedWeeklyRestAllocationsFromSeed(
+  seed: import("./allocation-frontier.ts").AllocationContinuationSeed,
+  intervals: readonly RestInterval[],
+  options: readonly WeeklyRestComponentOption[],
+  context: WeeklyRestAllocationContext,
+  continuationContexts: readonly AllocationSolverContinuationContext[] = seed.alternatives.map((alternative) => allocationSolverContinuationContext(alternative)),
+): { result: SolveWeeklyRestAllocationsResult; diagnostics: SeededAllocationDiagnostics } {
+  // A split-crossing factual interval is the only historical interval admitted into suffix preparation.
+  // It remains exact (original start/end and evidence), is never truncated at the checkpoint, and is deduplicated by ID.
+  const boundaryIntervals = continuationContexts
+    .map((item) => item.factualBoundaryRestInterval)
+    .filter((item): item is RestInterval => item != null && !intervals.some((interval) => interval.restIntervalId === item.restIntervalId));
+  const effectiveIntervals = [...boundaryIntervals, ...intervals];
+  const boundaryOptions = boundaryIntervals.flatMap((interval) => generateWeeklyRestComponentOptions([interval]).options);
+  const prepared = prepareAllocationChoiceGroups(effectiveIntervals, [...boundaryOptions, ...options], context);
+  // This local key is transport-only for one seeded transition.  Persisting the
+  // complete prior alternativeId inside its successor fingerprint would make
+  // identities recursively grow after every reload/append cycle.
+  const localContextId = (index: number) => `seed-context:${index}`;
+  const byAlternative = new Map(continuationContexts.map((item, index) => [localContextId(index), { ...item, alternativeId: localContextId(index) }]));
+  let choices = seed.alternatives.map((alternative, index) => frontierToMaterializedChoice(alternative, localContextId(index)));
+  for (const group of prepared.choiceGroups) choices = extendAllocationChoices(choices, group, prepared.eliminated);
+  const result = materializeAllocationBranches(choices, prepared, context, { kind: "SEEDED", continuationContexts: byAlternative });
+  return { result, diagnostics: {
+    genesisEntered: false,
+    historicalChoiceGroupsReplayed: 0,
+    historicalFixedWeeksReconstructed: 0,
+    historicalRollingCyclesRecomputed: 0,
+    suffixChoiceGroupsProcessed: prepared.choiceGroups.length,
+    startingFrontierAlternatives: seed.alternatives.length,
+    endingFrontierAlternatives: result.branches.length,
+    finalizedHistoricalItemsRecreatedLive: 0,
+  } };
 }
