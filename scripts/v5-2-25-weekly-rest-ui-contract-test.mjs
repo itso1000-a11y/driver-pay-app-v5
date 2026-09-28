@@ -3,41 +3,11 @@ import os from 'node:os';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { createRequire } from 'node:module';
 import { build } from 'esbuild';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const APP_PATH = path.join(ROOT, 'src', 'App.tsx');
 const appSource = fs.readFileSync(APP_PATH, 'utf8');
-const requireFromRoot = createRequire(path.join(ROOT, 'package.json'));
-const SOURCE_EXTENSIONS = ['', '.tsx', '.ts', '.jsx', '.js', '.mjs', '.json'];
-
-function resolveProjectImport(basePath) {
-  for (const extension of SOURCE_EXTENSIONS) {
-    const candidate = `${basePath}${extension}`;
-    if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) return candidate;
-  }
-  for (const extension of SOURCE_EXTENSIONS.slice(1)) {
-    const candidate = path.join(basePath, `index${extension}`);
-    if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) return candidate;
-  }
-  return null;
-}
-
-// Resolve the in-memory App.tsx from this project root without scanning sandboxed
-// ancestor directories. This affects only this legacy regression runner.
-const projectRootResolver = {
-  name: 'project-root-resolver',
-  setup(build) {
-    build.onResolve({ filter: /^\.\.?\// }, (args) => {
-      const resolved = resolveProjectImport(path.resolve(args.resolveDir, args.path));
-      return resolved ? { path: resolved } : undefined;
-    });
-    build.onResolve({ filter: /^[^./][^:]*$/ }, (args) => {
-      try { return { path: requireFromRoot.resolve(args.path) }; } catch { return undefined; }
-    });
-  },
-};
 
 // Visible UI contracts recovered from the v5.2.16-era simple weekly-rest flow.
 assert.match(appSource, /\{weeklyRestPlan \? <><WeeklyRestInlineCard plan=\{weeklyRestPlan\} \/>/,
@@ -64,15 +34,13 @@ const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'driver-pay-v525-'));
 const bundlePath = path.join(tempDir, 'app-instrumented.mjs');
 
 await build({
-  absWorkingDir: ROOT,
-  stdin: { contents: instrumented, sourcefile: 'App.tsx', resolveDir: path.join(ROOT, 'src'), loader: 'tsx' },
+  stdin: { contents: instrumented, sourcefile: APP_PATH, resolveDir: path.join(ROOT, 'src'), loader: 'tsx' },
   bundle: true,
   platform: 'node',
   format: 'esm',
   target: 'node18',
   outfile: bundlePath,
   logLevel: 'silent',
-  plugins: [projectRootResolver],
 });
 
 class MemoryStorage {
