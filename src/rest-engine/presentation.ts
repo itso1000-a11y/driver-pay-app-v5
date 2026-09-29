@@ -1,5 +1,11 @@
 import { evaluateRestEngine, type EngineEvaluation, type RestEngineRuleset } from "./evaluate.ts";
 import { migrateLegacyFacts, type LegacyStorageSnapshot, type RestEngineMigration } from "./migration.ts";
+import { deriveRestIntervals } from "./chronology.ts";
+import { generateWeeklyRestComponentOptions } from "./weekly-rest-candidates.ts";
+import { normalizeActivityFacts } from "./facts.ts";
+import { orchestrateStoredIncrementalRestEngine } from "./incremental-checkpoint-runtime.ts";
+import { compensationBranchFromAllocationAlternative } from "./compensation-frontier.ts";
+import type { KeyValueStorage } from "./storage.ts";
 import { fixedLegalWeekForInstant, formatLondonInstant, londonCivilDayBounds } from "./time.ts";
 import type {
   ActivityFactInput,
@@ -170,11 +176,63 @@ export function buildAuthoritativeLegacySnapshot(input: VisibleWeekSnapshotInput
   return Object.fromEntries(Object.entries(snapshot).sort(([left], [right]) => left.localeCompare(right)));
 }
 
-/** One authoritative Phase 1-7 recomputation. Display/navigation state is not an input. */
-export function evaluateProductionRestEngine(
+/** Projects persisted incremental legal state into the existing presentation selectors. */
+function evaluateStoredProductionRestEngine(
+  storage: KeyValueStorage,
   snapshot: LegacyStorageSnapshot,
   asOfEpochMilliseconds: number,
 ): ProductionEngineState {
+  const migration = migrateLegacyFacts(snapshot, asOfEpochMilliseconds);
+  const factualFacts = migration.facts.filter((fact) => fact.factStatus === "FACTUAL");
+  const normalizedFacts = normalizeActivityFacts(factualFacts).facts;
+  const chronology = deriveRestIntervals(normalizedFacts, asOfEpochMilliseconds);
+  const candidates = generateWeeklyRestComponentOptions(chronology.intervals);
+  const orchestration = orchestrateStoredIncrementalRestEngine(storage, {
+    facts: normalizedFacts,
+    asOfEpochMilliseconds,
+    evaluationWeekIds: [],
+    factualCoverageCompleteThroughAsOf: coverageCompleteThroughAsOf(migration, asOfEpochMilliseconds),
+    // Legacy restore supplies no authoritative bootstrap history. Keep it
+    // unknown rather than treating the earliest record as legal coverage.
+    initialLegalContext: { historyStartEpochMilliseconds: null, priorQualifyingWeeklyRest: null },
+  });
+  const capped = orchestration.checkpoint.bootstrapSafety != null;
+  const branches = orchestration.checkpoint.liveAllocationFrontier.alternatives.map((alternative) => {
+    const branch = compensationBranchFromAllocationAlternative(alternative, chronology.intervals);
+    return {
+      ...branch,
+      reviewStatus: capped ? "REVIEW_REQUIRED" : alternative.reviewStatus,
+      reviewReasons: capped ? [...alternative.reviewReasons, orchestration.checkpoint.bootstrapSafety!.reason] : [...alternative.reviewReasons],
+      legalState: (capped ? "REVIEW" : (alternative.reviewStatus === "REVIEW_REQUIRED" ? "REVIEW" : "COMPLIANT")) as typeof branch.legalState,
+    };
+  });
+  const evaluation: EngineEvaluation = {
+    schemaVersion: 1,
+    factsHash: orchestration.checkpoint.source.factualSourceHash,
+    evaluationFingerprint: `incremental:${orchestration.checkpoint.semanticVersion}:${orchestration.checkpoint.source.factualSourceHash}:${capped ? "review-cap" : "live"}`,
+    asOfEpochMilliseconds,
+    ruleset: { ...PRODUCTION_REST_ENGINE_RULESET },
+    factualCoverageCompleteThroughAsOf: coverageCompleteThroughAsOf(migration, asOfEpochMilliseconds),
+    evaluationWeekIds: [],
+    activityFacts: normalizedFacts,
+    restIntervals: chronology.intervals,
+    weeklyRestOptions: candidates.options,
+    allocation: { branches, eliminatedBranchesOrDiagnostics: [], issues: [] },
+    compensation: { branchEvaluations: orchestration.checkpoint.liveCompensationFrontier.alternatives.map((item) => item.evaluation), convergences: [] },
+    chronologyIssues: chronology.issues,
+    weeklyRestCandidateIssues: candidates.issues,
+    allocationIssues: [],
+  };
+  return { migration, evaluation, warning: aggregateBranchWarnings(evaluation) };
+}
+
+/** Production UI uses stored incremental state. The direct evaluator remains the test/differential oracle only. */
+export function evaluateProductionRestEngine(
+  snapshot: LegacyStorageSnapshot,
+  asOfEpochMilliseconds: number,
+  storage?: KeyValueStorage,
+): ProductionEngineState {
+  if (storage) return evaluateStoredProductionRestEngine(storage, snapshot, asOfEpochMilliseconds);
   const migration = migrateLegacyFacts(snapshot, asOfEpochMilliseconds);
   const factualFacts = migration.facts.filter((fact) => fact.factStatus === "FACTUAL");
   const horizon = evaluationHorizon(factualFacts, asOfEpochMilliseconds);
