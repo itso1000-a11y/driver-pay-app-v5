@@ -1,0 +1,211 @@
+diff --git "a/C:\\Users\\itso1\\Documents\\Codex\\2026-09-12\\this-is-a-fresh-independent-forensic\\outputs\\v5.3.9-restore-incremental-runtime\\stage-20260929-175317\\candidate\\src\\rest-engine\\incremental-checkpoint.ts" "b/C:\\Users\\itso1\\Documents\\Codex\\2026-09-12\\this-is-a-fresh-independent-forensic\\work\\phase2da-incremental-frontier-v5.3.7-target\\src\\rest-engine\\incremental-checkpoint.ts"
+index 917daeb..ccb2c4e 100644
+--- "a/C:\\Users\\itso1\\Documents\\Codex\\2026-09-12\\this-is-a-fresh-independent-forensic\\outputs\\v5.3.9-restore-incremental-runtime\\stage-20260929-175317\\candidate\\src\\rest-engine\\incremental-checkpoint.ts"
++++ "b/C:\\Users\\itso1\\Documents\\Codex\\2026-09-12\\this-is-a-fresh-independent-forensic\\work\\phase2da-incremental-frontier-v5.3.7-target\\src\\rest-engine\\incremental-checkpoint.ts"
+@@ -3,9 +3,9 @@ import type { ActivityFactInput } from "./types.ts";
+ import type { AllocationFrontier } from "./allocation-frontier.ts";
+ import type { FinalizedAllocationResult } from "./allocation-finalization.ts";
+ import type { CompensationFrontier, FinalizedCompensationResult } from "./compensation-frontier.ts";
+-export const REST_ENGINE_INCREMENTAL_CHECKPOINT_VERSION=2 as const;export const REST_ENGINE_INCREMENTAL_SEMANTIC_VERSION="EU_561_2006_REST_ENGINE_V1_INCREMENTAL_PACKAGE_CONTINUATION_V3_BOUNDED_BOOTSTRAP" as const;
++export const REST_ENGINE_INCREMENTAL_CHECKPOINT_VERSION=2 as const;export const REST_ENGINE_INCREMENTAL_SEMANTIC_VERSION="EU_561_2006_REST_ENGINE_V1_INCREMENTAL_PACKAGE_CONTINUATION_V4_PREFIX_AUTHENTICATED_STATE_CAP" as const;
+ /** A safe, derived stop state for a legacy restore that cannot be materialized within the runtime budget. */
+-export type IncrementalBootstrapSafety={kind:"STATE_CAP";inputSource:CheckpointSourceIdentity;stoppedBeforeFixedWeekId:string;reason:string};
++export type IncrementalBootstrapSafety={kind:"STATE_CAP";authenticatedPrefixSource:CheckpointSourceIdentity;evaluatedThroughFixedWeekId:string|null;stoppedBeforeFixedWeekId:string;reason:string};
+ export type RestEngineIncrementalCheckpointV2={checkpointVersion:typeof REST_ENGINE_INCREMENTAL_CHECKPOINT_VERSION;semanticVersion:typeof REST_ENGINE_INCREMENTAL_SEMANTIC_VERSION;source:CheckpointSourceIdentity;finalizedThroughWallDate:string|null;finalizedAllocationResults:readonly FinalizedAllocationResult[];finalizedCompensationResults:readonly FinalizedCompensationResult[];liveAllocationFrontier:AllocationFrontier;liveCompensationFrontier:CompensationFrontier;factualCoverageCompleteThroughBoundary:boolean;initialLegalContextFingerprint:string;reviewReasons:readonly string[];bootstrapSafety?:IncrementalBootstrapSafety};
+ function canonical<T>(v:readonly T[]):T[]{return[...v].sort((a,b)=>stableCheckpointJson(a).localeCompare(stableCheckpointJson(b)))}
+ export function createIncrementalCheckpoint(i:Omit<RestEngineIncrementalCheckpointV2,"checkpointVersion"|"semanticVersion"|"finalizedAllocationResults"|"finalizedCompensationResults"|"reviewReasons">&{finalizedAllocationResults:readonly FinalizedAllocationResult[];finalizedCompensationResults:readonly FinalizedCompensationResult[];reviewReasons:readonly string[]}):RestEngineIncrementalCheckpointV2{return{checkpointVersion:2,semanticVersion:REST_ENGINE_INCREMENTAL_SEMANTIC_VERSION,...i,finalizedAllocationResults:canonical(i.finalizedAllocationResults),finalizedCompensationResults:canonical(i.finalizedCompensationResults),reviewReasons:[...new Set(i.reviewReasons)].sort()}}
+diff --git "a/C:\\Users\\itso1\\Documents\\Codex\\2026-09-12\\this-is-a-fresh-independent-forensic\\outputs\\v5.3.9-restore-incremental-runtime\\stage-20260929-175317\\candidate\\src\\rest-engine\\incremental-orchestration.ts" "b/C:\\Users\\itso1\\Documents\\Codex\\2026-09-12\\this-is-a-fresh-independent-forensic\\work\\phase2da-incremental-frontier-v5.3.7-target\\src\\rest-engine\\incremental-orchestration.ts"
+index ef297ad..304b83c 100644
+--- "a/C:\\Users\\itso1\\Documents\\Codex\\2026-09-12\\this-is-a-fresh-independent-forensic\\outputs\\v5.3.9-restore-incremental-runtime\\stage-20260929-175317\\candidate\\src\\rest-engine\\incremental-orchestration.ts"
++++ "b/C:\\Users\\itso1\\Documents\\Codex\\2026-09-12\\this-is-a-fresh-independent-forensic\\work\\phase2da-incremental-frontier-v5.3.7-target\\src\\rest-engine\\incremental-orchestration.ts"
+@@ -6,14 +6,15 @@ import { allocationFrontierAlternative, allocationFrontierFromBranches, allocati
+ import { finalizeAllocationFrontier } from "./allocation-finalization.ts";
+ import { transitionCompensationFrontier } from "./compensation-frontier.ts";
+ import { createIncrementalCheckpoint, incrementalCheckpointSource, isIncrementalCheckpointStale, type IncrementalBootstrapSafety, type RestEngineIncrementalCheckpointV2 } from "./incremental-checkpoint.ts";
+-import { fixedLegalWeekForInstant } from "./time.ts";
++import { fixedLegalWeekForInstant, resolveLondonWallTime } from "./time.ts";
++import { stableCheckpointJson } from "./checkpoint.ts";
+ import type { ActivityFactInput, AllocationBranch, PriorQualifyingWeeklyRest, RestInterval } from "./types.ts";
+ 
+ export type InitialLegalContext={historyStartEpochMilliseconds:number|null;priorQualifyingWeeklyRest:PriorQualifyingWeeklyRest|null};
+ export type IncrementalOrchestrationInput={facts:readonly ActivityFactInput[];asOfEpochMilliseconds:number;evaluationWeekIds:readonly string[];factualCoverageCompleteThroughAsOf:boolean;initialLegalContext?:InitialLegalContext;checkpoint?:RestEngineIncrementalCheckpointV2|null};
+-export type IncrementalOrchestrationDiagnostics={genesisEntered:boolean;historicalChoiceGroupsReplayed:number;historicalFixedWeeksReconstructed:number;historicalRollingCyclesRecomputed:number;finalizedHistoricalItemsRecreatedLive:number;bootstrapSafety?:IncrementalBootstrapSafety};
++export type IncrementalOrchestrationDiagnostics={genesisEntered:boolean;reusedPrefixCheckpoint:boolean;suffixFactCount:number;historicalChoiceGroupsReplayed:number;historicalFixedWeeksReconstructed:number;historicalRollingCyclesRecomputed:number;finalizedHistoricalItemsRecreatedLive:number;bootstrapSafety?:IncrementalBootstrapSafety};
+ export type IncrementalOrchestrationResult={checkpoint:RestEngineIncrementalCheckpointV2;reusedCheckpoint:boolean;segmentCount:number;diagnostics:IncrementalOrchestrationDiagnostics;lastSegmentBranches:readonly AllocationBranch[]};
+-const emptyDiagnostics=():IncrementalOrchestrationDiagnostics=>({genesisEntered:false,historicalChoiceGroupsReplayed:0,historicalFixedWeeksReconstructed:0,historicalRollingCyclesRecomputed:0,finalizedHistoricalItemsRecreatedLive:0});
++const emptyDiagnostics=():IncrementalOrchestrationDiagnostics=>({genesisEntered:false,reusedPrefixCheckpoint:false,suffixFactCount:0,historicalChoiceGroupsReplayed:0,historicalFixedWeeksReconstructed:0,historicalRollingCyclesRecomputed:0,finalizedHistoricalItemsRecreatedLive:0});
+ /** Hard runtime budget for a legacy cold start. It returns REVIEW, never a guessed legal result. */
+ export const LEGACY_BOOTSTRAP_MAX_LIVE_ALLOCATION_ALTERNATIVES=96;
+ export function compensationIntervalsAvailableThrough(available: readonly RestInterval[], current: readonly RestInterval[]): RestInterval[] {
+@@ -22,6 +23,9 @@ export function compensationIntervalsAvailableThrough(available: readonly RestIn
+   return [...values.values()].sort((left, right) => (left.startEpochMilliseconds ?? -1) - (right.startEpochMilliseconds ?? -1) || left.restIntervalId.localeCompare(right.restIntervalId));
+ }
+ function intervalWeek(interval:RestInterval):string|null{const instant=interval.endEpochMilliseconds??interval.observedThroughEpochMilliseconds??interval.startEpochMilliseconds;return instant==null?null:fixedLegalWeekForInstant(instant).weekId}
++function factWeek(fact:ActivityFactInput):string{const resolved=resolveLondonWallTime(fact.sourceRef.wallDate,"12:00:00");const epoch=resolved.epochMilliseconds??resolved.candidates[0]?.epochMilliseconds;if(epoch==null)throw new Error(`Cannot establish fixed week for ${fact.factId}`);return fixedLegalWeekForInstant(epoch).weekId}
++function factsThroughWeek(facts:readonly ActivityFactInput[],boundary:string|null):ActivityFactInput[]{return boundary==null?[]:facts.filter(fact=>factWeek(fact)<=boundary)}
++function immutableSnapshot<T>(value:T):T{return JSON.parse(stableCheckpointJson(value)) as T}
+ function context(input:IncrementalOrchestrationInput,weeks:string[]){return{asOfEpochMilliseconds:input.asOfEpochMilliseconds,evaluationWeekIds:weeks,historyStartEpochMilliseconds:input.initialLegalContext?.historyStartEpochMilliseconds??null,factualCoverageCompleteThroughAsOf:input.factualCoverageCompleteThroughAsOf,priorQualifyingWeeklyRest:input.initialLegalContext?.priorQualifyingWeeklyRest??undefined}}
+ function initialLegalContextFingerprint(input:IncrementalOrchestrationInput){return JSON.stringify(input.initialLegalContext??{historyStartEpochMilliseconds:null,priorQualifyingWeeklyRest:null})}
+ function withPackages(frontier:any, packages:readonly {parentAlternativeId:string;branch:AllocationBranch}[]){
+@@ -47,12 +51,6 @@ function checkpoint(sourceFacts:readonly ActivityFactInput[], input:IncrementalO
+ /** Incremental runtime: checkpoint source authenticates its prefix; only later factual material is seeded. */
+ export function orchestrateIncrementalRestEngine(input:IncrementalOrchestrationInput):IncrementalOrchestrationResult{
+  const facts=normalizeActivityFacts(input.facts).facts; let prior=input.checkpoint??null;
+- const fullInputSource=incrementalCheckpointSource(input.facts);
+- if(prior?.bootstrapSafety){
+-   const sameInput=JSON.stringify(prior.bootstrapSafety.inputSource)===JSON.stringify(fullInputSource);
+-   if(sameInput&&prior.initialLegalContextFingerprint===initialLegalContextFingerprint(input))return{checkpoint:prior,reusedCheckpoint:true,segmentCount:0,diagnostics:{...emptyDiagnostics(),bootstrapSafety:prior.bootstrapSafety},lastSegmentBranches:[]};
+-   prior=null;
+- }
+  if(prior&&!isIncrementalCheckpointStale(prior,input.facts)&&prior.initialLegalContextFingerprint===initialLegalContextFingerprint(input)){
+    const suffixFacts=facts.filter(f=>f.sourceRef.wallDate>prior.source.lastWallDate);
+    if(!suffixFacts.length)return{checkpoint:prior,reusedCheckpoint:true,segmentCount:0,diagnostics:emptyDiagnostics(),lastSegmentBranches:[]};
+@@ -64,16 +62,24 @@ export function orchestrateIncrementalRestEngine(input:IncrementalOrchestrationI
+    const frontier=allocationFrontierFromBranches(seeded.result.branches);
+    const boundary=(weeks.length ? weeks[weeks.length - 1] : null) ?? prior.finalizedThroughWallDate;
+    const finalized=boundary?finalizeAllocationFrontier(frontier,{chronologicalBoundaryFixedWeekId:boundary}):{finalizedAllocationResults:[],liveFrontier:frontier};
++   if(frontier.alternatives.length>LEGACY_BOOTSTRAP_MAX_LIVE_ALLOCATION_ALTERNATIVES){
++    const safety:IncrementalBootstrapSafety={kind:"STATE_CAP",authenticatedPrefixSource:prior.source,evaluatedThroughFixedWeekId:prior.finalizedThroughWallDate,stoppedBeforeFixedWeekId:weeks[0]??prior.finalizedThroughWallDate??"",reason:"REST_ENGINE_BOOTSTRAP_REVIEW_STATE_CAP"};
++    return{checkpoint:prior,reusedCheckpoint:false,segmentCount:0,diagnostics:{...emptyDiagnostics(),reusedPrefixCheckpoint:true,suffixFactCount:suffixFacts.length,bootstrapSafety:safety},lastSegmentBranches:[]};
++   }
+    const comp=transitionCompensationFrontier(prior.liveCompensationFrontier,finalized.liveFrontier,chronology.intervals,{asOfEpochMilliseconds:input.asOfEpochMilliseconds,factualCoverageCompleteThroughAsOf:input.factualCoverageCompleteThroughAsOf},prior.finalizedCompensationResults);
+    const packagedFrontier=withPackages(finalized.liveFrontier,comp.packageBranches);
+    const cp=checkpoint(input.facts,input,packagedFrontier,[...prior.finalizedAllocationResults,...finalized.finalizedAllocationResults],{live:comp.nextCompensationFrontier,finalized:[...prior.finalizedCompensationResults,...comp.newlyFinalizedCompensationResults]},boundary);
+-   return{checkpoint:cp,reusedCheckpoint:false,segmentCount:1,diagnostics:{...seeded.diagnostics},lastSegmentBranches:seeded.result.branches};
++   return{checkpoint:cp,reusedCheckpoint:false,segmentCount:1,diagnostics:{...seeded.diagnostics,reusedPrefixCheckpoint:true,suffixFactCount:suffixFacts.length},lastSegmentBranches:seeded.result.branches};
+  }
+  const chronology=deriveRestIntervals(facts,input.asOfEpochMilliseconds);const groups=new Map<string,RestInterval[]>();for(const i of chronology.intervals){const w=intervalWeek(i);if(w)groups.set(w,[...(groups.get(w)??[]),i])}
+  let frontier:any=null, finalAlloc:any[]=[] , finalComp:any[]=[] , liveComp:any={alternatives:[]}; let availableIntervals: RestInterval[]=[]; let count=0;let diagnostics=emptyDiagnostics(); let lastSegmentBranches:readonly AllocationBranch[]=[];
+- let lastSafeFrontier:any={alternatives:[]},lastSafeComp:any=liveComp,lastSafeAllocation:any[]=finalAlloc,lastSafeCompensation:any[]=finalComp,lastSafeBoundary:string|null=null;
+- for(const [week,intervals] of [...groups.entries()].sort(([a],[b])=>a.localeCompare(b))){availableIntervals=compensationIntervalsAvailableThrough(availableIntervals,intervals);const opts=generateWeeklyRestComponentOptions(intervals).options;let allocation;if(!frontier){allocation=solveSegmentedWeeklyRestAllocations(intervals,opts,context(input,[week]));diagnostics.genesisEntered=true}else{const seeded=solveSegmentedWeeklyRestAllocationsFromSeed(allocationContinuationSeed(frontier,null),intervals,opts,context(input,[week]),frontier.alternatives.map((a:any)=>allocationSolverContinuationContext(a)));allocation=seeded.result;diagnostics={...seeded.diagnostics,genesisEntered:true}}lastSegmentBranches=allocation.branches;frontier=allocationFrontierFromBranches(allocation.branches);const finalized=finalizeAllocationFrontier(frontier,{chronologicalBoundaryFixedWeekId:week});frontier=finalized.liveFrontier;finalAlloc.push(...finalized.finalizedAllocationResults);
+-  if(frontier.alternatives.length>LEGACY_BOOTSTRAP_MAX_LIVE_ALLOCATION_ALTERNATIVES){const bootstrapSafety:IncrementalBootstrapSafety={kind:"STATE_CAP",inputSource:fullInputSource,stoppedBeforeFixedWeekId:week,reason:"REST_ENGINE_BOOTSTRAP_REVIEW_STATE_CAP"};const cp=checkpoint(input.facts,input,lastSafeFrontier,lastSafeAllocation,{live:lastSafeComp,finalized:lastSafeCompensation},lastSafeBoundary,bootstrapSafety);return{checkpoint:cp,reusedCheckpoint:false,segmentCount:count,diagnostics:{...diagnostics,bootstrapSafety},lastSegmentBranches:[]}}
+-  const comp=transitionCompensationFrontier(liveComp,frontier,availableIntervals,{asOfEpochMilliseconds:input.asOfEpochMilliseconds,factualCoverageCompleteThroughAsOf:input.factualCoverageCompleteThroughAsOf});liveComp=comp.nextCompensationFrontier;frontier=withPackages(frontier,comp.packageBranches);finalComp.push(...comp.newlyFinalizedCompensationResults);count++;lastSafeFrontier=frontier;lastSafeComp=liveComp;lastSafeAllocation=finalAlloc;lastSafeCompensation=finalComp;lastSafeBoundary=week;}
++ let lastSafeFrontier:any=immutableSnapshot({alternatives:[]}),lastSafeComp:any=immutableSnapshot(liveComp),lastSafeAllocation:any[]=immutableSnapshot(finalAlloc),lastSafeCompensation:any[]=immutableSnapshot(finalComp),lastSafeBoundary:string|null=null;
++ for(const [week,intervals] of [...groups.entries()].sort(([a],[b])=>a.localeCompare(b))){availableIntervals=compensationIntervalsAvailableThrough(availableIntervals,intervals);const opts=generateWeeklyRestComponentOptions(intervals).options;let allocation;if(!frontier){allocation=solveSegmentedWeeklyRestAllocations(intervals,opts,context(input,[week]));diagnostics.genesisEntered=true}else{const seeded=solveSegmentedWeeklyRestAllocationsFromSeed(allocationContinuationSeed(frontier,null),intervals,opts,context(input,[week]),frontier.alternatives.map((a:any)=>allocationSolverContinuationContext(a)));allocation=seeded.result;diagnostics={...seeded.diagnostics,genesisEntered:true,reusedPrefixCheckpoint:false,suffixFactCount:0}}lastSegmentBranches=allocation.branches;frontier=allocationFrontierFromBranches(allocation.branches);const finalized=finalizeAllocationFrontier(frontier,{chronologicalBoundaryFixedWeekId:week});frontier=finalized.liveFrontier;finalAlloc.push(...finalized.finalizedAllocationResults);
++  if(frontier.alternatives.length>LEGACY_BOOTSTRAP_MAX_LIVE_ALLOCATION_ALTERNATIVES){const prefixFacts=factsThroughWeek(input.facts,lastSafeBoundary);const authenticatedPrefixSource=incrementalCheckpointSource(prefixFacts);const bootstrapSafety:IncrementalBootstrapSafety={kind:"STATE_CAP",authenticatedPrefixSource,evaluatedThroughFixedWeekId:lastSafeBoundary,stoppedBeforeFixedWeekId:week,reason:"REST_ENGINE_BOOTSTRAP_REVIEW_STATE_CAP"};const cp=checkpoint(prefixFacts,input,lastSafeFrontier,lastSafeAllocation,{live:lastSafeComp,finalized:lastSafeCompensation},lastSafeBoundary,bootstrapSafety);return{checkpoint:cp,reusedCheckpoint:false,segmentCount:count,diagnostics:{...diagnostics,bootstrapSafety},lastSegmentBranches:[]}}
++  const comp=transitionCompensationFrontier(liveComp,frontier,availableIntervals,{asOfEpochMilliseconds:input.asOfEpochMilliseconds,factualCoverageCompleteThroughAsOf:input.factualCoverageCompleteThroughAsOf});liveComp=comp.nextCompensationFrontier;frontier=withPackages(frontier,comp.packageBranches);finalComp.push(...comp.newlyFinalizedCompensationResults);count++;lastSafeFrontier=immutableSnapshot(frontier);lastSafeComp=immutableSnapshot(liveComp);lastSafeAllocation=immutableSnapshot(finalAlloc);lastSafeCompensation=immutableSnapshot(finalComp);lastSafeBoundary=week;}
+  const boundary=(()=>{const keys=[...groups.keys()].sort();return keys.length?keys[keys.length-1]:null})();const cp=checkpoint(input.facts,input,frontier??{alternatives:[]},finalAlloc,{live:liveComp,finalized:finalComp},boundary);return{checkpoint:cp,reusedCheckpoint:false,segmentCount:count,diagnostics,lastSegmentBranches};
+ }
++
++
++
++
+diff --git "a/C:\\Users\\itso1\\Documents\\Codex\\2026-09-12\\this-is-a-fresh-independent-forensic\\outputs\\v5.3.9-restore-incremental-runtime\\stage-20260929-175317\\candidate\\scripts\\restore-incremental-runtime-test.ts" "b/C:\\Users\\itso1\\Documents\\Codex\\2026-09-12\\this-is-a-fresh-independent-forensic\\work\\phase2da-incremental-frontier-v5.3.7-target\\scripts\\restore-incremental-runtime-test.ts"
+index 08abe46..8989bc9 100644
+--- "a/C:\\Users\\itso1\\Documents\\Codex\\2026-09-12\\this-is-a-fresh-independent-forensic\\outputs\\v5.3.9-restore-incremental-runtime\\stage-20260929-175317\\candidate\\scripts\\restore-incremental-runtime-test.ts"
++++ "b/C:\\Users\\itso1\\Documents\\Codex\\2026-09-12\\this-is-a-fresh-independent-forensic\\work\\phase2da-incremental-frontier-v5.3.7-target\\scripts\\restore-incremental-runtime-test.ts"
+@@ -1,9 +1,11 @@
+ import assert from "node:assert/strict";
+ import fs from "node:fs";
+ import { evaluateProductionRestEngine } from "../src/rest-engine/presentation.ts";
+-import { INCREMENTAL_CHECKPOINT_STORAGE_KEY } from "../src/rest-engine/incremental-checkpoint-storage.ts";
++import { INCREMENTAL_CHECKPOINT_STORAGE_KEY, loadValidIncrementalCheckpoint } from "../src/rest-engine/incremental-checkpoint-storage.ts";
+ import { migrateLegacyFacts } from "../src/rest-engine/migration.ts";
+-import { loadValidIncrementalCheckpoint } from "../src/rest-engine/incremental-checkpoint-storage.ts";
++import { normalizeActivityFacts } from "../src/rest-engine/facts.ts";
++import { orchestrateStoredIncrementalRestEngine } from "../src/rest-engine/incremental-checkpoint-runtime.ts";
++import type { ActivityFactInput } from "../src/rest-engine/types.ts";
+ 
+ class MemoryStorage {
+   private readonly values = new Map<string, string>();
+@@ -12,42 +14,78 @@ class MemoryStorage {
+   getItem(key: string) { return this.values.get(key) ?? null; }
+   setItem(key: string, value: string) { this.values.set(key, value); }
+   removeItem(key: string) { this.values.delete(key); }
++  clone(): MemoryStorage { const copy = new MemoryStorage(); for (const [key, value] of this.values) copy.setItem(key, value); return copy; }
+ }
+ const backupPath = process.env.REAL_BACKUP_PATH ?? "C:/Users/itso1/OneDrive/1.Itso/driver-pay-backup-2026-10-03-2026-09-28.json";
+ if (!fs.existsSync(backupPath)) throw new Error(`Exact real-backup fixture is unavailable: ${backupPath}`);
+ const backup = JSON.parse(fs.readFileSync(backupPath, "utf8"));
+ assert.equal(backup.version, 2);
+-const storage = new MemoryStorage();
+-for (const [key, value] of Object.entries(backup.storageSnapshot)) storage.setItem(key, value as string);
++const restoreStorage = () => { const storage = new MemoryStorage(); for (const [key, value] of Object.entries(backup.storageSnapshot)) storage.setItem(key, value as string); return storage; };
+ const asOf = Date.parse(backup.exportedAt);
++const runtimeInput = (facts: readonly ActivityFactInput[]) => ({ facts, asOfEpochMilliseconds: asOf, evaluationWeekIds: [], factualCoverageCompleteThroughAsOf: true });
++const newFactualDay = (date: string, id: string): ActivityFactInput => ({
++  factId: id, sourceRef: { sourceKey: "forensic", recordId: id, wallDate: date }, kind: "WORK", factStatus: "FACTUAL", coverage: "COMPLETE",
++  start: { wallDate: date, wallTime: "09:00", timeZone: "Europe/London", provenance: "EXPLICIT" },
++  end: { wallDate: date, wallTime: "17:00", timeZone: "Europe/London", provenance: "EXPLICIT" },
++  provenance: "EXPLICIT", revision: 1, revisionFingerprint: id,
++});
++
++const storage = restoreStorage();
+ const before = process.memoryUsage();
+ const started = performance.now();
+ const first = evaluateProductionRestEngine(backup.storageSnapshot, asOf, storage);
+ const elapsedMilliseconds = performance.now() - started;
+ const after = process.memoryUsage();
+ const raw = storage.getItem(INCREMENTAL_CHECKPOINT_STORAGE_KEY);
+-assert.ok(raw, "R3 persisted incremental checkpoint exists after bounded bootstrap");
++assert.ok(raw, "C1 checkpoint exists after bounded bootstrap");
+ const checkpoint = JSON.parse(raw);
+-assert.equal(checkpoint.bootstrapSafety?.kind, "STATE_CAP", "R2 bounded legacy bootstrap returns controlled review state");
+-assert.ok(checkpoint.liveAllocationFrontier.alternatives.length <= 96, "R1 live allocation state remains within bootstrap cap");
+-assert.equal(first.evaluation.allocation.branches.length, checkpoint.liveAllocationFrontier.alternatives.length, "R5 production presentation projects incremental frontier");
+-assert.ok(first.evaluation.allocation.branches.every((branch) => branch.reviewStatus === "REVIEW_REQUIRED"), "R7 capped alternatives remain REVIEW");
+-assert.ok(first.migration.facts.some((fact) => fact.factStatus !== "FACTUAL"), "R8 non-factual rows are not fabricated into factual evidence");
++assert.equal(checkpoint.bootstrapSafety?.kind, "STATE_CAP", "C1 bounded legacy bootstrap returns controlled review state");
++assert.deepEqual(checkpoint.source, checkpoint.bootstrapSafety.authenticatedPrefixSource, "C1 checkpoint source authenticates exactly the evaluated prefix");
++assert.ok(checkpoint.source.lastWallDate < "2026-09-28", "C1 suffix facts are not included in STATE_CAP source authentication");
++assert.ok(checkpoint.liveAllocationFrontier.alternatives.length <= 96, "C1 allocation state remains within safety cap");
++assert.equal(first.evaluation.allocation.branches.length, checkpoint.liveAllocationFrontier.alternatives.length, "C1 production presentation projects incremental frontier");
++assert.ok(first.evaluation.allocation.branches.every((branch) => branch.reviewStatus === "REVIEW_REQUIRED"), "C9 STATE_CAP remains REVIEW");
++assert.ok(first.migration.facts.some((fact) => fact.factStatus !== "FACTUAL"), "C10 non-factual rows are not fabricated into factual evidence");
+ const rawBeforeReuse = raw;
+ const second = evaluateProductionRestEngine(backup.storageSnapshot, asOf, storage);
+-assert.equal(storage.getItem(INCREMENTAL_CHECKPOINT_STORAGE_KEY), rawBeforeReuse, "R4 unchanged restore reuses checkpoint without rebuilding bootstrap");
+-assert.equal(second.evaluation.evaluationFingerprint, first.evaluation.evaluationFingerprint, "R4 reused presentation state is deterministic");
+-const factualFacts = migrateLegacyFacts(backup.storageSnapshot, asOf).facts.filter((fact) => fact.factStatus === "FACTUAL");
+-const changedFacts = factualFacts.map((fact, index) => index === 0 ? { ...fact, revisionFingerprint: "forensic-mismatch" } : fact);
+-assert.equal(loadValidIncrementalCheckpoint(storage, changedFacts), null, "R6 changed factual identity invalidates unsafe checkpoint reuse");
++assert.equal(storage.getItem(INCREMENTAL_CHECKPOINT_STORAGE_KEY), rawBeforeReuse, "C2 unchanged restore reuses checkpoint without bootstrap");
++assert.equal(second.evaluation.evaluationFingerprint, first.evaluation.evaluationFingerprint, "C2 reused presentation state is deterministic");
++const factualFacts = normalizeActivityFacts(first.migration.facts.filter((fact) => fact.factStatus === "FACTUAL")).facts;
++const futureOne = [...factualFacts, newFactualDay("2026-09-29", "future-one")];
++const suffixStorage = storage.clone();
++
++const suffix = orchestrateStoredIncrementalRestEngine(suffixStorage, runtimeInput(futureOne));
++assert.equal(suffix.diagnostics.reusedPrefixCheckpoint, true, "C3 future day reuses authenticated prefix");
++assert.equal(suffix.diagnostics.genesisEntered, false, "C3 future day does not restart genesis bootstrap");
++assert.ok(suffix.diagnostics.suffixFactCount > 0, "C3 only factual suffix material is considered after prefix reuse");
++assert.equal(suffix.diagnostics.bootstrapSafety?.kind, "STATE_CAP", "C3 an unsafe suffix remains bounded REVIEW rather than restarting genesis");
++assert.deepEqual(suffix.checkpoint.source, checkpoint.source, "C3 unevaluated suffix does not falsely extend authenticated prefix");
++const futureMany = [...factualFacts, newFactualDay("2026-09-29", "future-one"), newFactualDay("2026-09-30", "future-two"), newFactualDay("2026-10-01", "future-three")];
++const multi = orchestrateStoredIncrementalRestEngine(storage.clone(), runtimeInput(futureMany));
++assert.equal(multi.diagnostics.reusedPrefixCheckpoint, true, "C4 multiple future facts reuse authenticated prefix");
++assert.equal(multi.diagnostics.genesisEntered, false, "C4 multiple future facts do not restart genesis bootstrap");
++const prefixFact = factualFacts.find((fact) => fact.sourceRef.wallDate <= checkpoint.source.lastWallDate)!;
++const changedPrefix = factualFacts.map((fact) => fact.factId === prefixFact.factId ? { ...fact, revisionFingerprint: "changed-prefix" } : fact);
++assert.equal(loadValidIncrementalCheckpoint(storage.clone(), changedPrefix), null, "C5 changed authenticated prefix invalidates checkpoint");
++const outsideFact = factualFacts.find((fact) => fact.sourceRef.wallDate > checkpoint.source.lastWallDate)!;
++const changedSuffix = factualFacts.map((fact) => fact.factId === outsideFact.factId ? { ...fact, revisionFingerprint: "changed-suffix" } : fact);
++assert.ok(loadValidIncrementalCheckpoint(storage.clone(), changedSuffix), "C6 changed unevaluated suffix keeps prefix checkpoint valid");
++const allocationBefore = JSON.stringify(checkpoint.liveAllocationFrontier);
++const compensationBefore = JSON.stringify(checkpoint.liveCompensationFrontier);
++checkpoint.liveAllocationFrontier.alternatives[0] && (checkpoint.liveAllocationFrontier.alternatives[0].reviewReasons = ["mutated-test-only"]);
++checkpoint.liveCompensationFrontier.alternatives[0] && ((checkpoint.liveCompensationFrontier.alternatives[0] as any).evaluation = { mutated: true });
++assert.equal(JSON.stringify(JSON.parse(raw!).liveAllocationFrontier), allocationBefore, "C7 last-safe allocation was serialized from an immutable snapshot");
++assert.equal(JSON.stringify(JSON.parse(raw!).liveCompensationFrontier), compensationBefore, "C8 last-safe compensation was serialized from an immutable snapshot");
+ const app = fs.readFileSync(new URL("../src/App.tsx", import.meta.url), "utf8");
+ const presentation = fs.readFileSync(new URL("../src/rest-engine/presentation.ts", import.meta.url), "utf8");
+-assert.match(app, /evaluateProductionRestEngine\(snapshot, restEngineAsOf, localStorage\)/, "R5 App supplies persistent storage to production evaluator");
+-assert.match(presentation, /if \(storage\) return evaluateStoredProductionRestEngine/, "R5 production evaluator selects incremental path when storage exists");
+-assert.equal(storage.getItem("settings"), backup.storageSnapshot.settings, "R9 runtime evaluation does not mutate restored Pay/Gross settings");
+-console.log(JSON.stringify({
+-  result: "R1-R9 PASS",
+-  backup: { bytes: fs.statSync(backupPath).size, migratedStorageKeys: Object.keys(backup.storageSnapshot).length },
+-  performance: { elapsedMilliseconds: +elapsedMilliseconds.toFixed(2), before, after },
+-  checkpoint: { bootstrapSafety: checkpoint.bootstrapSafety, liveAllocationAlternatives: checkpoint.liveAllocationFrontier.alternatives.length, liveCompensationAlternatives: checkpoint.liveCompensationFrontier.alternatives.length },
+-}, null, 2));
++assert.match(app, /evaluateProductionRestEngine\(snapshot, restEngineAsOf, localStorage\)/, "C1 production App supplies persistent storage");
++assert.match(presentation, /if \(storage\) return evaluateStoredProductionRestEngine/, "C1 production evaluator uses stored incremental path");
++assert.equal(storage.getItem("settings"), backup.storageSnapshot.settings, "C10 runtime evaluation does not mutate restored Pay/Gross settings");
++console.log(JSON.stringify({ result: "C1-C10 PASS", backup: { bytes: fs.statSync(backupPath).size, migratedStorageKeys: Object.keys(backup.storageSnapshot).length }, performance: { elapsedMilliseconds: +elapsedMilliseconds.toFixed(2), before, after }, checkpoint: { boundary: checkpoint.bootstrapSafety.evaluatedThroughFixedWeekId, source: checkpoint.source, liveAllocationAlternatives: JSON.parse(raw!).liveAllocationFrontier.alternatives.length, liveCompensationAlternatives: JSON.parse(raw!).liveCompensationFrontier.alternatives.length }, suffix: { reusedPrefixCheckpoint: suffix.diagnostics.reusedPrefixCheckpoint, genesisEntered: suffix.diagnostics.genesisEntered, segmentCount: suffix.segmentCount } }, null, 2));
++
++
++
++
++
++
++
